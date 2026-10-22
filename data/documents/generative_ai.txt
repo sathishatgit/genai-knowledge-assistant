@@ -1,0 +1,18 @@
+Generative Artificial Intelligence: Architecture, Foundation Models, and Applications
+
+Generative Artificial Intelligence (GenAI) refers to artificial intelligence systems capable of creating new, original content such as text, images, audio, video, and synthetic data by learning the underlying statistical distributions of training data.
+
+Foundations of Modern GenAI:
+1. Transformer Architecture:
+   Introduced in 2017 in "Attention Is All You Need", transformers revolutionized NLP and computer vision through self-attention mechanisms, allowing parallelized processing of long sequence dependencies.
+
+2. Large Language Models (LLMs):
+   Models like GPT-4, Gemini, Claude, and LLaMA are pretrained on massive web-scale corpora via autoregressive token prediction, acquiring broad reasoning and zero-shot problem-solving capabilities.
+
+3. Diffusion Models:
+   Diffusion models generate high-fidelity images and multimedia by learning to reverse a gradual Gaussian noise corruption process step-by-step.
+
+Key Capabilities and Challenges:
+- Prompt Engineering: Guiding model behavior using in-context instructions, few-shot examples, and chain-of-thought prompting.
+- Hallucination: LLMs may generate plausible-sounding but factually incorrect statements because they optimize for token probability rather than truth verification.
+- Context Windows: The token capacity an LLM can process in a single inference session. Modern models handle from 8k tokens up to millions of tokens.

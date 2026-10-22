@@ -1,0 +1,25 @@
+Retrieval-Augmented Generation (RAG): Architecture, Pipeline, and Best Practices
+
+Retrieval-Augmented Generation (RAG) is an architectural pattern that enhances Large Language Model (LLM) responses by grounding them in authoritative, external, or private enterprise knowledge bases retrieved at query time.
+
+Our Internal RAG System Architecture:
+1. Ingestion Phase:
+   - Document Loading: Ingest unstructured internal documents (such as Markdown and text files).
+   - Chunking: Split documents into semantically coherent segments using a chunk size of 400 characters with an overlap of 80 characters.
+   - Vector Embedding: Convert chunks into dense mathematical vector representations using Jina AI Embeddings (jina-embeddings-v3).
+   - Vector Storage: Store chunk embeddings and metadata in a persistent local ChromaDB instance located at data/chroma/.
+   - Lexical Indexing: Build an inverted keyword index using BM25Okapi to capture exact terminology, code keywords, and domain-specific acronyms.
+
+2. Retrieval Phase:
+   - Hybrid Search: Combine lexical keyword search (BM25) and dense semantic vector search (ChromaDB + Jina).
+   - Reciprocal Rank Fusion (RRF): Merge the ranked lists from both retrieval methods using a rank constant of k=60. This guarantees balanced scoring without requiring calibrated distance scores.
+   - Top-K Selection: Select the top 3-5 highest scoring fused chunks as prompt context.
+
+3. Generation Phase:
+   - The selected context chunks and the user query are injected into a structured prompt sent to Google Gemini (gemini-1.5-flash).
+   - The LLM synthesizes an accurate, factually grounded answer with citations to the original document sources.
+
+Benefits of RAG:
+- Mitigates LLM hallucinations by restricting answers to supplied factual context.
+- Eliminates the need for expensive continual pre-training or fine-tuning when enterprise knowledge updates.
+- Provides verifiable traceability and auditability through source citations.

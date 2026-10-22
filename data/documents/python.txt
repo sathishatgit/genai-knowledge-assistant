@@ -1,0 +1,14 @@
+Python Programming Language: Fundamentals and Core Features
+
+Python is a high-level, interpreted programming language known for its clear syntax and high code readability. It was created by Guido van Rossum and first released in 1991. Python supports multiple programming paradigms, including object-oriented, procedural, and functional programming.
+
+Key Features of Python:
+1. Dynamic Typing: Variable types are determined at runtime, allowing rapid prototyping and clean syntax.
+2. Extensive Standard Library: Python is often described as "batteries included" because of its rich built-in modules for networking, math, file I/O, and string processing.
+3. List and Dictionary Data Structures: Python lists are ordered, mutable sequences that can store mixed data types. Python dictionaries are hash-table based key-value mappings offering O(1) average lookup time.
+4. Ecosystem: Python is the primary language for Data Science, Artificial Intelligence, and Machine Learning thanks to libraries such as NumPy, Pandas, PyTorch, and Scikit-learn.
+
+Best Practices:
+- Follow PEP 8 style guidelines for readability.
+- Use virtual environments (such as venv or virtualenv) to manage dependencies per project.
+- Employ list comprehensions and generators for memory-efficient iteration.

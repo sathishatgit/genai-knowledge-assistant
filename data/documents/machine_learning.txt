@@ -1,0 +1,22 @@
+Machine Learning Fundamentals: Concepts, Categories, and Algorithms
+
+Machine Learning (ML) is a subfield of Artificial Intelligence (AI) that focuses on building systems that learn patterns from data rather than following hardcoded, deterministic rules.
+
+Core Branches of Machine Learning:
+1. Supervised Learning:
+   The algorithm learns from labeled training data. The goal is to learn a mapping function from input features to target labels.
+   - Classification: Predicting discrete categories (e.g., spam detection, sentiment analysis). Common models: Logistic Regression, Random Forests, Support Vector Machines.
+   - Regression: Predicting continuous numeric values (e.g., house price forecasting). Common models: Linear Regression, Gradient Boosted Trees.
+
+2. Unsupervised Learning:
+   The algorithm uncovers hidden patterns or structure in unlabeled data.
+   - Clustering: Grouping similar instances together (e.g., K-Means, DBSCAN).
+   - Dimensionality Reduction: Compressing feature spaces while preserving variance (e.g., PCA, t-SNE, UMAP).
+
+3. Reinforcement Learning (RL):
+   An agent learns by interacting with an environment, taking actions, and receiving rewards or penalties to maximize cumulative reward over time.
+
+Model Evaluation and Metrics:
+- Accuracy, Precision, Recall, and F1-score for classification tasks.
+- Mean Squared Error (MSE) and Mean Absolute Error (MAE) for regression.
+- Overfitting occurs when a model memorizes noise in the training set; regularization and cross-validation help prevent it.

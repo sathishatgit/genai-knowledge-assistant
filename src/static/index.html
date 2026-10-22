@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AGUI - Intelligent GenAI Interactive Agent</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen font-sans flex flex-col">
+
+  <!-- Header -->
+  <header class="border-b border-slate-800 bg-slate-900/60 backdrop-blur sticky top-0 z-50 px-6 py-4">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center shadow-lg shadow-indigo-500/30">
+          <i class="fa-solid fa-brain text-white text-lg"></i>
+        </div>
+        <div>
+          <div class="flex items-center space-x-2">
+            <h1 class="font-bold text-lg text-white">AGUI Agent Hub</h1>
+            <span class="text-xs bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 px-2 py-0.5 rounded-full font-mono">Live Interactive</span>
+          </div>
+          <p class="text-xs text-slate-400">Intelligent Routing • Hybrid RAG (BM25 + Jina) • Exa Web • Gemini</p>
+        </div>
+      </div>
+
+      <!-- Action Buttons & Status -->
+      <div class="flex items-center flex-wrap gap-2 text-xs">
+        <div class="flex items-center space-x-1.5 px-3 py-1.5 bg-slate-800/80 rounded-lg border border-slate-700">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span class="text-slate-300">Gemini:</span>
+          <span id="geminiStatus" class="font-semibold text-emerald-400">Checking...</span>
+        </div>
+        <div class="flex items-center space-x-1.5 px-3 py-1.5 bg-slate-800/80 rounded-lg border border-slate-700">
+          <span class="w-2 h-2 rounded-full bg-blue-400"></span>
+          <span class="text-slate-300">Jina:</span>
+          <span id="jinaStatus" class="font-semibold text-blue-400">Checking...</span>
+        </div>
+        <div class="flex items-center space-x-1.5 px-3 py-1.5 bg-slate-800/80 rounded-lg border border-slate-700">
+          <span class="w-2 h-2 rounded-full bg-cyan-400"></span>
+          <span class="text-slate-300">Exa:</span>
+          <span id="exaStatus" class="font-semibold text-cyan-400">Checking...</span>
+        </div>
+        <div class="flex items-center space-x-1.5 px-3 py-1.5 bg-slate-800/80 rounded-lg border border-slate-700">
+          <i class="fa-solid fa-database text-purple-400 text-[10px]"></i>
+          <span class="text-slate-300">Chunks:</span>
+          <span id="chromaStatus" class="font-semibold text-purple-400">Checking...</span>
+        </div>
+
+        <!-- Add Data Button -->
+        <button onclick="toggleDataModal(true)" class="px-3 py-1.5 bg-indigo-600/30 hover:bg-indigo-600/50 text-indigo-300 border border-indigo-500/40 rounded-lg transition text-xs flex items-center space-x-1.5 shadow-sm">
+          <i class="fa-solid fa-file-circle-plus text-xs"></i>
+          <span>Add Knowledge Data</span>
+        </button>
+
+        <!-- Re-index Button -->
+        <button onclick="triggerIngest()" id="btnIngest" class="px-3 py-1.5 bg-purple-600/30 hover:bg-purple-600/50 text-purple-300 border border-purple-500/40 rounded-lg transition text-xs flex items-center space-x-1">
+          <i class="fa-solid fa-rotate text-xs"></i>
+          <span>Re-Index</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+    <!-- Left Column: Controls, Question Presets & Knowledge Base Status (4 Cols) -->
+    <div class="lg:col-span-4 flex flex-col space-y-6">
+      
+      <!-- Preset Scenarios Card -->
+      <div class="bg-slate-900/70 border border-slate-800 rounded-2xl p-5 shadow-xl">
+        <h2 class="text-sm font-semibold text-slate-200 mb-3 flex items-center space-x-2">
+          <i class="fa-solid fa-flask text-indigo-400"></i>
+          <span>Workshop Test Scenarios</span>
+        </h2>
+        <p class="text-xs text-slate-400 mb-4">Click any test query to see the Intelligent Router dynamically switch strategies:</p>
+
+        <div class="space-y-2">
+          <button onclick="selectPreset('What is a Python list?', 'direct_llm')" class="w-full text-left p-3 rounded-xl bg-slate-800/50 hover:bg-slate-800 border border-slate-700/60 hover:border-slate-600 transition group">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-xs font-semibold text-slate-200 group-hover:text-white">1. Direct LLM Route</span>
+              <span class="text-[10px] bg-slate-700 text-slate-300 px-2 py-0.5 rounded font-mono">direct_llm</span>
+            </div>
+            <div class="text-xs text-slate-400 truncate">"What is a Python list?"</div>
+          </button>
+
+          <button onclick="selectPreset('According to our documents, what is our RAG architecture?', 'local_rag')" class="w-full text-left p-3 rounded-xl bg-slate-800/50 hover:bg-slate-800 border border-slate-700/60 hover:border-emerald-500/40 transition group">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-xs font-semibold text-slate-200 group-hover:text-white">2. Local RAG Route</span>
+              <span class="text-[10px] bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-2 py-0.5 rounded font-mono">local_rag</span>
+            </div>
+            <div class="text-xs text-slate-400 truncate">"According to our documents, what is our RAG architecture?"</div>
+          </button>
+
+          <button onclick="selectPreset('What is the latest Gemini model?', 'web_search')" class="w-full text-left p-3 rounded-xl bg-slate-800/50 hover:bg-slate-800 border border-slate-700/60 hover:border-cyan-500/40 transition group">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-xs font-semibold text-slate-200 group-hover:text-white">3. Web Search Route</span>
+              <span class="text-[10px] bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 px-2 py-0.5 rounded font-mono">web_search</span>
+            </div>
+            <div class="text-xs text-slate-400 truncate">"What is the latest Gemini model?"</div>
+          </button>
+
+          <button onclick="selectPreset('Compare our RAG architecture with the latest RAG approaches.', 'both')" class="w-full text-left p-3 rounded-xl bg-slate-800/50 hover:bg-slate-800 border border-slate-700/60 hover:border-purple-500/40 transition group">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-xs font-semibold text-slate-200 group-hover:text-white">4. Both Fused Route</span>
+              <span class="text-[10px] bg-purple-500/20 text-purple-300 border border-purple-500/30 px-2 py-0.5 rounded font-mono">both</span>
+            </div>
+            <div class="text-xs text-slate-400 truncate">"Compare our RAG architecture with the latest RAG approaches."</div>
+          </button>
+        </div>
+      </div>
+
+      <!-- Execution Mode Option -->
+      <div class="bg-slate-900/70 border border-slate-800 rounded-2xl p-5 shadow-xl">
+        <label class="block text-xs font-semibold text-slate-300 mb-2 flex items-center justify-between">
+          <span>Route Decision Mode</span>
+          <i class="fa-solid fa-sliders text-slate-400"></i>
+        </label>
+        <select id="routeMode" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-indigo-500">
+          <option value="">Auto (Intelligent Gemini Router)</option>
+          <option value="direct_llm">Force Route: Direct LLM</option>
+          <option value="local_rag">Force Route: Local RAG (BM25 + Vector)</option>
+          <option value="web_search">Force Route: Web Search (Exa)</option>
+          <option value="both">Force Route: Both (RAG + Web)</option>
+        </select>
+        <p class="text-[11px] text-slate-400 mt-2">Leave on 'Auto' to let the LLM classifier determine the optimal strategy.</p>
+      </div>
+
+      <!-- Knowledge Base Documents List Card -->
+      <div class="bg-slate-900/70 border border-slate-800 rounded-2xl p-5 shadow-xl flex-1 text-xs text-slate-400 flex flex-col">
+        <div class="font-semibold text-slate-300 mb-3 flex items-center justify-between">
+          <div class="flex items-center space-x-2">
+            <i class="fa-solid fa-folder-closed text-indigo-400"></i>
+            <span>Indexed Documents</span>
+          </div>
+          <button onclick="toggleDataModal(true)" class="text-indigo-400 hover:text-indigo-300 text-xs">
+            + Add New
+          </button>
+        </div>
+        <div id="docListContainer" class="space-y-2 overflow-y-auto max-h-48 pr-1 font-mono text-[11px]">
+          <div class="text-slate-500 italic">Loading documents...</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Right Column: Interactive Chat & Live Agent Execution Trace (8 Cols) -->
+    <div class="lg:col-span-8 flex flex-col space-y-6">
+
+      <!-- Query Input Bar -->
+      <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 shadow-2xl">
+        <form onsubmit="handleQuerySubmit(event)" class="flex flex-col sm:flex-row gap-3">
+          <div class="relative flex-1">
+            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+              <i class="fa-solid fa-magnifying-glass text-sm"></i>
+            </div>
+            <input
+              type="text"
+              id="queryInput"
+              placeholder="Ask anything (e.g. 'What is a Python list?' or 'What is our RAG architecture?')..."
+              class="w-full bg-slate-950 border border-slate-700/80 rounded-xl pl-10 pr-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition"
+              required
+            />
+          </div>
+          <button
+            type="submit"
+            id="btnSubmit"
+            class="px-6 py-3 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-medium text-sm rounded-xl shadow-lg shadow-indigo-500/25 transition flex items-center justify-center space-x-2 disabled:opacity-50"
+          >
+            <span>Ask Agent</span>
+            <i class="fa-solid fa-arrow-right text-xs"></i>
+          </button>
+        </form>
+      </div>
+
+      <!-- Agent Execution Status Card -->
+      <div id="executionTraceCard" class="hidden bg-slate-900/80 border border-slate-800 rounded-2xl p-5 shadow-xl transition-all">
+        <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
+          <div class="flex items-center space-x-2">
+            <span id="traceSpinner" class="w-3 h-3 border-2 border-indigo-400 border-t-transparent rounded-full animate-spin"></span>
+            <h3 class="text-sm font-semibold text-slate-200">Live Agent Pipeline Execution</h3>
+          </div>
+          <div id="routeBadge" class="text-xs px-2.5 py-1 rounded-full font-mono font-semibold uppercase bg-slate-800 text-slate-400">
+            Routing...
+          </div>
+        </div>
+
+        <!-- Live Step Progress Bar -->
+        <div class="grid grid-cols-4 gap-2 mb-4 text-center">
+          <div id="step1" class="p-2 rounded-lg bg-slate-800 border border-slate-700 text-xs">
+            <div class="font-bold text-slate-300">1. Router</div>
+            <div class="text-[10px] text-slate-400" id="step1Detail">Classifying query</div>
+          </div>
+          <div id="step2" class="p-2 rounded-lg bg-slate-800/40 border border-slate-800 text-xs">
+            <div class="font-bold text-slate-400">2. Retrieval</div>
+            <div class="text-[10px] text-slate-500" id="step2Detail">Pending</div>
+          </div>
+          <div id="step3" class="p-2 rounded-lg bg-slate-800/40 border border-slate-800 text-xs">
+            <div class="font-bold text-slate-400">3. Fusion</div>
+            <div class="text-[10px] text-slate-500" id="step3Detail">Pending</div>
+          </div>
+          <div id="step4" class="p-2 rounded-lg bg-slate-800/40 border border-slate-800 text-xs">
+            <div class="font-bold text-slate-400">4. Gemini</div>
+            <div class="text-[10px] text-slate-500" id="step4Detail">Pending</div>
+          </div>
+        </div>
+
+        <!-- Routing Rationale Box -->
+        <div id="routingRationaleBox" class="p-3 bg-slate-950/60 rounded-xl border border-slate-800 text-xs mb-4 hidden">
+          <div class="text-slate-400 font-semibold mb-1 flex items-center space-x-1">
+            <i class="fa-solid fa-lightbulb text-amber-400"></i>
+            <span>Routing Reason:</span>
+          </div>
+          <p id="routingRationaleText" class="text-slate-300 font-sans"></p>
+        </div>
+
+        <!-- Retrieved Sources Box -->
+        <div id="sourcesBox" class="p-3 bg-slate-950/60 rounded-xl border border-slate-800 text-xs mb-4 hidden">
+          <div class="text-slate-400 font-semibold mb-2 flex items-center space-x-1">
+            <i class="fa-solid fa-folder-open text-indigo-400"></i>
+            <span>Retrieved Sources & References:</span>
+          </div>
+          <div id="sourcesList" class="flex flex-wrap gap-2"></div>
+        </div>
+
+        <!-- Final Answer Box -->
+        <div id="answerBox" class="p-4 bg-slate-950 rounded-xl border border-slate-800 text-sm hidden">
+          <div class="text-slate-400 font-semibold text-xs mb-2 flex items-center justify-between">
+            <span class="flex items-center space-x-1.5">
+              <i class="fa-solid fa-sparkles text-purple-400"></i>
+              <span>Final Answer Generated by Gemini:</span>
+            </span>
+            <button onclick="copyAnswer()" class="text-slate-500 hover:text-slate-300 text-xs">
+              <i class="fa-regular fa-copy"></i> Copy
+            </button>
+          </div>
+          <div id="answerText" class="text-slate-200 leading-relaxed whitespace-pre-wrap"></div>
+        </div>
+      </div>
+
+      <!-- Welcome Banner (When empty) -->
+      <div id="welcomeBanner" class="border border-slate-800/80 bg-slate-900/40 rounded-2xl p-8 text-center flex flex-col items-center justify-center">
+        <div class="w-16 h-16 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 text-2xl mb-4">
+          <i class="fa-solid fa-wand-magic-sparkles"></i>
+        </div>
+        <h3 class="text-base font-semibold text-white mb-2">Ready to Test Intelligent GenAI</h3>
+        <p class="text-xs text-slate-400 max-w-md mb-6 leading-relaxed">
+          Ask a general question, query the internal knowledge base, search real-time web facts, or add custom paragraphs and text files.
+        </p>
+        <div class="flex flex-wrap justify-center gap-2">
+          <span class="text-[11px] bg-slate-800 text-slate-300 px-3 py-1 rounded-full border border-slate-700">1. Direct LLM</span>
+          <span class="text-[11px] bg-emerald-500/10 text-emerald-300 px-3 py-1 rounded-full border border-emerald-500/20">2. Local RAG</span>
+          <span class="text-[11px] bg-cyan-500/10 text-cyan-300 px-3 py-1 rounded-full border border-cyan-500/20">3. Web Search</span>
+          <span class="text-[11px] bg-purple-500/10 text-purple-300 px-3 py-1 rounded-full border border-purple-500/20">4. Both Fused</span>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Add Knowledge Data Modal -->
+  <div id="dataModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <div class="flex items-center space-x-2">
+          <div class="w-8 h-8 rounded-lg bg-indigo-500/20 text-indigo-400 flex items-center justify-center">
+            <i class="fa-solid fa-file-circle-plus"></i>
+          </div>
+          <h3 class="font-bold text-slate-100 text-base">Add Data to Knowledge Base</h3>
+        </div>
+        <button onclick="toggleDataModal(false)" class="text-slate-400 hover:text-white">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <!-- Tabs -->
+      <div class="flex border-b border-slate-800 text-xs">
+        <button id="tabBtnDirect" onclick="switchModalTab('direct')" class="px-4 py-2 font-semibold text-indigo-400 border-b-2 border-indigo-400 transition">
+          Direct Paragraph Input
+        </button>
+        <button id="tabBtnUpload" onclick="switchModalTab('upload')" class="px-4 py-2 font-semibold text-slate-400 hover:text-slate-200 transition">
+          Upload .txt File
+        </button>
+      </div>
+
+      <!-- Tab 1: Direct Paragraph Input Form -->
+      <form id="formDirectText" onsubmit="handleDirectTextSubmit(event)" class="space-y-3">
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1">Document Title / Subject</label>
+          <input
+            type="text"
+            id="docTitleInput"
+            placeholder="e.g. cloud_security_policy or company_faq"
+            class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+            required
+          />
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1">Paragraph / Text Content</label>
+          <textarea
+            id="docContentInput"
+            rows="5"
+            placeholder="Paste or write your custom text, knowledge, or internal documentation here..."
+            class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 leading-relaxed"
+            required
+          ></textarea>
+        </div>
+        <button
+          type="submit"
+          id="btnSaveDirect"
+          class="w-full py-2.5 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-medium text-xs rounded-xl shadow-lg transition flex items-center justify-center space-x-2"
+        >
+          <i class="fa-solid fa-check"></i>
+          <span>Save & Ingest into Knowledge Base</span>
+        </button>
+      </form>
+
+      <!-- Tab 2: Upload File Form -->
+      <form id="formUploadFile" onsubmit="handleFileUploadSubmit(event)" class="space-y-3 hidden">
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-2">Select Plain Text (.txt) File</label>
+          <div class="border-2 border-dashed border-slate-700 rounded-xl p-6 text-center hover:border-indigo-500/60 transition cursor-pointer" onclick="document.getElementById('fileUploadInput').click()">
+            <i class="fa-solid fa-cloud-arrow-up text-indigo-400 text-2xl mb-2"></i>
+            <div class="text-xs text-slate-300">Click to choose a file or drag & drop</div>
+            <div id="selectedFileName" class="text-xs text-emerald-400 mt-2 font-mono"></div>
+            <input
+              type="file"
+              id="fileUploadInput"
+              accept=".txt"
+              class="hidden"
+              onchange="handleFileSelected(this)"
+              required
+            />
+          </div>
+        </div>
+        <button
+          type="submit"
+          id="btnSaveUpload"
+          class="w-full py-2.5 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-medium text-xs rounded-xl shadow-lg transition flex items-center justify-center space-x-2"
+        >
+          <i class="fa-solid fa-upload"></i>
+          <span>Upload & Ingest into Knowledge Base</span>
+        </button>
+      </form>
+
+      <div id="modalAlert" class="text-xs p-2.5 rounded-xl hidden font-medium"></div>
+
+    </div>
+  </div>
+
+  <footer class="border-t border-slate-800/80 bg-slate-950 px-6 py-4 text-center text-xs text-slate-500">
+    Intelligent GenAI Knowledge Assistant • Powered by Gemini, Jina AI, ChromaDB, BM25 & Exa
+  </footer>
+
+  <script>
+    // Fetch live system status on page load
+    async function fetchStatus() {
+      try {
+        const res = await fetch('/api/status');
+        const data = await res.json();
+        
+        document.getElementById('geminiStatus').textContent = data.gemini ? 'Ready' : 'Not Set';
+        document.getElementById('geminiStatus').className = data.gemini ? 'font-semibold text-emerald-400' : 'font-semibold text-amber-400';
+        
+        document.getElementById('jinaStatus').textContent = data.jina ? 'Ready' : 'Not Set';
+        document.getElementById('jinaStatus').className = data.jina ? 'font-semibold text-emerald-400' : 'font-semibold text-amber-400';
+
+        document.getElementById('exaStatus').textContent = data.exa ? 'Ready' : 'Not Set';
+        document.getElementById('exaStatus').className = data.exa ? 'font-semibold text-emerald-400' : 'font-semibold text-amber-400';
+
+        document.getElementById('chromaStatus').textContent = `${data.chroma_count} Chunks`;
+      } catch (e) {
+        console.warn('Status check failed:', e);
+      }
+      fetchDocuments();
+    }
+
+    // Fetch list of documents in knowledge base
+    async function fetchDocuments() {
+      try {
+        const res = await fetch('/api/documents');
+        const docs = await res.json();
+        const container = document.getElementById('docListContainer');
+        container.innerHTML = '';
+
+        if (!docs || docs.length === 0) {
+          container.innerHTML = '<div class="text-slate-500 italic">No documents indexed yet.</div>';
+          return;
+        }
+
+        docs.forEach(doc => {
+          const item = document.createElement('div');
+          item.className = 'p-2 rounded-lg bg-slate-800/50 border border-slate-700/60 flex items-center justify-between';
+          item.innerHTML = `
+            <div class="truncate mr-2">
+              <span class="text-slate-200 font-semibold"><i class="fa-solid fa-file-lines text-slate-400 mr-1"></i>${doc.filename}</span>
+              <span class="text-[10px] text-slate-500 block truncate">${doc.preview}</span>
+            </div>
+            <span class="text-[10px] text-indigo-400 whitespace-nowrap">${doc.char_count} chars</span>
+          `;
+          container.appendChild(item);
+        });
+      } catch (e) {
+        console.warn('Document list fetch failed:', e);
+      }
+    }
+
+    function toggleDataModal(show) {
+      const modal = document.getElementById('dataModal');
+      if (show) {
+        modal.classList.remove('hidden');
+        document.getElementById('modalAlert').classList.add('hidden');
+      } else {
+        modal.classList.add('hidden');
+      }
+    }
+
+    function switchModalTab(tab) {
+      const formDirect = document.getElementById('formDirectText');
+      const formUpload = document.getElementById('formUploadFile');
+      const btnDirect = document.getElementById('tabBtnDirect');
+      const btnUpload = document.getElementById('tabBtnUpload');
+
+      if (tab === 'direct') {
+        formDirect.classList.remove('hidden');
+        formUpload.classList.add('hidden');
+        btnDirect.className = 'px-4 py-2 font-semibold text-indigo-400 border-b-2 border-indigo-400 transition';
+        btnUpload.className = 'px-4 py-2 font-semibold text-slate-400 hover:text-slate-200 transition';
+      } else {
+        formDirect.classList.add('hidden');
+        formUpload.classList.remove('hidden');
+        btnDirect.className = 'px-4 py-2 font-semibold text-slate-400 hover:text-slate-200 transition';
+        btnUpload.className = 'px-4 py-2 font-semibold text-indigo-400 border-b-2 border-indigo-400 transition';
+      }
+    }
+
+    function handleFileSelected(input) {
+      const label = document.getElementById('selectedFileName');
+      if (input.files && input.files[0]) {
+        label.textContent = `Selected: ${input.files[0].name} (${input.files[0].size} bytes)`;
+      } else {
+        label.textContent = '';
+      }
+    }
+
+    async function handleDirectTextSubmit(e) {
+      e.preventDefault();
+      const title = document.getElementById('docTitleInput').value.trim();
+      const content = document.getElementById('docContentInput').value.trim();
+      const btn = document.getElementById('btnSaveDirect');
+      const alertBox = document.getElementById('modalAlert');
+
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> <span>Saving & Indexing...</span>';
+
+      try {
+        const res = await fetch('/api/documents/text', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ title, content })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || 'Failed to save document');
+
+        alertBox.className = 'text-xs p-2.5 rounded-xl bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
+        alertBox.textContent = data.message;
+        alertBox.classList.remove('hidden');
+
+        document.getElementById('docTitleInput').value = '';
+        document.getElementById('docContentInput').value = '';
+        fetchStatus();
+        setTimeout(() => toggleDataModal(false), 1500);
+
+      } catch (err) {
+        alertBox.className = 'text-xs p-2.5 rounded-xl bg-red-500/20 text-red-300 border border-red-500/30';
+        alertBox.textContent = err.message;
+        alertBox.classList.remove('hidden');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-check"></i> <span>Save & Ingest into Knowledge Base</span>';
+      }
+    }
+
+    async function handleFileUploadSubmit(e) {
+      e.preventDefault();
+      const input = document.getElementById('fileUploadInput');
+      const btn = document.getElementById('btnSaveUpload');
+      const alertBox = document.getElementById('modalAlert');
+
+      if (!input.files || !input.files[0]) {
+        alert('Please choose a .txt file.');
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> <span>Uploading & Indexing...</span>';
+
+      const formData = new FormData();
+      formData.append('file', input.files[0]);
+
+      try {
+        const res = await fetch('/api/documents/upload', {
+          method: 'POST',
+          body: formData
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || 'Upload failed');
+
+        alertBox.className = 'text-xs p-2.5 rounded-xl bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
+        alertBox.textContent = data.message;
+        alertBox.classList.remove('hidden');
+
+        input.value = '';
+        document.getElementById('selectedFileName').textContent = '';
+        fetchStatus();
+        setTimeout(() => toggleDataModal(false), 1500);
+
+      } catch (err) {
+        alertBox.className = 'text-xs p-2.5 rounded-xl bg-red-500/20 text-red-300 border border-red-500/30';
+        alertBox.textContent = err.message;
+        alertBox.classList.remove('hidden');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-upload"></i> <span>Upload & Ingest into Knowledge Base</span>';
+      }
+    }
+
+    function selectPreset(query, route) {
+      document.getElementById('queryInput').value = query;
+      document.getElementById('routeMode').value = route || '';
+      handleQuerySubmit(new Event('submit'));
+    }
+
+    async function triggerIngest() {
+      const btn = document.getElementById('btnIngest');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin text-xs"></i> <span>Indexing...</span>';
+      try {
+        const res = await fetch('/api/ingest', { method: 'POST' });
+        const data = await res.json();
+        alert(data.message || 'Ingestion completed successfully!');
+        fetchStatus();
+      } catch (err) {
+        alert('Ingestion error: ' + err);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-rotate text-xs"></i> <span>Re-Index</span>';
+      }
+    }
+
+    async function handleQuerySubmit(e) {
+      if (e) e.preventDefault();
+      const input = document.getElementById('queryInput');
+      const query = input.value.trim();
+      if (!query) return;
+
+      const forcedRoute = document.getElementById('routeMode').value || null;
+      const btnSubmit = document.getElementById('btnSubmit');
+
+      // UI Transitions
+      document.getElementById('welcomeBanner').classList.add('hidden');
+      const traceCard = document.getElementById('executionTraceCard');
+      traceCard.classList.remove('hidden');
+
+      // Reset Step Visuals
+      setStepActive(1, 'Routing query with Gemini...');
+      resetStep(2);
+      resetStep(3);
+      resetStep(4);
+
+      document.getElementById('routeBadge').textContent = 'Routing...';
+      document.getElementById('routeBadge').className = 'text-xs px-2.5 py-1 rounded-full font-mono font-semibold uppercase bg-slate-800 text-slate-400';
+      document.getElementById('routingRationaleBox').classList.add('hidden');
+      document.getElementById('sourcesBox').classList.add('hidden');
+      document.getElementById('answerBox').classList.add('hidden');
+      document.getElementById('traceSpinner').classList.remove('hidden');
+
+      btnSubmit.disabled = true;
+
+      try {
+        const res = await fetch('/api/query', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ query: query, route: forcedRoute })
+        });
+
+        const data = await res.json();
+        if (data.error) throw new Error(data.error);
+
+        // Update Route Badge
+        const route = data.route || 'direct_llm';
+        const badge = document.getElementById('routeBadge');
+        badge.textContent = route.replace('_', ' ');
+
+        if (route === 'direct_llm') {
+          badge.className = 'text-xs px-2.5 py-1 rounded-full font-mono font-semibold uppercase bg-slate-700 text-slate-200 border border-slate-600';
+          setStepCompleted(1, 'Direct LLM');
+          setStepCompleted(2, 'Skipped (Zero Overhead)');
+          setStepCompleted(3, 'Direct Path');
+          setStepCompleted(4, 'Synthesized');
+        } else if (route === 'local_rag') {
+          badge.className = 'text-xs px-2.5 py-1 rounded-full font-mono font-semibold uppercase bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
+          setStepCompleted(1, 'Local RAG');
+          setStepCompleted(2, 'BM25 + ChromaDB');
+          setStepCompleted(3, 'RRF Ranking (k=60)');
+          setStepCompleted(4, 'Synthesized');
+        } else if (route === 'web_search') {
+          badge.className = 'text-xs px-2.5 py-1 rounded-full font-mono font-semibold uppercase bg-cyan-500/20 text-cyan-300 border border-cyan-500/30';
+          setStepCompleted(1, 'Web Search');
+          setStepCompleted(2, 'Exa AI Neural Search');
+          setStepCompleted(3, 'Web Snippets');
+          setStepCompleted(4, 'Synthesized');
+        } else if (route === 'both') {
+          badge.className = 'text-xs px-2.5 py-1 rounded-full font-mono font-semibold uppercase bg-purple-500/20 text-purple-300 border border-purple-500/30';
+          setStepCompleted(1, 'Both Fused');
+          setStepCompleted(2, 'Hybrid RAG + Exa');
+          setStepCompleted(3, 'Cross-Context Fusion');
+          setStepCompleted(4, 'Synthesized');
+        }
+
+        // Show Rationale
+        if (data.reason) {
+          document.getElementById('routingRationaleText').textContent = data.reason;
+          document.getElementById('routingRationaleBox').classList.remove('hidden');
+        }
+
+        // Show Sources
+        const sourcesList = document.getElementById('sourcesList');
+        sourcesList.innerHTML = '';
+        let hasSources = false;
+
+        if (data.internal_sources && data.internal_sources.length > 0) {
+          hasSources = true;
+          data.internal_sources.forEach(src => {
+            const badge = document.createElement('span');
+            badge.className = 'px-2.5 py-1 bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 rounded-lg font-mono text-[11px] flex items-center space-x-1';
+            badge.innerHTML = `<i class="fa-solid fa-file-lines text-[10px]"></i><span>${src}</span>`;
+            sourcesList.appendChild(badge);
+          });
+        }
+
+        if (data.web_sources && data.web_sources.length > 0) {
+          hasSources = true;
+          data.web_sources.forEach(item => {
+            const link = document.createElement('a');
+            link.href = item.url;
+            link.target = '_blank';
+            link.className = 'px-2.5 py-1 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 border border-cyan-500/20 rounded-lg text-[11px] flex items-center space-x-1 transition';
+            link.innerHTML = `<i class="fa-solid fa-arrow-up-right-from-square text-[9px]"></i><span>${item.title || item.url}</span>`;
+            sourcesList.appendChild(link);
+          });
+        }
+
+        if (hasSources) {
+          document.getElementById('sourcesBox').classList.remove('hidden');
+        }
+
+        // Show Final Answer
+        document.getElementById('answerText').textContent = data.answer || 'No response generated.';
+        document.getElementById('answerBox').classList.remove('hidden');
+
+      } catch (err) {
+        alert('Query failed: ' + err.message);
+      } finally {
+        btnSubmit.disabled = false;
+        document.getElementById('traceSpinner').classList.add('hidden');
+      }
+    }
+
+    function setStepActive(stepNum, detail) {
+      const step = document.getElementById(`step${stepNum}`);
+      step.className = 'p-2 rounded-lg bg-indigo-500/20 border border-indigo-500/40 text-xs';
+      document.getElementById(`step${stepNum}Detail`).textContent = detail;
+    }
+
+    function setStepCompleted(stepNum, detail) {
+      const step = document.getElementById(`step${stepNum}`);
+      step.className = 'p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-xs text-emerald-300';
+      document.getElementById(`step${stepNum}Detail`).textContent = detail;
+    }
+
+    function resetStep(stepNum) {
+      const step = document.getElementById(`step${stepNum}`);
+      step.className = 'p-2 rounded-lg bg-slate-800/40 border border-slate-800 text-xs text-slate-500';
+      document.getElementById(`step${stepNum}Detail`).textContent = 'Pending';
+    }
+
+    function copyAnswer() {
+      const text = document.getElementById('answerText').textContent;
+      navigator.clipboard.writeText(text);
+      alert('Answer copied to clipboard!');
+    }
+
+    // Initialize
+    fetchStatus();
+  </script>
+</body>
+</html>

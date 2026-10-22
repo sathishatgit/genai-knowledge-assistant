@@ -1,0 +1,44 @@
+# Environment variables - NEVER commit API keys
+.env
+
+# Python virtual environment
+venv/
+env/
+.venv/
+
+# ChromaDB persistent storage (auto-rebuilt on ingest)
+data/chroma/
+data/test_chroma/
+
+# BM25 index (auto-rebuilt on ingest)
+data/bm25_index.json
+
+# Python cache
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+
+# Pytest / test cache
+.pytest_cache/
+.coverage
+htmlcov/
+
+# IDE files
+.vscode/
+.idea/
+*.suo
+*.user
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
