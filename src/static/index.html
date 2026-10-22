@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="h-full bg-[#080c14] text-slate-100 antialiased selection:bg-indigo-500/30 selection:text-indigo-200">
+<html lang="en" class="h-full antialiased selection:bg-indigo-500/30 selection:text-indigo-400">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -52,52 +52,109 @@
   </script>
 
   <style>
-    /* Custom Scrollbar */
-    ::-webkit-scrollbar { width: 5px; height: 5px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: rgba(99, 102, 241, 0.25); border-radius: 9999px; }
-    ::-webkit-scrollbar-thumb:hover { background: rgba(99, 102, 241, 0.6); }
+    /* Theme CSS Variables: Light Mode is the clean, crisp default */
+    :root {
+      --bg-base: #f8fafc;
+      --bg-panel: rgba(255, 255, 255, 0.95);
+      --bg-panel-hover: #ffffff;
+      --border-panel: rgba(226, 232, 240, 0.9);
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --bg-input: #ffffff;
+      --border-input: #cbd5e1;
+      --bg-subtle: rgba(241, 245, 249, 0.9);
+      --border-subtle: rgba(226, 232, 240, 0.9);
+      --bg-header: rgba(255, 255, 255, 0.92);
+      --border-header: rgba(226, 232, 240, 0.9);
+      --bg-footer: #f1f5f9;
+      --border-footer: #e2e8f0;
+      --glow-1: rgba(99, 102, 241, 0.08);
+      --glow-2: rgba(168, 85, 247, 0.05);
+      --prose-text: #1e293b;
+      --prose-code-bg: rgba(99, 102, 241, 0.1);
+      --prose-code-text: #4f46e5;
+    }
 
-    /* Ambient Background Glow */
+    html.dark {
+      --bg-base: #080c14;
+      --bg-panel: rgba(13, 19, 32, 0.72);
+      --bg-panel-hover: rgba(18, 26, 44, 0.85);
+      --border-panel: rgba(255, 255, 255, 0.08);
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --bg-input: rgba(0, 0, 0, 0.6);
+      --border-input: rgba(255, 255, 255, 0.12);
+      --bg-subtle: rgba(0, 0, 0, 0.4);
+      --border-subtle: rgba(255, 255, 255, 0.06);
+      --bg-header: rgba(12, 17, 29, 0.85);
+      --border-header: rgba(255, 255, 255, 0.08);
+      --bg-footer: #090d16;
+      --border-footer: rgba(255, 255, 255, 0.08);
+      --glow-1: rgba(99, 102, 241, 0.12);
+      --glow-2: rgba(168, 85, 247, 0.08);
+      --prose-text: #e2e8f0;
+      --prose-code-bg: rgba(99, 102, 241, 0.15);
+      --prose-code-text: #a5b4fc;
+    }
+
+    /* Ambient Mesh Background */
     .bg-mesh {
-      background-color: #080c14;
+      background-color: var(--bg-base);
       background-image: 
-        radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.12) 0px, transparent 50%),
-        radial-gradient(at 100% 0%, rgba(168, 85, 247, 0.08) 0px, transparent 50%),
-        radial-gradient(at 50% 100%, rgba(14, 165, 233, 0.08) 0px, transparent 50%);
+        radial-gradient(at 0% 0%, var(--glow-1) 0px, transparent 50%),
+        radial-gradient(at 100% 0%, var(--glow-2) 0px, transparent 50%),
+        radial-gradient(at 50% 100%, var(--glow-1) 0px, transparent 50%);
+      transition: background-color 0.3s ease;
     }
 
     /* Glass Panels */
     .glass-panel {
-      background: rgba(13, 19, 32, 0.72);
+      background: var(--bg-panel);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(255, 255, 255, 0.07);
-    }
-    .glass-panel-hover {
+      border: 1px solid var(--border-panel);
+      color: var(--text-main);
       transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .glass-panel-hover:hover {
+      background: var(--bg-panel-hover);
       border-color: rgba(99, 102, 241, 0.4);
-      box-shadow: 0 12px 30px -10px rgba(99, 102, 241, 0.18);
+      box-shadow: 0 12px 30px -10px rgba(99, 102, 241, 0.16);
       transform: translateY(-1px);
     }
 
-    /* Markdown Styling in Responses */
-    .prose-ai { font-size: 0.925rem; line-height: 1.7; color: #e2e8f0; }
+    /* Subtle Theme Boxes */
+    .theme-subtle {
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-subtle);
+    }
+    .theme-input {
+      background: var(--bg-input);
+      border: 1px solid var(--border-input);
+      color: var(--text-main);
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(99, 102, 241, 0.3); border-radius: 9999px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(99, 102, 241, 0.6); }
+
+    /* Markdown Styling */
+    .prose-ai { font-size: 0.925rem; line-height: 1.7; color: var(--prose-text); }
     .prose-ai p { margin-bottom: 0.85rem; }
     .prose-ai p:last-child { margin-bottom: 0; }
-    .prose-ai h1, .prose-ai h2, .prose-ai h3 { color: #f8fafc; font-weight: 700; margin-top: 1.25rem; margin-bottom: 0.5rem; }
+    .prose-ai h1, .prose-ai h2, .prose-ai h3 { font-weight: 700; margin-top: 1.25rem; margin-bottom: 0.5rem; }
     .prose-ai h1 { font-size: 1.35rem; }
     .prose-ai h2 { font-size: 1.15rem; }
     .prose-ai h3 { font-size: 1rem; }
     .prose-ai ul { list-style-type: disc; padding-left: 1.4rem; margin-bottom: 0.85rem; }
     .prose-ai ol { list-style-type: decimal; padding-left: 1.4rem; margin-bottom: 0.85rem; }
     .prose-ai li { margin-bottom: 0.3rem; }
-    .prose-ai strong { color: #ffffff; font-weight: 600; }
+    .prose-ai strong { font-weight: 600; }
     .prose-ai code:not(pre code) {
-      background: rgba(99, 102, 241, 0.12);
-      color: #a5b4fc;
+      background: var(--prose-code-bg);
+      color: var(--prose-code-text);
       border: 1px solid rgba(99, 102, 241, 0.25);
       padding: 0.15rem 0.4rem;
       border-radius: 0.375rem;
@@ -106,7 +163,7 @@
     }
     .prose-ai pre {
       background: #0f1422 !important;
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.1);
       border-radius: 0.75rem;
       padding: 1rem;
       overflow-x: auto;
@@ -118,139 +175,169 @@
       font-size: 0.825rem;
       background: transparent !important;
       padding: 0 !important;
+      color: #e2e8f0;
     }
     .prose-ai blockquote {
       border-left: 3px solid #6366f1;
       padding-left: 1rem;
-      color: #94a3b8;
+      color: var(--text-muted);
       font-style: italic;
       margin: 0.85rem 0;
     }
-    .prose-ai table {
-      width: 100%;
-      border-collapse: collapse;
-      margin: 1rem 0;
-      font-size: 0.85rem;
-    }
-    .prose-ai th, .prose-ai td {
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      padding: 0.5rem 0.75rem;
-      text-align: left;
-    }
-    .prose-ai th { background: rgba(99, 102, 241, 0.1); color: #f8fafc; font-weight: 600; }
 
     /* Code Copy Button */
     .code-copy-btn {
       position: absolute;
       top: 0.5rem;
       right: 0.5rem;
-      background: rgba(255, 255, 255, 0.1);
-      border: 1px solid rgba(255, 255, 255, 0.15);
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.18);
       border-radius: 0.375rem;
-      color: #94a3b8;
+      color: #cbd5e1;
       padding: 0.25rem 0.5rem;
       font-size: 0.75rem;
       cursor: pointer;
       transition: all 0.2s;
     }
     .code-copy-btn:hover {
-      background: rgba(99, 102, 241, 0.3);
+      background: rgba(99, 102, 241, 0.4);
       color: #fff;
+    }
+    @keyframes heart-beat {
+      0%, 100% { transform: scale(1); }
+      14% { transform: scale(1.3); }
+      28% { transform: scale(1); }
+      42% { transform: scale(1.3); }
+      70% { transform: scale(1); }
+    }
+    .animate-heartbeat {
+      animation: heart-beat 1.6s ease infinite;
     }
   </style>
 </head>
-<body class="bg-mesh min-h-screen flex flex-col font-sans">
+<body class="bg-mesh min-h-screen flex flex-col font-sans transition-colors duration-300">
 
-  <!-- Toast Notification Container -->
+  <!-- Toast Container -->
   <div id="toastContainer" class="fixed top-5 right-5 z-[100] flex flex-col space-y-2.5 pointer-events-none"></div>
 
-  <!-- Main App Layout (Top Bar + Responsive Content + Sticky Modern Footer) -->
+  <!-- Main Container -->
   <div class="flex-1 flex flex-col">
     
-    <!-- TOP NAVIGATION BAR -->
-    <header class="border-b border-white/[0.08] bg-[#0c111d]/85 backdrop-blur-xl sticky top-0 z-50 px-4 sm:px-6 py-3">
-      <div class="max-w-7xl mx-auto flex items-center justify-between gap-4">
+    <!-- TOP NAVIGATION HEADER -->
+    <header style="background: var(--bg-header); border-bottom: 1px solid var(--border-header);" class="backdrop-blur-xl sticky top-0 z-50 px-4 sm:px-6 py-2.5 transition-colors duration-300">
+      <div class="max-w-7xl mx-auto flex items-center justify-between gap-3">
         
         <!-- Brand & Slogan -->
-        <div class="flex items-center space-x-3 cursor-pointer" onclick="switchPage('chat')">
-          <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center shadow-lg shadow-indigo-500/25 ring-1 ring-white/20">
-            <i class="fa-solid fa-brain text-white text-lg"></i>
+        <div class="flex items-center space-x-3 cursor-pointer flex-shrink-0" onclick="switchPage('chat')">
+          <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center shadow-md shadow-indigo-500/25 ring-1 ring-white/20 flex-shrink-0">
+            <i class="fa-solid fa-brain text-white text-base"></i>
           </div>
           <div>
             <div class="flex items-center space-x-2">
-              <h1 class="font-bold text-base sm:text-lg text-white tracking-tight">AGUI Agent Hub</h1>
-              <span class="text-[10px] bg-gradient-to-r from-indigo-500/20 to-purple-500/20 text-indigo-300 border border-indigo-500/30 px-2 py-0.5 rounded-full font-mono font-semibold">v2.5 Pro</span>
+              <h1 class="font-bold text-base tracking-tight whitespace-nowrap" style="color: var(--text-main);">AGUI Agent Hub</h1>
+              <span class="text-[10px] whitespace-nowrap bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20 px-2 py-0.5 rounded-full font-semibold font-mono">v2.5 Pro</span>
             </div>
-            <p class="text-[11px] text-slate-400 hidden sm:block">Intelligent Multi-LLM Router • Hybrid BM25 & ChromaDB RAG</p>
+            <p class="text-[11px] whitespace-nowrap hidden xl:block" style="color: var(--text-muted);">Intelligent Multi-LLM Router • Hybrid RAG</p>
           </div>
         </div>
 
         <!-- Center Tabs (SPA Multi-Page Switcher) -->
-        <nav class="hidden md:flex items-center space-x-1 bg-black/40 p-1.5 rounded-xl border border-white/[0.08] text-xs font-medium">
-          <button id="nav-btn-chat" onclick="switchPage('chat')" class="flex items-center space-x-2 px-3.5 py-1.5 rounded-lg transition text-white bg-indigo-600 shadow-md shadow-indigo-600/30">
+        <nav class="hidden md:flex items-center space-x-1 p-1 rounded-xl text-xs font-semibold theme-subtle flex-shrink-0">
+          <button id="nav-btn-chat" onclick="switchPage('chat')" class="flex items-center space-x-1.5 px-3.5 py-1.5 rounded-lg whitespace-nowrap transition text-white bg-indigo-600 shadow-sm shadow-indigo-600/30 font-semibold">
             <i class="fa-solid fa-comments text-xs"></i>
-            <span>Chat Playground</span>
+            <span>Playground</span>
           </button>
-          <button id="nav-btn-knowledge" onclick="switchPage('knowledge')" class="flex items-center space-x-2 px-3.5 py-1.5 rounded-lg transition text-slate-400 hover:text-white hover:bg-white/5">
+          <button id="nav-btn-knowledge" onclick="switchPage('knowledge')" class="flex items-center space-x-1.5 px-3.5 py-1.5 rounded-lg whitespace-nowrap transition font-medium hover:text-indigo-600 dark:hover:text-white" style="color: var(--text-muted);">
             <i class="fa-solid fa-database text-xs"></i>
-            <span>Knowledge Studio</span>
-            <span id="navDocBadge" class="text-[10px] bg-indigo-500/20 text-indigo-300 px-1.5 py-0.2 rounded-full font-mono">...</span>
+            <span>Knowledge</span>
+            <span id="navDocBadge" class="text-[10px] bg-indigo-500/10 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-300 px-1.5 py-0.2 rounded-full font-mono">...</span>
           </button>
-          <button id="nav-btn-models" onclick="switchPage('models')" class="flex items-center space-x-2 px-3.5 py-1.5 rounded-lg transition text-slate-400 hover:text-white hover:bg-white/5">
+          <button id="nav-btn-models" onclick="switchPage('models')" class="flex items-center space-x-1.5 px-3.5 py-1.5 rounded-lg whitespace-nowrap transition font-medium hover:text-indigo-600 dark:hover:text-white" style="color: var(--text-muted);">
             <i class="fa-solid fa-microchip text-xs"></i>
-            <span>AI Model Hub</span>
+            <span>Model Hub</span>
           </button>
-          <button id="nav-btn-architecture" onclick="switchPage('architecture')" class="flex items-center space-x-2 px-3.5 py-1.5 rounded-lg transition text-slate-400 hover:text-white hover:bg-white/5">
+          <button id="nav-btn-architecture" onclick="switchPage('architecture')" class="flex items-center space-x-1.5 px-3.5 py-1.5 rounded-lg whitespace-nowrap transition font-medium hover:text-indigo-600 dark:hover:text-white" style="color: var(--text-muted);">
             <i class="fa-solid fa-network-wired text-xs"></i>
-            <span>Architecture & RRF</span>
+            <span>Architecture</span>
           </button>
         </nav>
 
-        <!-- Right Quick Controls -->
-        <div class="flex items-center space-x-2 text-xs">
+        <!-- Right Quick Controls (Theme Toggle + LLM Selector + Repo) -->
+        <div class="flex items-center space-x-2 text-xs flex-shrink-0">
+          
+          <!-- Theme Toggle Button (Dark / Light) -->
+          <button 
+            id="themeToggleBtn" 
+            onclick="toggleTheme()" 
+            class="px-2.5 py-1.5 rounded-lg transition flex items-center space-x-1.5 border theme-subtle cursor-pointer hover:border-indigo-500/50 whitespace-nowrap" 
+            title="Toggle Light / Dark mode"
+          >
+            <i id="themeToggleIcon" class="fa-solid fa-sun text-amber-500 text-xs"></i>
+            <span id="themeToggleText" class="text-[11px] font-semibold hidden sm:inline" style="color: var(--text-main);">Light</span>
+          </button>
+
           <!-- Active LLM Switcher Dropdown -->
-          <div class="flex items-center space-x-1.5 px-2.5 py-1.5 bg-black/40 rounded-lg border border-white/[0.08] hover:border-indigo-500/40 transition">
-            <span id="quickProviderDot" class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-            <span class="text-slate-400 text-[11px] hidden lg:inline">LLM:</span>
-            <select id="quickProviderSelect" onchange="handleProviderChange(this.value)" class="bg-transparent text-indigo-300 font-semibold text-xs outline-none cursor-pointer">
-              <option value="gemini" class="bg-slate-900 text-white">Gemini</option>
-              <option value="openai" class="bg-slate-900 text-white">OpenAI</option>
-              <option value="nvidia" class="bg-slate-900 text-white">NVIDIA NIM</option>
-              <option value="ollama" class="bg-slate-900 text-white">Ollama</option>
+          <div class="flex items-center space-x-1.5 px-2.5 py-1.5 rounded-lg border theme-subtle hover:border-indigo-500/40 transition whitespace-nowrap">
+            <span id="quickProviderDot" class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse flex-shrink-0"></span>
+            <span class="text-[11px] hidden lg:inline" style="color: var(--text-muted);">LLM:</span>
+            <select id="quickProviderSelect" onchange="handleProviderChange(this.value)" class="bg-transparent text-indigo-600 dark:text-indigo-300 font-semibold text-xs outline-none cursor-pointer">
+              <option value="gemini" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Gemini</option>
+              <option value="openai" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">OpenAI</option>
+              <option value="nvidia" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">NVIDIA NIM</option>
+              <option value="ollama" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Ollama</option>
             </select>
-            <span id="quickModelBadge" class="text-[10px] bg-indigo-500/20 text-indigo-300 px-1.5 py-0.5 rounded font-mono hidden xl:inline">gemini-3.5-flash</span>
+            <span id="quickModelBadge" class="text-[10px] bg-indigo-500/10 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-300 px-1.5 py-0.5 rounded font-mono max-w-[110px] truncate whitespace-nowrap hidden xl:inline">gemini-3.5-flash</span>
           </div>
 
+          <!-- Creator Profile Badge -->
+          <button 
+            onclick="openProfileModal()" 
+            class="px-2.5 py-1.5 rounded-lg border theme-subtle transition flex items-center space-x-1.5 cursor-pointer hover:border-indigo-500/60 whitespace-nowrap shadow-sm group"
+            title="View Sathish's Developer Profile"
+          >
+            <div class="relative w-5 h-5 rounded-full overflow-hidden ring-1 ring-indigo-500 flex-shrink-0">
+              <img 
+                src="https://avatars.githubusercontent.com/u/103997288?v=4" 
+                onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=Sathish&size=32&background=6366f1&color=fff';" 
+                alt="Sathish" 
+                class="w-full h-full object-cover"
+              />
+              <span class="absolute bottom-0 right-0 w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+            </div>
+            <span class="text-[11px] font-bold group-hover:text-indigo-600 dark:group-hover:text-indigo-300 transition" style="color: var(--text-main);">Sathish</span>
+            <span class="text-[9px] font-semibold px-1.5 py-0.2 rounded-full bg-indigo-500/10 text-indigo-600 dark:text-indigo-300 hidden xl:inline">AI Eng</span>
+          </button>
+
           <!-- New Query Button -->
-          <button onclick="startNewQuery()" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white font-medium rounded-lg transition flex items-center space-x-1.5 shadow-sm shadow-indigo-600/30" title="Clear and start new query">
+          <button onclick="startNewQuery()" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-lg transition flex items-center space-x-1.5 shadow-sm shadow-indigo-600/30 whitespace-nowrap" title="Start new query">
             <i class="fa-solid fa-plus text-xs"></i>
             <span class="hidden sm:inline">New Query</span>
           </button>
 
           <!-- GitHub Repo Link -->
-          <a href="https://github.com/sathishatgit/genai-knowledge-assistant" target="_blank" rel="noopener noreferrer" class="px-2.5 py-1.5 bg-white/[0.05] hover:bg-white/[0.1] text-slate-300 border border-white/[0.08] rounded-lg transition flex items-center space-x-1.5" title="View GitHub Repository">
+          <a href="https://github.com/sathishatgit/genai-knowledge-assistant" target="_blank" rel="noopener noreferrer" class="p-2 rounded-lg border theme-subtle transition flex items-center justify-center hover:border-indigo-500/50 flex-shrink-0" style="color: var(--text-main);" title="View GitHub Repository">
             <i class="fa-brands fa-github text-sm"></i>
           </a>
         </div>
       </div>
 
       <!-- Mobile Navigation Sub-bar -->
-      <div class="flex md:hidden items-center justify-around border-t border-white/[0.06] pt-2.5 mt-2.5 text-xs">
-        <button onclick="switchPage('chat')" id="mobile-btn-chat" class="flex flex-col items-center py-1 text-indigo-400 font-medium">
+      <div class="flex md:hidden items-center justify-around border-t pt-2 mt-2 text-xs" style="border-color: var(--border-header);">
+        <button onclick="switchPage('chat')" id="mobile-btn-chat" class="flex flex-col items-center py-1 text-indigo-600 dark:text-indigo-400 font-semibold">
           <i class="fa-solid fa-comments text-base mb-1"></i>
           <span>Playground</span>
         </button>
-        <button onclick="switchPage('knowledge')" id="mobile-btn-knowledge" class="flex flex-col items-center py-1 text-slate-400 font-medium">
+        <button onclick="switchPage('knowledge')" id="mobile-btn-knowledge" class="flex flex-col items-center py-1 font-medium" style="color: var(--text-muted);">
           <i class="fa-solid fa-database text-base mb-1"></i>
           <span>Knowledge</span>
         </button>
-        <button onclick="switchPage('models')" id="mobile-btn-models" class="flex flex-col items-center py-1 text-slate-400 font-medium">
+        <button onclick="switchPage('models')" id="mobile-btn-models" class="flex flex-col items-center py-1 font-medium" style="color: var(--text-muted);">
           <i class="fa-solid fa-microchip text-base mb-1"></i>
           <span>Models</span>
         </button>
-        <button onclick="switchPage('architecture')" id="mobile-btn-architecture" class="flex flex-col items-center py-1 text-slate-400 font-medium">
+        <button onclick="switchPage('architecture')" id="mobile-btn-architecture" class="flex flex-col items-center py-1 font-medium" style="color: var(--text-muted);">
           <i class="fa-solid fa-network-wired text-base mb-1"></i>
-          <span>Arch & RRF</span>
+          <span>Architecture</span>
         </button>
       </div>
     </header>
@@ -264,61 +351,61 @@
       <div class="glass-panel rounded-2xl p-4 sm:p-5">
         <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 mb-3">
           <div class="flex items-center space-x-2">
-            <span class="w-6 h-6 rounded-lg bg-indigo-500/20 text-indigo-400 flex items-center justify-center text-xs">
+            <span class="w-6 h-6 rounded-lg bg-indigo-500/20 text-indigo-500 dark:text-indigo-400 flex items-center justify-center text-xs">
               <i class="fa-solid fa-flask"></i>
             </span>
-            <span class="text-xs font-semibold uppercase tracking-wider text-slate-300">Test Scenarios & Canonical Routes</span>
+            <span class="text-xs font-semibold uppercase tracking-wider" style="color: var(--text-main);">Test Scenarios & Canonical Routes</span>
           </div>
-          <span class="text-[11px] text-slate-400">Click any scenario to see real-time route classification & fusion:</span>
+          <span class="text-[11px]" style="color: var(--text-muted);">Click any scenario to see real-time route classification & fusion:</span>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
           <!-- Preset 1: Direct LLM -->
-          <button onclick="triggerPreset('What is a Python list and its primary methods?', 'direct_llm')" class="text-left p-3 rounded-xl bg-black/30 hover:bg-indigo-950/30 border border-white/[0.06] hover:border-indigo-500/40 transition group">
+          <button onclick="triggerPreset('What is a Python list and its primary methods?', 'direct_llm')" class="text-left p-3 rounded-xl theme-subtle hover:border-indigo-500/40 transition group">
             <div class="flex items-center justify-between mb-1">
-              <span class="text-xs font-semibold text-slate-200 group-hover:text-indigo-300 flex items-center space-x-1.5">
-                <i class="fa-solid fa-bolt text-amber-400 text-xs"></i>
+              <span class="text-xs font-semibold group-hover:text-indigo-500 dark:group-hover:text-indigo-300 flex items-center space-x-1.5" style="color: var(--text-main);">
+                <i class="fa-solid fa-bolt text-amber-500 text-xs"></i>
                 <span>Direct LLM</span>
               </span>
-              <span class="text-[9px] bg-slate-800 text-slate-300 px-1.5 py-0.5 rounded font-mono">0ms retrieval</span>
+              <span class="text-[9px] bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 px-1.5 py-0.5 rounded font-mono">0ms retrieval</span>
             </div>
-            <p class="text-[11px] text-slate-400 truncate">"What is a Python list?"</p>
+            <p class="text-[11px] truncate" style="color: var(--text-muted);">"What is a Python list?"</p>
           </button>
 
           <!-- Preset 2: Local RAG -->
-          <button onclick="triggerPreset('According to our documents, what is our RAG architecture?', 'local_rag')" class="text-left p-3 rounded-xl bg-black/30 hover:bg-emerald-950/30 border border-white/[0.06] hover:border-emerald-500/40 transition group">
+          <button onclick="triggerPreset('According to our documents, what is our RAG architecture?', 'local_rag')" class="text-left p-3 rounded-xl theme-subtle hover:border-emerald-500/40 transition group">
             <div class="flex items-center justify-between mb-1">
-              <span class="text-xs font-semibold text-slate-200 group-hover:text-emerald-300 flex items-center space-x-1.5">
-                <i class="fa-solid fa-book-bookmark text-emerald-400 text-xs"></i>
+              <span class="text-xs font-semibold group-hover:text-emerald-500 dark:group-hover:text-emerald-300 flex items-center space-x-1.5" style="color: var(--text-main);">
+                <i class="fa-solid fa-book-bookmark text-emerald-500 text-xs"></i>
                 <span>Local RAG</span>
               </span>
-              <span class="text-[9px] bg-emerald-500/10 text-emerald-300 px-1.5 py-0.5 rounded font-mono border border-emerald-500/20">BM25 + Chroma</span>
+              <span class="text-[9px] bg-emerald-500/10 text-emerald-600 dark:text-emerald-300 px-1.5 py-0.5 rounded font-mono border border-emerald-500/20">BM25 + Chroma</span>
             </div>
-            <p class="text-[11px] text-slate-400 truncate">"What is our RAG architecture?"</p>
+            <p class="text-[11px] truncate" style="color: var(--text-muted);">"What is our RAG architecture?"</p>
           </button>
 
           <!-- Preset 3: Web Search -->
-          <button onclick="triggerPreset('What is the latest Google Gemini model released recently?', 'web_search')" class="text-left p-3 rounded-xl bg-black/30 hover:bg-cyan-950/30 border border-white/[0.06] hover:border-cyan-500/40 transition group">
+          <button onclick="triggerPreset('What is the latest Google Gemini model released recently?', 'web_search')" class="text-left p-3 rounded-xl theme-subtle hover:border-cyan-500/40 transition group">
             <div class="flex items-center justify-between mb-1">
-              <span class="text-xs font-semibold text-slate-200 group-hover:text-cyan-300 flex items-center space-x-1.5">
-                <i class="fa-solid fa-globe text-cyan-400 text-xs"></i>
+              <span class="text-xs font-semibold group-hover:text-cyan-500 dark:group-hover:text-cyan-300 flex items-center space-x-1.5" style="color: var(--text-main);">
+                <i class="fa-solid fa-globe text-cyan-500 text-xs"></i>
                 <span>Web Search</span>
               </span>
-              <span class="text-[9px] bg-cyan-500/10 text-cyan-300 px-1.5 py-0.5 rounded font-mono border border-cyan-500/20">Exa AI Neural</span>
+              <span class="text-[9px] bg-cyan-500/10 text-cyan-600 dark:text-cyan-300 px-1.5 py-0.5 rounded font-mono border border-cyan-500/20">Exa AI Neural</span>
             </div>
-            <p class="text-[11px] text-slate-400 truncate">"What is the latest Gemini model?"</p>
+            <p class="text-[11px] truncate" style="color: var(--text-muted);">"What is the latest Gemini model?"</p>
           </button>
 
           <!-- Preset 4: Both Fused -->
-          <button onclick="triggerPreset('Compare our internal RAG architecture with modern 2026 enterprise approaches.', 'both')" class="text-left p-3 rounded-xl bg-black/30 hover:bg-purple-950/30 border border-white/[0.06] hover:border-purple-500/40 transition group">
+          <button onclick="triggerPreset('Compare our internal RAG architecture with modern 2026 enterprise approaches.', 'both')" class="text-left p-3 rounded-xl theme-subtle hover:border-purple-500/40 transition group">
             <div class="flex items-center justify-between mb-1">
-              <span class="text-xs font-semibold text-slate-200 group-hover:text-purple-300 flex items-center space-x-1.5">
-                <i class="fa-solid fa-layer-group text-purple-400 text-xs"></i>
+              <span class="text-xs font-semibold group-hover:text-purple-500 dark:group-hover:text-purple-300 flex items-center space-x-1.5" style="color: var(--text-main);">
+                <i class="fa-solid fa-layer-group text-purple-500 text-xs"></i>
                 <span>Both Fused</span>
               </span>
-              <span class="text-[9px] bg-purple-500/10 text-purple-300 px-1.5 py-0.5 rounded font-mono border border-purple-500/20">Reciprocal Rank</span>
+              <span class="text-[9px] bg-purple-500/10 text-purple-600 dark:text-purple-300 px-1.5 py-0.5 rounded font-mono border border-purple-500/20">Rank Fusion</span>
             </div>
-            <p class="text-[11px] text-slate-400 truncate">"Compare internal vs modern RAG"</p>
+            <p class="text-[11px] truncate" style="color: var(--text-muted);">"Compare internal vs modern RAG"</p>
           </button>
         </div>
       </div>
@@ -326,7 +413,7 @@
       <!-- Main Chat Conversation Feed -->
       <div id="chatFeed" class="flex-1 flex flex-col space-y-5">
         
-        <!-- Welcome Hero Banner (Displayed before any query is asked) -->
+        <!-- Welcome Hero Banner -->
         <div id="emptyHeroBanner" class="glass-panel rounded-3xl p-8 sm:p-14 text-center flex flex-col items-center justify-center space-y-5 my-auto">
           <div class="relative">
             <div class="w-20 h-20 rounded-2xl bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center text-white text-3xl shadow-xl shadow-indigo-500/20">
@@ -339,25 +426,25 @@
           </div>
 
           <div class="max-w-xl space-y-2">
-            <h2 class="text-xl sm:text-2xl font-extrabold text-white tracking-tight">How can I assist your research today?</h2>
-            <p class="text-xs sm:text-sm text-slate-400 leading-relaxed">
-              Ask any question to test our multi-stage agent. Queries are intelligently classified into <strong class="text-slate-200">Direct LLM</strong>, <strong class="text-emerald-400">Local RAG</strong> (BM25 + ChromaDB), <strong class="text-cyan-400">Neural Web Search</strong> (Exa AI), or <strong class="text-purple-400">Cross-Context Fusion</strong>.
+            <h2 class="text-xl sm:text-2xl font-extrabold tracking-tight" style="color: var(--text-main);">How can I assist your research today?</h2>
+            <p class="text-xs sm:text-sm leading-relaxed" style="color: var(--text-muted);">
+              Ask any question to test our multi-stage agent. Queries are intelligently classified into <strong style="color: var(--text-main);">Direct LLM</strong>, <strong class="text-emerald-500">Local RAG</strong> (BM25 + ChromaDB), <strong class="text-cyan-500">Neural Web Search</strong> (Exa AI), or <strong class="text-purple-500">Cross-Context Fusion</strong>.
             </p>
           </div>
 
           <!-- Feature Pills -->
           <div class="flex flex-wrap justify-center gap-2 pt-2 text-xs">
-            <span class="px-3 py-1.5 rounded-full bg-white/[0.04] border border-white/[0.08] text-slate-300 flex items-center space-x-1.5">
-              <i class="fa-solid fa-microchip text-indigo-400"></i>
+            <span class="px-3 py-1.5 rounded-full theme-subtle flex items-center space-x-1.5" style="color: var(--text-main);">
+              <i class="fa-solid fa-microchip text-indigo-500"></i>
               <span>Multi-LLM Engine</span>
             </span>
-            <span class="px-3 py-1.5 rounded-full bg-white/[0.04] border border-white/[0.08] text-slate-300 flex items-center space-x-1.5">
-              <i class="fa-solid fa-code-merge text-purple-400"></i>
+            <span class="px-3 py-1.5 rounded-full theme-subtle flex items-center space-x-1.5" style="color: var(--text-main);">
+              <i class="fa-solid fa-code-merge text-purple-500"></i>
               <span>RRF (k=60) Fusion</span>
             </span>
-            <span class="px-3 py-1.5 rounded-full bg-white/[0.04] border border-white/[0.08] text-slate-300 flex items-center space-x-1.5">
-              <i class="fa-solid fa-fingerprint text-emerald-400"></i>
-              <span>Local Data Sovereignty</span>
+            <span class="px-3 py-1.5 rounded-full theme-subtle flex items-center space-x-1.5" style="color: var(--text-main);">
+              <i class="fa-solid fa-fingerprint text-emerald-500"></i>
+              <span>Data Sovereignty</span>
             </span>
           </div>
         </div>
@@ -374,11 +461,11 @@
           <!-- Routing Mode Chips & Model Info Row -->
           <div class="flex flex-wrap items-center justify-between gap-2 px-1 text-xs">
             <div class="flex items-center space-x-2">
-              <span class="text-slate-400 font-medium flex items-center space-x-1">
-                <i class="fa-solid fa-route text-indigo-400 text-xs"></i>
+              <span class="font-medium flex items-center space-x-1" style="color: var(--text-muted);">
+                <i class="fa-solid fa-route text-indigo-500 text-xs"></i>
                 <span class="hidden sm:inline">Route Strategy:</span>
               </span>
-              <select id="routeMode" class="bg-black/50 border border-white/[0.1] text-indigo-300 text-xs rounded-lg px-2.5 py-1 outline-none focus:border-indigo-500 cursor-pointer">
+              <select id="routeMode" class="theme-input text-indigo-600 dark:text-indigo-300 text-xs rounded-lg px-2.5 py-1 outline-none focus:border-indigo-500 cursor-pointer">
                 <option value="">⚡ Auto (Intelligent Classifier)</option>
                 <option value="direct_llm">🧠 Force Route: Direct LLM</option>
                 <option value="local_rag">📂 Force Route: Local RAG (BM25 + Chroma)</option>
@@ -387,9 +474,9 @@
               </select>
             </div>
             
-            <div class="flex items-center space-x-3 text-[11px] text-slate-400">
-              <span class="hidden md:inline text-slate-500">Press <kbd class="px-1.5 py-0.5 bg-white/10 rounded font-mono text-[10px]">Enter</kbd> to ask</span>
-              <span class="flex items-center space-x-1 text-indigo-300 font-medium">
+            <div class="flex items-center space-x-3 text-[11px]" style="color: var(--text-muted);">
+              <span class="hidden md:inline">Press <kbd class="px-1.5 py-0.5 rounded font-mono text-[10px] theme-subtle">Enter</kbd> to ask</span>
+              <span class="flex items-center space-x-1 text-indigo-500 dark:text-indigo-300 font-medium">
                 <i class="fa-solid fa-sparkles text-xs"></i>
                 <span id="activeModelTag">Gemini</span>
               </span>
@@ -402,7 +489,7 @@
               id="queryInput"
               rows="2"
               placeholder="Ask anything (e.g. 'What is a Python list?' or 'According to our documents, what is our RAG architecture?')..."
-              class="w-full bg-black/60 border border-white/[0.1] rounded-xl pl-4 pr-28 sm:pr-32 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500/80 focus:ring-1 focus:ring-indigo-500/50 resize-none transition shadow-inner leading-relaxed"
+              class="w-full theme-input rounded-xl pl-4 pr-28 sm:pr-32 py-2.5 text-sm placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/50 resize-none transition shadow-inner leading-relaxed"
               required
               onkeydown="if(event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); handleQuerySubmit(event); }"
             ></textarea>
@@ -430,13 +517,13 @@
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         
         <div class="glass-panel glass-panel-hover rounded-2xl p-5 flex items-center space-x-4">
-          <div class="w-12 h-12 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center text-xl shadow-inner">
+          <div class="w-12 h-12 rounded-xl bg-purple-500/20 text-purple-500 flex items-center justify-center text-xl shadow-inner">
             <i class="fa-solid fa-cubes-stacked"></i>
           </div>
           <div>
-            <div class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">ChromaDB Chunks</div>
-            <div id="kbChromaCount" class="text-2xl font-black text-white">...</div>
-            <div class="text-[10px] text-emerald-400 flex items-center space-x-1">
+            <div class="text-[11px] font-semibold uppercase tracking-wider" style="color: var(--text-muted);">ChromaDB Chunks</div>
+            <div id="kbChromaCount" class="text-2xl font-black" style="color: var(--text-main);">...</div>
+            <div class="text-[10px] text-emerald-500 flex items-center space-x-1">
               <i class="fa-solid fa-circle-check text-[9px]"></i>
               <span>Dense 1024-dim Vectors</span>
             </div>
@@ -444,13 +531,13 @@
         </div>
 
         <div class="glass-panel glass-panel-hover rounded-2xl p-5 flex items-center space-x-4">
-          <div class="w-12 h-12 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center text-xl shadow-inner">
+          <div class="w-12 h-12 rounded-xl bg-blue-500/20 text-blue-500 flex items-center justify-center text-xl shadow-inner">
             <i class="fa-solid fa-file-lines"></i>
           </div>
           <div>
-            <div class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Indexed Documents</div>
-            <div id="kbDocCount" class="text-2xl font-black text-white">...</div>
-            <div class="text-[10px] text-blue-400 flex items-center space-x-1">
+            <div class="text-[11px] font-semibold uppercase tracking-wider" style="color: var(--text-muted);">Indexed Documents</div>
+            <div id="kbDocCount" class="text-2xl font-black" style="color: var(--text-main);">...</div>
+            <div class="text-[10px] text-blue-500 flex items-center space-x-1">
               <i class="fa-solid fa-folder-open text-[9px]"></i>
               <span>Internal Knowledge Files</span>
             </div>
@@ -458,24 +545,24 @@
         </div>
 
         <div class="glass-panel glass-panel-hover rounded-2xl p-5 flex items-center space-x-4">
-          <div class="w-12 h-12 rounded-xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center text-xl shadow-inner">
+          <div class="w-12 h-12 rounded-xl bg-indigo-500/20 text-indigo-500 flex items-center justify-center text-xl shadow-inner">
             <i class="fa-solid fa-font"></i>
           </div>
           <div>
-            <div class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">BM25 Lexical Docs</div>
-            <div id="kbBm25Count" class="text-2xl font-black text-white">...</div>
-            <div class="text-[10px] text-indigo-400 flex items-center space-x-1">
+            <div class="text-[11px] font-semibold uppercase tracking-wider" style="color: var(--text-muted);">BM25 Lexical Docs</div>
+            <div id="kbBm25Count" class="text-2xl font-black" style="color: var(--text-main);">...</div>
+            <div class="text-[10px] text-indigo-500 flex items-center space-x-1">
               <i class="fa-solid fa-magnifying-glass text-[9px]"></i>
-              <span>Exact Keyword Inverted Index</span>
+              <span>Exact Keyword Index</span>
             </div>
           </div>
         </div>
 
         <div class="glass-panel rounded-2xl p-5 flex items-center justify-between">
           <div class="space-y-1">
-            <div class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Full Ingestion</div>
-            <div class="text-xs text-white font-medium">Re-chunk & Re-embed</div>
-            <div class="text-[10px] text-slate-500">Synchronizes BM25 & ChromaDB</div>
+            <div class="text-[11px] font-semibold uppercase tracking-wider" style="color: var(--text-muted);">Full Ingestion</div>
+            <div class="text-xs font-medium" style="color: var(--text-main);">Re-chunk & Re-embed</div>
+            <div class="text-[10px]" style="color: var(--text-muted);">Syncs BM25 & ChromaDB</div>
           </div>
           <button onclick="triggerIngest()" id="btnIngestFull" class="px-4 py-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-medium text-xs rounded-xl shadow-lg shadow-purple-600/30 transition flex items-center space-x-1.5">
             <i class="fa-solid fa-rotate text-xs"></i>
@@ -490,39 +577,39 @@
         
         <!-- Workspace A: Direct Paragraph Input -->
         <div class="glass-panel rounded-2xl p-6 shadow-xl space-y-4">
-          <div class="flex items-center space-x-3 border-b border-white/[0.08] pb-3.5">
-            <div class="w-9 h-9 rounded-xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center text-base">
+          <div class="flex items-center space-x-3 border-b pb-3.5" style="border-color: var(--border-panel);">
+            <div class="w-9 h-9 rounded-xl bg-indigo-500/20 text-indigo-500 flex items-center justify-center text-base">
               <i class="fa-solid fa-pen-fancy"></i>
             </div>
             <div>
-              <h3 class="font-bold text-white text-sm">Direct Text & Knowledge Ingestion</h3>
-              <p class="text-[11px] text-slate-400">Instantly chunk and index custom paragraphs or company facts</p>
+              <h3 class="font-bold text-sm" style="color: var(--text-main);">Direct Text & Knowledge Ingestion</h3>
+              <p class="text-[11px]" style="color: var(--text-muted);">Instantly chunk and index custom paragraphs or company facts</p>
             </div>
           </div>
 
           <form onsubmit="handleDirectTextSubmit(event)" class="space-y-4">
             <div>
-              <label class="block text-xs font-semibold text-slate-300 mb-1.5">Document Subject / Filename</label>
+              <label class="block text-xs font-semibold mb-1.5" style="color: var(--text-main);">Document Subject / Filename</label>
               <input
                 type="text"
                 id="docTitleInput"
                 placeholder="e.g. system_architecture_2026 or employee_benefits"
-                class="w-full bg-black/60 border border-white/[0.1] rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition"
+                class="w-full theme-input rounded-xl px-3.5 py-2.5 text-xs placeholder-slate-400 focus:outline-none focus:border-indigo-500 transition"
                 required
               />
             </div>
 
             <div>
               <div class="flex items-center justify-between mb-1.5">
-                <label class="block text-xs font-semibold text-slate-300">Content / Paragraph</label>
-                <span id="charCountDisplay" class="text-[10px] text-slate-500 font-mono">0 chars</span>
+                <label class="block text-xs font-semibold" style="color: var(--text-main);">Content / Paragraph</label>
+                <span id="charCountDisplay" class="text-[10px] font-mono" style="color: var(--text-muted);">0 chars</span>
               </div>
               <textarea
                 id="docContentInput"
                 rows="6"
                 oninput="document.getElementById('charCountDisplay').textContent = this.value.length + ' chars'"
                 placeholder="Write or paste your custom internal knowledge here. It will be chunked into 500-char pieces, converted to dense vector embeddings with Jina AI, and indexed into both BM25 and ChromaDB..."
-                class="w-full bg-black/60 border border-white/[0.1] rounded-xl p-3.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 leading-relaxed transition"
+                class="w-full theme-input rounded-xl p-3.5 text-xs placeholder-slate-400 focus:outline-none focus:border-indigo-500 leading-relaxed transition"
                 required
               ></textarea>
             </div>
@@ -540,28 +627,28 @@
 
         <!-- Workspace B: Drag & Drop File Upload -->
         <div class="glass-panel rounded-2xl p-6 shadow-xl space-y-4">
-          <div class="flex items-center space-x-3 border-b border-white/[0.08] pb-3.5">
-            <div class="w-9 h-9 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-base">
+          <div class="flex items-center space-x-3 border-b pb-3.5" style="border-color: var(--border-panel);">
+            <div class="w-9 h-9 rounded-xl bg-emerald-500/20 text-emerald-500 flex items-center justify-center text-base">
               <i class="fa-solid fa-cloud-arrow-up"></i>
             </div>
             <div>
-              <h3 class="font-bold text-white text-sm">Upload Plain Text Document (.txt)</h3>
-              <p class="text-[11px] text-slate-400">Add policies, research papers, resumes, or engineering documentation</p>
+              <h3 class="font-bold text-sm" style="color: var(--text-main);">Upload Plain Text Document (.txt)</h3>
+              <p class="text-[11px]" style="color: var(--text-muted);">Add policies, research papers, resumes, or engineering documentation</p>
             </div>
           </div>
 
           <form onsubmit="handleFileUploadSubmit(event)" class="space-y-4">
             <div>
-              <label class="block text-xs font-semibold text-slate-300 mb-2">Drop Zone</label>
+              <label class="block text-xs font-semibold mb-2" style="color: var(--text-main);">Drop Zone</label>
               <div 
                 id="dropZone" 
-                class="border-2 border-dashed border-white/[0.15] hover:border-emerald-500/60 rounded-xl p-8 text-center transition cursor-pointer bg-black/30 group"
+                class="border-2 border-dashed rounded-xl p-8 text-center transition cursor-pointer theme-subtle hover:border-emerald-500/60 group"
                 onclick="document.getElementById('fileUploadInput').click()"
               >
-                <i class="fa-solid fa-file-arrow-up text-emerald-400 text-3xl mb-3 group-hover:scale-110 transition transform"></i>
-                <div class="text-xs text-slate-200 font-semibold">Click to browse or drop your .txt file here</div>
-                <div class="text-[10px] text-slate-500 mt-1">UTF-8 plain text documents up to 5MB</div>
-                <div id="selectedFileBadge" class="text-xs text-emerald-300 font-mono font-semibold mt-3"></div>
+                <i class="fa-solid fa-file-arrow-up text-emerald-500 text-3xl mb-3 group-hover:scale-110 transition transform"></i>
+                <div class="text-xs font-semibold" style="color: var(--text-main);">Click to browse or drop your .txt file here</div>
+                <div class="text-[10px] mt-1" style="color: var(--text-muted);">UTF-8 plain text documents up to 5MB</div>
+                <div id="selectedFileBadge" class="text-xs text-emerald-500 font-mono font-semibold mt-3"></div>
                 <input
                   type="file"
                   id="fileUploadInput"
@@ -588,12 +675,12 @@
 
       <!-- Document Explorer Grid -->
       <div class="glass-panel rounded-2xl p-6 shadow-xl space-y-4">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/[0.08] pb-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b pb-4" style="border-color: var(--border-panel);">
           <div class="flex items-center space-x-2.5">
-            <i class="fa-solid fa-folder-tree text-indigo-400 text-lg"></i>
+            <i class="fa-solid fa-folder-tree text-indigo-500 text-lg"></i>
             <div>
-              <h3 class="font-bold text-white text-sm">Document Library & Chunk Inspector</h3>
-              <p class="text-[11px] text-slate-400">Click any document to inspect full text, view chunk counts, or query it</p>
+              <h3 class="font-bold text-sm" style="color: var(--text-main);">Document Library & Chunk Inspector</h3>
+              <p class="text-[11px]" style="color: var(--text-muted);">Click any document to inspect full text, view chunk counts, or query it</p>
             </div>
           </div>
 
@@ -604,15 +691,15 @@
               id="docSearchInput"
               oninput="filterDocuments(this.value)"
               placeholder="Search documents by name or content..."
-              class="w-full bg-black/60 border border-white/[0.1] rounded-xl pl-9 pr-3.5 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+              class="w-full theme-input rounded-xl pl-9 pr-3.5 py-2 text-xs placeholder-slate-400 focus:outline-none focus:border-indigo-500"
             />
-            <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-500 text-xs"></i>
+            <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-400 text-xs"></i>
           </div>
         </div>
 
         <!-- Document Cards Container -->
         <div id="documentCardsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <div class="text-slate-500 text-xs italic col-span-full py-8 text-center">Loading document library...</div>
+          <div class="text-xs italic col-span-full py-8 text-center" style="color: var(--text-muted);">Loading document library...</div>
         </div>
       </div>
 
@@ -628,18 +715,18 @@
         <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div class="space-y-1">
             <div class="flex items-center space-x-2">
-              <span class="w-8 h-8 rounded-lg bg-indigo-500/20 text-indigo-400 flex items-center justify-center text-sm">
+              <span class="w-8 h-8 rounded-lg bg-indigo-500/20 text-indigo-500 flex items-center justify-center text-sm">
                 <i class="fa-solid fa-microchip"></i>
               </span>
-              <h2 class="text-lg font-bold text-white">Multi-LLM Unified Model Hub</h2>
+              <h2 class="text-lg font-bold" style="color: var(--text-main);">Multi-LLM Unified Model Hub</h2>
             </div>
-            <p class="text-xs text-slate-400 max-w-2xl leading-relaxed">
+            <p class="text-xs max-w-2xl leading-relaxed" style="color: var(--text-muted);">
               Switch freely between Google Gemini, OpenAI, NVIDIA NIM, and Ollama at runtime without restarting the server. All models are orchestrated seamlessly with LangChain connectors.
             </p>
           </div>
-          <div class="px-4 py-2 bg-indigo-950/60 border border-indigo-500/40 rounded-xl text-xs flex items-center space-x-2">
-            <span class="text-slate-400">Active Provider:</span>
-            <span id="activeModelNameHub" class="font-bold text-indigo-300 font-mono uppercase">Gemini</span>
+          <div class="px-4 py-2 theme-subtle rounded-xl text-xs flex items-center space-x-2">
+            <span style="color: var(--text-muted);">Active Provider:</span>
+            <span id="activeModelNameHub" class="font-bold text-indigo-500 dark:text-indigo-300 font-mono uppercase">Gemini</span>
           </div>
         </div>
       </div>
@@ -652,22 +739,22 @@
           <div>
             <div class="flex items-center justify-between mb-3">
               <div class="flex items-center space-x-3">
-                <div class="w-11 h-11 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center text-xl">
+                <div class="w-11 h-11 rounded-xl bg-blue-500/20 text-blue-500 flex items-center justify-center text-xl">
                   <i class="fa-brands fa-google"></i>
                 </div>
                 <div>
-                  <h3 class="font-bold text-white text-base">Google Gemini</h3>
-                  <span class="text-[11px] text-blue-400 font-mono">Multimodal & High Speed</span>
+                  <h3 class="font-bold text-base" style="color: var(--text-main);">Google Gemini</h3>
+                  <span class="text-[11px] text-blue-500 font-mono">Multimodal & High Speed</span>
                 </div>
               </div>
-              <span id="badge-hub-gemini" class="text-[10px] px-2.5 py-0.5 rounded-full font-mono font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Active</span>
+              <span id="badge-hub-gemini" class="text-[10px] px-2.5 py-0.5 rounded-full font-mono font-semibold bg-emerald-500/20 text-emerald-600 dark:text-emerald-300 border border-emerald-500/30">Active</span>
             </div>
-            <p class="text-xs text-slate-300 leading-relaxed mb-3">
+            <p class="text-xs leading-relaxed mb-3" style="color: var(--text-muted);">
               Native multi-model resilience fallback chain (`gemini-3.5-flash` → `gemini-3.8-flash` → `gemini-1.5-pro`). Powering both rapid router classification and synthesized RAG answers.
             </p>
-            <div class="text-[11px] bg-black/40 p-3 rounded-xl border border-white/[0.06] space-y-1 font-mono text-slate-300">
-              <div><span class="text-slate-500">Model:</span> gemini-3.5-flash</div>
-              <div><span class="text-slate-500">Tier:</span> Free & Enterprise Resilient Chain</div>
+            <div class="text-[11px] theme-subtle p-3 rounded-xl space-y-1 font-mono" style="color: var(--text-main);">
+              <div><span style="color: var(--text-muted);">Model:</span> gemini-3.5-flash</div>
+              <div><span style="color: var(--text-muted);">Tier:</span> Free & Enterprise Fallback Chain</div>
             </div>
           </div>
 
@@ -682,26 +769,26 @@
           <div>
             <div class="flex items-center justify-between mb-3">
               <div class="flex items-center space-x-3">
-                <div class="w-11 h-11 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-xl">
+                <div class="w-11 h-11 rounded-xl bg-emerald-500/20 text-emerald-500 flex items-center justify-center text-xl">
                   <i class="fa-solid fa-cube"></i>
                 </div>
                 <div>
-                  <h3 class="font-bold text-white text-base">OpenAI</h3>
-                  <span class="text-[11px] text-emerald-400 font-mono">ChatOpenAI via LangChain</span>
+                  <h3 class="font-bold text-base" style="color: var(--text-main);">OpenAI</h3>
+                  <span class="text-[11px] text-emerald-500 font-mono">ChatOpenAI via LangChain</span>
                 </div>
               </div>
-              <span id="badge-hub-openai" class="text-[10px] px-2.5 py-0.5 rounded-full font-mono font-semibold bg-slate-800 text-slate-400 border border-slate-700">Ready</span>
+              <span id="badge-hub-openai" class="text-[10px] px-2.5 py-0.5 rounded-full font-mono font-semibold theme-subtle" style="color: var(--text-muted);">Ready</span>
             </div>
-            <p class="text-xs text-slate-300 leading-relaxed mb-3">
+            <p class="text-xs leading-relaxed mb-3" style="color: var(--text-muted);">
               Frontier reasoning models (`gpt-4o`, `gpt-4o-mini`). Full streaming, JSON structured schema outputs, and multi-turn agentic workflows.
             </p>
-            <div class="text-[11px] bg-black/40 p-3 rounded-xl border border-white/[0.06] space-y-1 font-mono text-slate-300">
-              <div><span class="text-slate-500">Model:</span> gpt-4o-mini</div>
-              <div><span class="text-slate-500">Key:</span> OPENAI_API_KEY</div>
+            <div class="text-[11px] theme-subtle p-3 rounded-xl space-y-1 font-mono" style="color: var(--text-main);">
+              <div><span style="color: var(--text-muted);">Model:</span> gpt-4o-mini</div>
+              <div><span style="color: var(--text-muted);">Key:</span> OPENAI_API_KEY</div>
             </div>
           </div>
 
-          <button onclick="handleProviderChange('openai')" class="w-full py-2.5 px-3 rounded-xl bg-white/[0.08] hover:bg-emerald-600 text-slate-200 hover:text-white text-xs font-semibold transition flex items-center justify-center space-x-2">
+          <button onclick="handleProviderChange('openai')" class="w-full py-2.5 px-3 rounded-xl theme-subtle hover:bg-emerald-600 hover:text-white text-xs font-semibold transition flex items-center justify-center space-x-2" style="color: var(--text-main);">
             <i class="fa-solid fa-check"></i>
             <span>Set as Active Provider</span>
           </button>
@@ -712,26 +799,26 @@
           <div>
             <div class="flex items-center justify-between mb-3">
               <div class="flex items-center space-x-3">
-                <div class="w-11 h-11 rounded-xl bg-green-500/20 text-green-400 flex items-center justify-center text-xl">
+                <div class="w-11 h-11 rounded-xl bg-green-500/20 text-green-500 flex items-center justify-center text-xl">
                   <i class="fa-solid fa-microchip"></i>
                 </div>
                 <div>
-                  <h3 class="font-bold text-white text-base">NVIDIA NIM</h3>
-                  <span class="text-[11px] text-green-400 font-mono">Accelerated Microservices</span>
+                  <h3 class="font-bold text-base" style="color: var(--text-main);">NVIDIA NIM</h3>
+                  <span class="text-[11px] text-green-500 font-mono">Accelerated Microservices</span>
                 </div>
               </div>
-              <span id="badge-hub-nvidia" class="text-[10px] px-2.5 py-0.5 rounded-full font-mono font-semibold bg-slate-800 text-slate-400 border border-slate-700">Ready</span>
+              <span id="badge-hub-nvidia" class="text-[10px] px-2.5 py-0.5 rounded-full font-mono font-semibold theme-subtle" style="color: var(--text-muted);">Ready</span>
             </div>
-            <p class="text-xs text-slate-300 leading-relaxed mb-3">
+            <p class="text-xs leading-relaxed mb-3" style="color: var(--text-muted);">
               High-throughput cloud inference on NVIDIA GPUs running Meta Llama 3.3 70B Instruct with sub-second response times.
             </p>
-            <div class="text-[11px] bg-black/40 p-3 rounded-xl border border-white/[0.06] space-y-1 font-mono text-slate-300">
-              <div><span class="text-slate-500">Endpoint:</span> https://integrate.api.nvidia.com/v1</div>
-              <div><span class="text-slate-500">Key:</span> NVIDIA_API_KEY</div>
+            <div class="text-[11px] theme-subtle p-3 rounded-xl space-y-1 font-mono" style="color: var(--text-main);">
+              <div><span style="color: var(--text-muted);">Endpoint:</span> https://integrate.api.nvidia.com/v1</div>
+              <div><span style="color: var(--text-muted);">Key:</span> NVIDIA_API_KEY</div>
             </div>
           </div>
 
-          <button onclick="handleProviderChange('nvidia')" class="w-full py-2.5 px-3 rounded-xl bg-white/[0.08] hover:bg-green-600 text-slate-200 hover:text-white text-xs font-semibold transition flex items-center justify-center space-x-2">
+          <button onclick="handleProviderChange('nvidia')" class="w-full py-2.5 px-3 rounded-xl theme-subtle hover:bg-green-600 hover:text-white text-xs font-semibold transition flex items-center justify-center space-x-2" style="color: var(--text-main);">
             <i class="fa-solid fa-check"></i>
             <span>Set as Active Provider</span>
           </button>
@@ -742,26 +829,26 @@
           <div>
             <div class="flex items-center justify-between mb-3">
               <div class="flex items-center space-x-3">
-                <div class="w-11 h-11 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-xl">
+                <div class="w-11 h-11 rounded-xl bg-amber-500/20 text-amber-500 flex items-center justify-center text-xl">
                   <i class="fa-solid fa-server"></i>
                 </div>
                 <div>
-                  <h3 class="font-bold text-white text-base">Ollama (Cloud & Local)</h3>
-                  <span class="text-[11px] text-amber-400 font-mono">Sovereign & On-Premise</span>
+                  <h3 class="font-bold text-base" style="color: var(--text-main);">Ollama (Cloud & Local)</h3>
+                  <span class="text-[11px] text-amber-500 font-mono">Sovereign & On-Premise</span>
                 </div>
               </div>
-              <span id="badge-hub-ollama" class="text-[10px] px-2.5 py-0.5 rounded-full font-mono font-semibold bg-slate-800 text-slate-400 border border-slate-700">Ready</span>
+              <span id="badge-hub-ollama" class="text-[10px] px-2.5 py-0.5 rounded-full font-mono font-semibold theme-subtle" style="color: var(--text-muted);">Ready</span>
             </div>
-            <p class="text-xs text-slate-300 leading-relaxed mb-3">
+            <p class="text-xs leading-relaxed mb-3" style="color: var(--text-muted);">
               Connect to your local Ollama daemon or Ollama Cloud remote endpoint. Completely private execution of Llama 3, DeepSeek, or Mistral.
             </p>
-            <div class="text-[11px] bg-black/40 p-3 rounded-xl border border-white/[0.06] space-y-1 font-mono text-slate-300">
-              <div><span class="text-slate-500">Endpoint:</span> http://localhost:11434/v1 (or Cloud URL)</div>
-              <div><span class="text-slate-500">Model:</span> llama3</div>
+            <div class="text-[11px] theme-subtle p-3 rounded-xl space-y-1 font-mono" style="color: var(--text-main);">
+              <div><span style="color: var(--text-muted);">Endpoint:</span> http://localhost:11434/v1 (or Cloud URL)</div>
+              <div><span style="color: var(--text-muted);">Model:</span> llama3</div>
             </div>
           </div>
 
-          <button onclick="handleProviderChange('ollama')" class="w-full py-2.5 px-3 rounded-xl bg-white/[0.08] hover:bg-amber-600 text-slate-200 hover:text-white text-xs font-semibold transition flex items-center justify-center space-x-2">
+          <button onclick="handleProviderChange('ollama')" class="w-full py-2.5 px-3 rounded-xl theme-subtle hover:bg-amber-600 hover:text-white text-xs font-semibold transition flex items-center justify-center space-x-2" style="color: var(--text-main);">
             <i class="fa-solid fa-check"></i>
             <span>Set as Active Provider</span>
           </button>
@@ -771,12 +858,12 @@
 
       <!-- Latency & Model Ping Benchmark Console -->
       <div class="glass-panel rounded-2xl p-6 shadow-xl space-y-4">
-        <div class="flex items-center justify-between border-b border-white/[0.08] pb-3">
+        <div class="flex items-center justify-between border-b pb-3" style="border-color: var(--border-panel);">
           <div class="flex items-center space-x-2">
-            <i class="fa-solid fa-gauge-high text-indigo-400"></i>
-            <h3 class="font-bold text-white text-sm">Real-Time Connectivity & Latency Benchmark</h3>
+            <i class="fa-solid fa-gauge-high text-indigo-500"></i>
+            <h3 class="font-bold text-sm" style="color: var(--text-main);">Real-Time Connectivity & Latency Benchmark</h3>
           </div>
-          <span class="text-[11px] text-slate-400">Pings the currently selected LLM with a warm-up prompt</span>
+          <span class="text-[11px]" style="color: var(--text-muted);">Pings the currently selected LLM with a warm-up prompt</span>
         </div>
 
         <div class="flex flex-col sm:flex-row gap-3">
@@ -784,7 +871,7 @@
             type="text"
             id="benchmarkPromptInput"
             value="In 10 words, explain why hybrid RAG outperforms vector search alone."
-            class="flex-1 bg-black/60 border border-white/[0.1] rounded-xl px-4 py-2.5 text-xs text-white font-mono focus:outline-none focus:border-indigo-500"
+            class="flex-1 theme-input rounded-xl px-4 py-2.5 text-xs font-mono focus:outline-none focus:border-indigo-500"
           />
           <button
             onclick="runModelBenchmark()"
@@ -796,7 +883,7 @@
           </button>
         </div>
 
-        <div id="benchmarkOutputBox" class="p-4 bg-black/60 rounded-xl border border-white/[0.08] text-xs font-mono text-slate-300 hidden whitespace-pre-wrap leading-relaxed"></div>
+        <div id="benchmarkOutputBox" class="p-4 theme-subtle rounded-xl text-xs font-mono hidden whitespace-pre-wrap leading-relaxed" style="color: var(--text-main);"></div>
       </div>
 
     </main>
@@ -813,8 +900,8 @@
             <i class="fa-solid fa-network-wired"></i>
           </div>
           <div>
-            <h2 class="text-lg font-bold text-white">System Architecture & Fusion Mathematics</h2>
-            <p class="text-xs text-slate-400">Complete pipeline breakdown: Lexical BM25, Semantic Jina Vectors & Reciprocal Rank Fusion</p>
+            <h2 class="text-lg font-bold" style="color: var(--text-main);">System Architecture & Fusion Mathematics</h2>
+            <p class="text-xs" style="color: var(--text-muted);">Complete pipeline breakdown: Lexical BM25, Semantic Jina Vectors & Reciprocal Rank Fusion</p>
           </div>
         </div>
       </div>
@@ -824,91 +911,91 @@
         
         <div class="glass-panel rounded-2xl p-5 border-l-4 border-l-slate-400 space-y-2">
           <div class="flex items-center justify-between">
-            <span class="font-bold text-xs text-white">1. Direct LLM</span>
-            <span class="text-[9px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-mono">direct_llm</span>
+            <span class="font-bold text-xs" style="color: var(--text-main);">1. Direct LLM</span>
+            <span class="text-[9px] bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 px-2 py-0.5 rounded font-mono">direct_llm</span>
           </div>
-          <p class="text-[11px] text-slate-400 leading-relaxed">
+          <p class="text-[11px] leading-relaxed" style="color: var(--text-muted);">
             Zero retrieval overhead. General knowledge queries, code syntax explanations, and greetings bypass search engines and stream directly from the model.
           </p>
-          <div class="text-[10px] text-slate-500 font-mono">0ms retrieval • Pure Synthesis</div>
+          <div class="text-[10px] font-mono" style="color: var(--text-muted);">0ms retrieval • Pure Synthesis</div>
         </div>
 
         <div class="glass-panel rounded-2xl p-5 border-l-4 border-l-emerald-500 space-y-2">
           <div class="flex items-center justify-between">
-            <span class="font-bold text-xs text-emerald-300">2. Local RAG</span>
-            <span class="text-[9px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded font-mono">local_rag</span>
+            <span class="font-bold text-xs text-emerald-500">2. Local RAG</span>
+            <span class="text-[9px] bg-emerald-500/20 text-emerald-600 dark:text-emerald-300 px-2 py-0.5 rounded font-mono">local_rag</span>
           </div>
-          <p class="text-[11px] text-slate-400 leading-relaxed">
+          <p class="text-[11px] leading-relaxed" style="color: var(--text-muted);">
             Dispatched when user asks about proprietary documents, policies, or internal code. Uses hybrid BM25 + Jina vectors fused by RRF.
           </p>
-          <div class="text-[10px] text-emerald-400 font-mono">100% Private • Local Disk</div>
+          <div class="text-[10px] text-emerald-500 font-mono">100% Private • Local Disk</div>
         </div>
 
         <div class="glass-panel rounded-2xl p-5 border-l-4 border-l-cyan-500 space-y-2">
           <div class="flex items-center justify-between">
-            <span class="font-bold text-xs text-cyan-300">3. Web Search</span>
-            <span class="text-[9px] bg-cyan-500/20 text-cyan-300 px-2 py-0.5 rounded font-mono">web_search</span>
+            <span class="font-bold text-xs text-cyan-500">3. Web Search</span>
+            <span class="text-[9px] bg-cyan-500/20 text-cyan-600 dark:text-cyan-300 px-2 py-0.5 rounded font-mono">web_search</span>
           </div>
-          <p class="text-[11px] text-slate-400 leading-relaxed">
+          <p class="text-[11px] leading-relaxed" style="color: var(--text-muted);">
             Queries Exa AI's neural web crawler for current events, external documentation, or real-time 2026 AI industry releases.
           </p>
-          <div class="text-[10px] text-cyan-400 font-mono">Live Internet • Neural Index</div>
+          <div class="text-[10px] text-cyan-500 font-mono">Live Internet • Neural Index</div>
         </div>
 
         <div class="glass-panel rounded-2xl p-5 border-l-4 border-l-purple-500 space-y-2">
           <div class="flex items-center justify-between">
-            <span class="font-bold text-xs text-purple-300">4. Both Fused</span>
-            <span class="text-[9px] bg-purple-500/20 text-purple-300 px-2 py-0.5 rounded font-mono">both</span>
+            <span class="font-bold text-xs text-purple-500">4. Both Fused</span>
+            <span class="text-[9px] bg-purple-500/20 text-purple-600 dark:text-purple-300 px-2 py-0.5 rounded font-mono">both</span>
           </div>
-          <p class="text-[11px] text-slate-400 leading-relaxed">
+          <p class="text-[11px] leading-relaxed" style="color: var(--text-muted);">
             Executes local RAG and live web search in parallel, cross-fusing both external news and internal documentation into a unified perspective.
           </p>
-          <div class="text-[10px] text-purple-400 font-mono">Comparative • Dual-Grounding</div>
+          <div class="text-[10px] text-purple-500 font-mono">Comparative • Dual-Grounding</div>
         </div>
 
       </div>
 
       <!-- Mathematical Deep-Dive: RRF Formula -->
       <div class="glass-panel rounded-2xl p-6 shadow-xl space-y-4">
-        <div class="flex items-center space-x-2.5 border-b border-white/[0.08] pb-3.5">
-          <i class="fa-solid fa-square-root-variable text-purple-400 text-lg"></i>
-          <h3 class="font-bold text-white text-sm">Reciprocal Rank Fusion (RRF) Mathematical Formula</h3>
+        <div class="flex items-center space-x-2.5 border-b pb-3.5" style="border-color: var(--border-panel);">
+          <i class="fa-solid fa-square-root-variable text-purple-500 text-lg"></i>
+          <h3 class="font-bold text-sm" style="color: var(--text-main);">Reciprocal Rank Fusion (RRF) Mathematical Formula</h3>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-center">
-          <div class="space-y-3 text-xs text-slate-300 leading-relaxed">
+          <div class="space-y-3 text-xs leading-relaxed" style="color: var(--text-main);">
             <p>
               Dense vector search captures semantic synonyms but struggles with exact product IDs or acronyms. BM25 captures exact lexical keywords but ignores semantic context. Our hybrid engine fuses both using Cormack's Reciprocal Rank Fusion:
             </p>
-            <div class="p-4 bg-black/60 rounded-xl border border-indigo-500/30 text-center font-mono text-indigo-300 text-sm sm:text-base shadow-inner">
+            <div class="p-4 theme-subtle rounded-xl text-center font-mono text-indigo-500 dark:text-indigo-300 text-sm sm:text-base shadow-inner">
               RRF_Score(d) = ∑ [ 1 / ( k + rank_m(d) ) ]
             </div>
-            <p class="text-[11px] text-slate-400">
-              Where <code class="text-indigo-300 font-mono">k = 60</code>. Items retrieved by both lexical and dense channels accumulate dominant scores, eliminating single-retriever blind spots.
+            <p class="text-[11px]" style="color: var(--text-muted);">
+              Where <code class="text-indigo-500 dark:text-indigo-300 font-mono">k = 60</code>. Items retrieved by both lexical and dense channels accumulate dominant scores, eliminating single-retriever blind spots.
             </p>
           </div>
 
           <!-- Component Specifications Table -->
-          <div class="bg-black/60 p-4 rounded-xl border border-white/[0.08] space-y-2 text-xs font-mono">
-            <div class="flex justify-between py-1.5 border-b border-white/[0.06]">
-              <span class="text-slate-400">Embedding Model:</span>
-              <span class="text-emerald-400">Jina AI (jina-embeddings-v3)</span>
+          <div class="theme-subtle p-4 rounded-xl space-y-2 text-xs font-mono">
+            <div class="flex justify-between py-1.5 border-b" style="border-color: var(--border-subtle);">
+              <span style="color: var(--text-muted);">Embedding Model:</span>
+              <span class="text-emerald-500">Jina AI (jina-embeddings-v3)</span>
             </div>
-            <div class="flex justify-between py-1.5 border-b border-white/[0.06]">
-              <span class="text-slate-400">Vector Storage:</span>
-              <span class="text-purple-400">ChromaDB Persistent (L2 Distance)</span>
+            <div class="flex justify-between py-1.5 border-b" style="border-color: var(--border-subtle);">
+              <span style="color: var(--text-muted);">Vector Storage:</span>
+              <span class="text-purple-500">ChromaDB Persistent (L2 Distance)</span>
             </div>
-            <div class="flex justify-between py-1.5 border-b border-white/[0.06]">
-              <span class="text-slate-400">Lexical Search:</span>
-              <span class="text-indigo-400">BM25 Okapi (Persistent JSON Index)</span>
+            <div class="flex justify-between py-1.5 border-b" style="border-color: var(--border-subtle);">
+              <span style="color: var(--text-muted);">Lexical Search:</span>
+              <span class="text-indigo-500">BM25 Okapi (Persistent JSON Index)</span>
             </div>
-            <div class="flex justify-between py-1.5 border-b border-white/[0.06]">
-              <span class="text-slate-400">Web Retrieval:</span>
-              <span class="text-cyan-400">Exa AI Neural Search API</span>
+            <div class="flex justify-between py-1.5 border-b" style="border-color: var(--border-subtle);">
+              <span style="color: var(--text-muted);">Web Retrieval:</span>
+              <span class="text-cyan-500">Exa AI Neural Search API</span>
             </div>
             <div class="flex justify-between py-1.5">
-              <span class="text-slate-400">Backend Server:</span>
-              <span class="text-amber-400">FastAPI 0.142 + Uvicorn (Port 8000)</span>
+              <span style="color: var(--text-muted);">Backend Server:</span>
+              <span class="text-amber-500">FastAPI 0.142 + Uvicorn (Port 8000)</span>
             </div>
           </div>
         </div>
@@ -919,25 +1006,25 @@
     <!-- ======================================================================= -->
     <!-- DOCUMENT PREVIEW MODAL / DRAWER                                         -->
     <!-- ======================================================================= -->
-    <div id="docViewerModal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-[80] flex items-center justify-center p-4 hidden">
+    <div id="docViewerModal" class="fixed inset-0 bg-black/75 backdrop-blur-md z-[80] flex items-center justify-center p-4 hidden">
       <div class="glass-panel rounded-2xl max-w-2xl w-full p-6 shadow-2xl flex flex-col max-h-[85vh] space-y-4 border-indigo-500/30">
-        <div class="flex items-center justify-between border-b border-white/[0.08] pb-3">
+        <div class="flex items-center justify-between border-b pb-3" style="border-color: var(--border-panel);">
           <div class="flex items-center space-x-2.5">
-            <div class="w-8 h-8 rounded-lg bg-indigo-500/20 text-indigo-400 flex items-center justify-center text-sm">
+            <div class="w-8 h-8 rounded-lg bg-indigo-500/20 text-indigo-500 flex items-center justify-center text-sm">
               <i class="fa-solid fa-file-lines"></i>
             </div>
             <div>
-              <h3 id="modalDocTitle" class="font-bold text-white text-sm">document.txt</h3>
-              <p id="modalDocMeta" class="text-[11px] text-slate-400">1,240 characters • Text file</p>
+              <h3 id="modalDocTitle" class="font-bold text-sm" style="color: var(--text-main);">document.txt</h3>
+              <p id="modalDocMeta" class="text-[11px]" style="color: var(--text-muted);">1,240 characters • Text file</p>
             </div>
           </div>
-          <button onclick="closeDocModal()" class="text-slate-400 hover:text-white p-1">
+          <button onclick="closeDocModal()" class="hover:text-red-400 p-1 transition" style="color: var(--text-muted);">
             <i class="fa-solid fa-xmark text-lg"></i>
           </button>
         </div>
 
         <!-- Full Document Text Content -->
-        <div class="flex-1 overflow-y-auto p-4 bg-black/60 rounded-xl border border-white/[0.08] text-xs text-slate-300 font-mono whitespace-pre-wrap leading-relaxed">
+        <div class="flex-1 overflow-y-auto p-4 theme-subtle rounded-xl text-xs font-mono whitespace-pre-wrap leading-relaxed" style="color: var(--text-main);">
           <div id="modalDocBody"></div>
         </div>
 
@@ -946,9 +1033,133 @@
             <i class="fa-solid fa-comments"></i>
             <span>Ask question about this document</span>
           </button>
-          <button onclick="closeDocModal()" class="px-4 py-2 bg-white/[0.08] hover:bg-white/[0.15] text-slate-300 rounded-xl text-xs font-medium transition">
+          <button onclick="closeDocModal()" class="px-4 py-2 theme-subtle rounded-xl text-xs font-medium transition" style="color: var(--text-main);">
             Close
           </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ======================================================================= -->
+    <!-- CRAZY HOLOGRAPHIC DEVELOPER PROFILE SHOWCASE MODAL                       -->
+    <!-- ======================================================================= -->
+    <div id="developerProfileModal" class="fixed inset-0 bg-black/80 backdrop-blur-xl z-[90] flex items-center justify-center p-4 hidden">
+      <div class="relative max-w-lg w-full rounded-3xl p-1 bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 shadow-2xl shadow-indigo-500/30 transform transition-all">
+        
+        <!-- Inner Card -->
+        <div class="glass-panel rounded-[22px] p-6 sm:p-7 relative overflow-hidden flex flex-col space-y-6" style="background: var(--bg-panel);">
+          
+          <!-- Close Button -->
+          <button onclick="closeProfileModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full theme-subtle flex items-center justify-center hover:bg-red-500/20 hover:text-red-400 transition z-10" style="color: var(--text-muted);">
+            <i class="fa-solid fa-xmark text-sm"></i>
+          </button>
+
+          <!-- Cyber Background Accents -->
+          <div class="absolute -top-16 -right-16 w-44 h-44 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none"></div>
+          <div class="absolute -bottom-16 -left-16 w-44 h-44 bg-purple-500/20 rounded-full blur-3xl pointer-events-none"></div>
+
+          <!-- Profile Header Section -->
+          <div class="flex flex-col sm:flex-row items-center sm:items-start space-y-4 sm:space-y-0 sm:space-x-5 text-center sm:text-left pt-2">
+            
+            <!-- Real Avatar with Glowing Cyber Rings -->
+            <div class="relative flex-shrink-0">
+              <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden ring-4 ring-indigo-500/40 shadow-xl shadow-indigo-500/25 p-0.5 bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500">
+                <img 
+                  src="https://avatars.githubusercontent.com/u/103997288?v=4" 
+                  onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=Sathish&size=128&background=6366f1&color=fff&bold=true';" 
+                  alt="Sathish" 
+                  class="w-full h-full object-cover rounded-[14px]"
+                />
+              </div>
+              <span class="absolute -bottom-1 -right-1 flex h-5 w-5">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-5 w-5 bg-emerald-500 border-2 border-white dark:border-slate-900 flex items-center justify-center text-[9px] text-white">
+                  <i class="fa-solid fa-check"></i>
+                </span>
+              </span>
+            </div>
+
+            <!-- Identity & Badges -->
+            <div class="space-y-1.5 flex-1">
+              <div class="flex flex-wrap items-center justify-center sm:justify-start gap-2">
+                <h3 class="text-xl sm:text-2xl font-black tracking-tight" style="color: var(--text-main);">Sathish</h3>
+                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-blue-500/10 text-blue-500 border border-blue-500/30 flex items-center space-x-1">
+                  <i class="fa-solid fa-certificate text-[9px]"></i>
+                  <span>Verified AI Engineer</span>
+                </span>
+              </div>
+              
+              <div class="text-xs sm:text-sm font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500">
+                AI Engineer & Intelligent Systems Architect
+              </div>
+
+              <p class="text-xs leading-relaxed max-w-sm pt-1" style="color: var(--text-muted);">
+                Architecting intelligent multi-agent systems, hybrid RAG pipelines, and enterprise-grade generative AI applications.
+              </p>
+            </div>
+          </div>
+
+          <!-- Highlight Telemetry Stats Grid -->
+          <div class="grid grid-cols-3 gap-2.5 pt-1">
+            <div class="theme-subtle p-3 rounded-2xl text-center space-y-0.5">
+              <div class="text-lg font-black text-indigo-500 dark:text-indigo-400 font-mono">14</div>
+              <div class="text-[10px] uppercase font-semibold" style="color: var(--text-muted);">Public Repos</div>
+            </div>
+            <div class="theme-subtle p-3 rounded-2xl text-center space-y-0.5">
+              <div class="text-lg font-black text-purple-500 dark:text-purple-400 font-mono">4</div>
+              <div class="text-[10px] uppercase font-semibold" style="color: var(--text-muted);">AI Providers</div>
+            </div>
+            <div class="theme-subtle p-3 rounded-2xl text-center space-y-0.5">
+              <div class="text-lg font-black text-emerald-500 dark:text-emerald-400 font-mono">100%</div>
+              <div class="text-[10px] uppercase font-semibold" style="color: var(--text-muted);">Open Source</div>
+            </div>
+          </div>
+
+          <!-- Technical Arsenal Badges -->
+          <div class="space-y-2">
+            <span class="text-[11px] font-semibold uppercase tracking-wider block" style="color: var(--text-muted);">Technical Arsenal</span>
+            <div class="flex flex-wrap gap-1.5 text-[11px] font-mono">
+              <span class="px-2.5 py-1 rounded-lg theme-subtle text-indigo-500 dark:text-indigo-300 border border-indigo-500/20 font-medium">Python 3.12</span>
+              <span class="px-2.5 py-1 rounded-lg theme-subtle text-purple-500 dark:text-purple-300 border border-purple-500/20 font-medium">LangChain</span>
+              <span class="px-2.5 py-1 rounded-lg theme-subtle text-emerald-500 dark:text-emerald-300 border border-emerald-500/20 font-medium">ChromaDB</span>
+              <span class="px-2.5 py-1 rounded-lg theme-subtle text-cyan-500 dark:text-cyan-300 border border-cyan-500/20 font-medium">Jina Embeddings</span>
+              <span class="px-2.5 py-1 rounded-lg theme-subtle text-amber-500 dark:text-amber-300 border border-amber-500/20 font-medium">BM25 Okapi</span>
+              <span class="px-2.5 py-1 rounded-lg theme-subtle text-pink-500 dark:text-pink-300 border border-pink-500/20 font-medium">FastAPI</span>
+            </div>
+          </div>
+
+          <!-- Action Buttons / Links -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-2">
+            <a 
+              href="https://www.linkedin.com/in/sathishbabu-shanmugam/" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              class="py-2.5 px-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs flex items-center justify-center space-x-2 shadow-lg shadow-blue-600/30 transition transform hover:-translate-y-0.5"
+            >
+              <i class="fa-brands fa-linkedin text-sm"></i>
+              <span>Connect on LinkedIn</span>
+            </a>
+
+            <a 
+              href="https://github.com/sathishatgit" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              class="py-2.5 px-4 rounded-xl bg-slate-900 hover:bg-black text-white dark:bg-white/10 dark:hover:bg-white/20 font-semibold text-xs flex items-center justify-center space-x-2 transition transform hover:-translate-y-0.5"
+            >
+              <i class="fa-brands fa-github text-sm"></i>
+              <span>GitHub Profile</span>
+            </a>
+          </div>
+
+          <!-- Micro Slogan & Confetti Trigger -->
+          <div class="text-center pt-1 border-t" style="border-color: var(--border-panel);">
+            <button onclick="triggerProfileLove()" class="text-xs hover:scale-105 transition transform flex items-center justify-center space-x-1.5 mx-auto font-medium" style="color: var(--text-muted);">
+              <span>Engineered with</span>
+              <i class="fa-solid fa-heart text-red-500 animate-heartbeat text-sm"></i>
+              <span>by <strong style="color: var(--text-main);">Sathish</strong> • Click for Love ✨</span>
+            </button>
+          </div>
+
         </div>
       </div>
     </div>
@@ -958,45 +1169,53 @@
   <!-- ========================================================================= -->
   <!-- FOOTER: Made with Love by Sathish (AI Engineer) with Clickable Links       -->
   <!-- ========================================================================= -->
-  <footer class="border-t border-white/[0.08] bg-[#090d16] py-6 px-4 sm:px-6 mt-auto">
-    <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-slate-400">
+  <footer style="background: var(--bg-footer); border-top: 1px solid var(--border-footer);" class="py-6 px-4 sm:px-6 mt-auto transition-colors duration-300">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-xs" style="color: var(--text-muted);">
       
       <!-- Brand & Capabilities -->
       <div class="flex items-center space-x-2 text-center md:text-left">
-        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-        <span class="font-semibold text-slate-200">AGUI Knowledge Assistant</span>
-        <span class="text-slate-600 hidden sm:inline">•</span>
-        <span class="text-slate-400 hidden sm:inline">Multi-LLM & Hybrid RAG Engine</span>
+        <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+        <span class="font-bold text-sm" style="color: var(--text-main);">AGUI Knowledge Assistant</span>
+        <span class="hidden sm:inline" style="color: var(--border-panel);">•</span>
+        <span class="hidden sm:inline">Multi-LLM & Hybrid RAG Engine</span>
       </div>
 
-      <!-- Slogan with Clickable GitHub Link for Sathish -->
-      <div class="flex items-center space-x-1.5 text-slate-300 text-center">
+      <!-- Slogan with Clickable Holographic Badge for Sathish -->
+      <div class="flex items-center space-x-2 text-center">
         <span>Made with</span>
-        <i class="fa-solid fa-heart text-red-500 animate-pulse text-xs"></i>
+        <i class="fa-solid fa-heart text-red-500 animate-heartbeat text-sm cursor-pointer" onclick="triggerProfileLove()" title="Send love"></i>
         <span>by</span>
-        <a 
-          href="https://github.com/sathishatgit" 
-          target="_blank" 
-          rel="noopener noreferrer" 
-          class="font-bold text-indigo-400 hover:text-indigo-300 underline decoration-indigo-500/50 hover:decoration-indigo-300 transition"
-          title="Visit Sathish's GitHub Profile"
+        
+        <button 
+          onclick="openProfileModal()" 
+          class="group relative inline-flex items-center space-x-2 px-3 py-1 rounded-full theme-subtle border border-indigo-500/40 hover:border-indigo-500 hover:shadow-lg hover:shadow-indigo-500/20 transition-all duration-300 cursor-pointer"
+          title="Open Sathish's Developer Profile"
         >
-          Sathish
-        </a>
-        <span class="text-slate-500">—</span>
-        <span class="text-indigo-300 font-medium">AI Engineer</span>
+          <img 
+            src="https://avatars.githubusercontent.com/u/103997288?v=4" 
+            onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=Sathish&size=32&background=6366f1&color=fff';" 
+            alt="Sathish" 
+            class="w-5 h-5 rounded-full object-cover ring-1 ring-indigo-500 flex-shrink-0"
+          />
+          <span class="font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-500 group-hover:from-indigo-400 group-hover:to-pink-500 text-xs">
+            Sathish
+          </span>
+          <span class="text-[10px] font-semibold text-slate-400 dark:text-slate-500">•</span>
+          <span class="text-[10px] font-semibold text-indigo-600 dark:text-indigo-400">AI Engineer</span>
+          <i class="fa-solid fa-sparkles text-amber-400 text-[10px] group-hover:rotate-12 transition transform"></i>
+        </button>
       </div>
 
       <!-- Social & Project Links -->
-      <div class="flex items-center space-x-5 text-slate-400">
+      <div class="flex items-center space-x-4" style="color: var(--text-muted);">
         <a 
           href="https://github.com/sathishatgit" 
           target="_blank" 
           rel="noopener noreferrer" 
-          class="hover:text-white transition flex items-center space-x-1.5 group"
+          class="hover:text-indigo-600 dark:hover:text-white transition flex items-center space-x-1.5 group font-medium"
           title="GitHub Profile"
         >
-          <i class="fa-brands fa-github text-sm text-slate-400 group-hover:text-white"></i>
+          <i class="fa-brands fa-github text-sm"></i>
           <span>GitHub</span>
         </a>
 
@@ -1004,10 +1223,10 @@
           href="https://www.linkedin.com/in/sathishbabu-shanmugam/" 
           target="_blank" 
           rel="noopener noreferrer" 
-          class="hover:text-white transition flex items-center space-x-1.5 group"
+          class="hover:text-blue-500 dark:hover:text-blue-400 transition flex items-center space-x-1.5 group font-medium"
           title="LinkedIn Profile"
         >
-          <i class="fa-brands fa-linkedin text-sm text-blue-400 group-hover:text-blue-300"></i>
+          <i class="fa-brands fa-linkedin text-sm text-blue-500"></i>
           <span>LinkedIn</span>
         </a>
 
@@ -1015,10 +1234,10 @@
           href="https://github.com/sathishatgit/genai-knowledge-assistant" 
           target="_blank" 
           rel="noopener noreferrer" 
-          class="hover:text-white transition flex items-center space-x-1.5 group"
+          class="hover:text-purple-500 dark:hover:text-purple-400 transition flex items-center space-x-1.5 group font-medium"
           title="GitHub Repository"
         >
-          <i class="fa-solid fa-code-fork text-xs text-purple-400 group-hover:text-purple-300"></i>
+          <i class="fa-solid fa-code-fork text-xs text-purple-500"></i>
           <span>Repository</span>
         </a>
       </div>
@@ -1037,19 +1256,48 @@
     let currentModalDoc = null;
     let queryCounter = 0;
 
+    // Theme Management (Dark / Light) — Default to Light Theme
+    function applyTheme(theme) {
+      const html = document.documentElement;
+      const toggleIcon = document.getElementById('themeToggleIcon');
+      const toggleText = document.getElementById('themeToggleText');
+
+      if (theme === 'dark') {
+        html.classList.add('dark');
+        if (toggleIcon) toggleIcon.className = 'fa-solid fa-moon text-indigo-400 text-xs';
+        if (toggleText) toggleText.textContent = 'Dark';
+        localStorage.setItem('theme', 'dark');
+      } else {
+        html.classList.remove('dark');
+        if (toggleIcon) toggleIcon.className = 'fa-solid fa-sun text-amber-500 text-xs';
+        if (toggleText) toggleText.textContent = 'Light';
+        localStorage.setItem('theme', 'light');
+      }
+    }
+
+    function toggleTheme() {
+      const isDark = document.documentElement.classList.contains('dark');
+      applyTheme(isDark ? 'light' : 'dark');
+      showToast(`Switched to ${isDark ? 'Light' : 'Dark'} theme`, 'info');
+    }
+
+    // Default to Light theme as requested
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    applyTheme(savedTheme);
+
     // Toast Notifications
     function showToast(message, type = 'info') {
       const container = document.getElementById('toastContainer');
       const toast = document.createElement('div');
       
-      let bg = 'bg-[#0f172a] border-white/10 text-white';
-      let icon = 'fa-circle-info text-blue-400';
+      let bg = 'bg-white dark:bg-[#0f172a] border-slate-200 dark:border-white/10 text-slate-900 dark:text-white';
+      let icon = 'fa-circle-info text-blue-500';
       if (type === 'success') {
-        bg = 'bg-[#0f172a] border-emerald-500/40 text-emerald-200';
-        icon = 'fa-circle-check text-emerald-400';
+        bg = 'bg-white dark:bg-[#0f172a] border-emerald-500/40 text-emerald-700 dark:text-emerald-200';
+        icon = 'fa-circle-check text-emerald-500';
       } else if (type === 'error') {
-        bg = 'bg-[#0f172a] border-red-500/40 text-red-200';
-        icon = 'fa-circle-exclamation text-red-400';
+        bg = 'bg-white dark:bg-[#0f172a] border-red-500/40 text-red-700 dark:text-red-200';
+        icon = 'fa-circle-exclamation text-red-500';
       }
 
       toast.className = `p-3.5 rounded-xl border shadow-2xl flex items-center space-x-2.5 text-xs pointer-events-auto transition-all duration-300 transform translate-x-full ${bg}`;
@@ -1061,6 +1309,40 @@
         toast.classList.add('opacity-0', 'translate-x-full');
         setTimeout(() => toast.remove(), 300);
       }, 3500);
+    }
+
+    // Developer Profile Modal Controllers
+    function openProfileModal() {
+      const modal = document.getElementById('developerProfileModal');
+      if (modal) {
+        modal.classList.remove('hidden');
+        if (window.confetti) {
+          confetti({
+            particleCount: 45,
+            spread: 60,
+            origin: { y: 0.6 }
+          });
+        }
+      }
+    }
+
+    function closeProfileModal() {
+      const modal = document.getElementById('developerProfileModal');
+      if (modal) {
+        modal.classList.add('hidden');
+      }
+    }
+
+    function triggerProfileLove() {
+      if (window.confetti) {
+        confetti({
+          particleCount: 100,
+          spread: 80,
+          origin: { y: 0.7 },
+          colors: ['#6366f1', '#a855f7', '#ec4899', '#f43f5e', '#3b82f6']
+        });
+      }
+      showToast('Engineered with passion by Sathish — AI Engineer! ❤️', 'success');
     }
 
     // SPA Page Switching
@@ -1076,18 +1358,21 @@
         if (p === pageId) {
           viewEl.classList.remove('hidden');
           if (navBtn) {
-            navBtn.className = 'flex items-center space-x-2 px-3.5 py-1.5 rounded-lg transition text-white bg-indigo-600 shadow-md shadow-indigo-600/30';
+            navBtn.className = 'flex items-center space-x-1.5 px-3.5 py-1.5 rounded-lg whitespace-nowrap transition text-white bg-indigo-600 shadow-sm shadow-indigo-600/30 font-semibold';
+            navBtn.style.color = '#ffffff';
           }
           if (mobBtn) {
-            mobBtn.className = 'flex flex-col items-center py-1 text-indigo-400 font-medium';
+            mobBtn.className = 'flex flex-col items-center py-1 text-indigo-600 dark:text-indigo-400 font-semibold';
           }
         } else {
           viewEl.classList.add('hidden');
           if (navBtn) {
-            navBtn.className = 'flex items-center space-x-2 px-3.5 py-1.5 rounded-lg transition text-slate-400 hover:text-white hover:bg-white/5';
+            navBtn.className = 'flex items-center space-x-1.5 px-3.5 py-1.5 rounded-lg whitespace-nowrap transition font-medium hover:text-indigo-600 dark:hover:text-white';
+            navBtn.style.color = 'var(--text-muted)';
           }
           if (mobBtn) {
-            mobBtn.className = 'flex flex-col items-center py-1 text-slate-400 font-medium';
+            mobBtn.className = 'flex flex-col items-center py-1 font-medium';
+            mobBtn.style.color = 'var(--text-muted)';
           }
         }
       });
@@ -1141,15 +1426,15 @@
             if (badge) {
               if (p === data.active_provider) {
                 badge.textContent = 'Active';
-                badge.className = 'text-[10px] px-2.5 py-0.5 rounded-full font-mono font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
+                badge.className = 'text-[10px] px-2.5 py-0.5 rounded-full font-mono font-semibold bg-emerald-500/20 text-emerald-600 dark:text-emerald-300 border border-emerald-500/30';
                 if (card) card.classList.add('border-indigo-500/50');
               } else if (data.providers[p]?.ready) {
                 badge.textContent = 'Ready';
-                badge.className = 'text-[10px] px-2.5 py-0.5 rounded-full font-mono font-semibold bg-white/10 text-slate-300 border border-white/15';
+                badge.className = 'text-[10px] px-2.5 py-0.5 rounded-full font-mono font-semibold theme-subtle';
                 if (card) card.classList.remove('border-indigo-500/50');
               } else {
                 badge.textContent = 'Key Needed';
-                badge.className = 'text-[10px] px-2.5 py-0.5 rounded-full font-mono font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20';
+                badge.className = 'text-[10px] px-2.5 py-0.5 rounded-full font-mono font-semibold bg-amber-500/10 text-amber-500 border border-amber-500/20';
                 if (card) card.classList.remove('border-indigo-500/50');
               }
             }
@@ -1201,31 +1486,31 @@
       container.innerHTML = '';
 
       if (!docs || docs.length === 0) {
-        container.innerHTML = '<div class="text-slate-500 text-xs italic col-span-full py-8 text-center">No documents in knowledge base yet. Ingest a paragraph or upload a file above.</div>';
+        container.innerHTML = '<div class="text-xs italic col-span-full py-8 text-center" style="color: var(--text-muted);">No documents in knowledge base yet. Ingest a paragraph or upload a file above.</div>';
         return;
       }
 
       docs.forEach(doc => {
         const card = document.createElement('div');
-        card.className = 'p-4 rounded-xl bg-black/40 border border-white/[0.08] hover:border-indigo-500/40 transition flex flex-col justify-between space-y-3 cursor-pointer group';
+        card.className = 'p-4 rounded-xl theme-subtle hover:border-indigo-500/40 transition flex flex-col justify-between space-y-3 cursor-pointer group';
         card.onclick = () => openDocModal(doc);
         
         card.innerHTML = `
           <div>
             <div class="flex items-center justify-between mb-2">
-              <span class="font-bold text-xs text-white truncate flex items-center space-x-1.5 group-hover:text-indigo-300 transition" title="${doc.filename}">
-                <i class="fa-solid fa-file-lines text-indigo-400 text-xs"></i>
+              <span class="font-bold text-xs truncate flex items-center space-x-1.5 group-hover:text-indigo-500 dark:group-hover:text-indigo-300 transition" style="color: var(--text-main);" title="${doc.filename}">
+                <i class="fa-solid fa-file-lines text-indigo-500 text-xs"></i>
                 <span class="truncate">${doc.filename}</span>
               </span>
-              <span class="text-[10px] bg-indigo-500/10 text-indigo-300 px-2 py-0.5 rounded font-mono border border-indigo-500/20 whitespace-nowrap">${doc.char_count} chars</span>
+              <span class="text-[10px] bg-indigo-500/10 text-indigo-600 dark:text-indigo-300 px-2 py-0.5 rounded font-mono border border-indigo-500/20 whitespace-nowrap">${doc.char_count} chars</span>
             </div>
-            <p class="text-[11px] text-slate-400 line-clamp-3 leading-relaxed font-sans bg-black/50 p-2.5 rounded-lg border border-white/[0.05]">
+            <p class="text-[11px] line-clamp-3 leading-relaxed font-sans theme-subtle p-2.5 rounded-lg" style="color: var(--text-muted);">
               ${doc.preview}
             </p>
           </div>
-          <div class="flex items-center justify-between pt-2 border-t border-white/[0.06] text-[10px]">
-            <span class="text-slate-500">${(doc.size_bytes / 1024).toFixed(1)} KB</span>
-            <span class="text-indigo-400 font-semibold group-hover:translate-x-1 transition flex items-center space-x-1">
+          <div class="flex items-center justify-between pt-2 border-t text-[10px]" style="border-color: var(--border-subtle);">
+            <span style="color: var(--text-muted);">${(doc.size_bytes / 1024).toFixed(1)} KB</span>
+            <span class="text-indigo-500 dark:text-indigo-400 font-semibold group-hover:translate-x-1 transition flex items-center space-x-1">
               <span>View full doc</span>
               <i class="fa-solid fa-arrow-right text-[9px]"></i>
             </span>
@@ -1423,16 +1708,16 @@
 
       card.innerHTML = `
         <!-- User Query Bubble -->
-        <div class="flex items-start space-x-3 border-b border-white/[0.08] pb-4">
+        <div class="flex items-start space-x-3 border-b pb-4" style="border-color: var(--border-panel);">
           <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center text-white text-xs font-bold shadow-md">
             <i class="fa-solid fa-user"></i>
           </div>
           <div class="flex-1">
             <div class="flex items-center justify-between">
-              <span class="text-xs font-bold text-white">Your Query</span>
-              <span class="text-[10px] text-slate-500 font-mono">${new Date().toLocaleTimeString()}</span>
+              <span class="text-xs font-bold" style="color: var(--text-main);">Your Query</span>
+              <span class="text-[10px] font-mono" style="color: var(--text-muted);">${new Date().toLocaleTimeString()}</span>
             </div>
-            <p class="text-sm text-slate-200 mt-1 font-medium">${query}</p>
+            <p class="text-sm mt-1 font-medium" style="color: var(--text-main);">${query}</p>
           </div>
         </div>
 
@@ -1440,63 +1725,63 @@
         <div class="space-y-3">
           <div class="flex items-center justify-between">
             <div class="flex items-center space-x-2">
-              <span id="spinner-${currentQueryId}" class="w-3.5 h-3.5 border-2 border-indigo-400 border-t-transparent rounded-full animate-spin"></span>
-              <span class="text-xs font-semibold text-slate-300">Agent Pipeline Execution</span>
+              <span id="spinner-${currentQueryId}" class="w-3.5 h-3.5 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin"></span>
+              <span class="text-xs font-semibold" style="color: var(--text-main);">Agent Pipeline Execution</span>
             </div>
-            <span id="badge-route-${currentQueryId}" class="text-xs px-2.5 py-0.5 rounded-full font-mono font-bold uppercase bg-slate-800 text-slate-400 border border-slate-700">
+            <span id="badge-route-${currentQueryId}" class="text-xs px-2.5 py-0.5 rounded-full font-mono font-bold uppercase theme-subtle" style="color: var(--text-muted);">
               Routing...
             </span>
           </div>
 
           <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
             <div id="step1-${currentQueryId}" class="p-2.5 rounded-xl bg-indigo-500/15 border border-indigo-500/40 text-xs">
-              <div class="font-bold text-indigo-300">1. Classifier</div>
-              <div class="text-[10px] text-indigo-200 font-mono truncate" id="step1-detail-${currentQueryId}">Evaluating query</div>
+              <div class="font-bold text-indigo-500 dark:text-indigo-300">1. Classifier</div>
+              <div class="text-[10px] text-indigo-600 dark:text-indigo-200 font-mono truncate" id="step1-detail-${currentQueryId}">Evaluating query</div>
             </div>
-            <div id="step2-${currentQueryId}" class="p-2.5 rounded-xl bg-black/40 border border-white/[0.06] text-xs">
-              <div class="font-bold text-slate-400">2. Retrieval</div>
-              <div class="text-[10px] text-slate-500 font-mono truncate" id="step2-detail-${currentQueryId}">Pending</div>
+            <div id="step2-${currentQueryId}" class="p-2.5 rounded-xl theme-subtle text-xs">
+              <div class="font-bold" style="color: var(--text-muted);">2. Retrieval</div>
+              <div class="text-[10px] font-mono truncate" style="color: var(--text-muted);" id="step2-detail-${currentQueryId}">Pending</div>
             </div>
-            <div id="step3-${currentQueryId}" class="p-2.5 rounded-xl bg-black/40 border border-white/[0.06] text-xs">
-              <div class="font-bold text-slate-400">3. RRF Fusion</div>
-              <div class="text-[10px] text-slate-500 font-mono truncate" id="step3-detail-${currentQueryId}">Pending</div>
+            <div id="step3-${currentQueryId}" class="p-2.5 rounded-xl theme-subtle text-xs">
+              <div class="font-bold" style="color: var(--text-muted);">3. RRF Fusion</div>
+              <div class="text-[10px] font-mono truncate" style="color: var(--text-muted);" id="step3-detail-${currentQueryId}">Pending</div>
             </div>
-            <div id="step4-${currentQueryId}" class="p-2.5 rounded-xl bg-black/40 border border-white/[0.06] text-xs">
-              <div class="font-bold text-slate-400">4. Synthesis</div>
-              <div class="text-[10px] text-slate-500 font-mono truncate" id="step4-detail-${currentQueryId}">Pending</div>
+            <div id="step4-${currentQueryId}" class="p-2.5 rounded-xl theme-subtle text-xs">
+              <div class="font-bold" style="color: var(--text-muted);">4. Synthesis</div>
+              <div class="text-[10px] font-mono truncate" style="color: var(--text-muted);" id="step4-detail-${currentQueryId}">Pending</div>
             </div>
           </div>
         </div>
 
         <!-- Rationale Box -->
-        <div id="rationale-box-${currentQueryId}" class="p-3.5 bg-black/50 rounded-xl border border-indigo-900/40 text-xs hidden">
-          <div class="text-indigo-400 font-semibold mb-1 flex items-center space-x-1.5">
-            <i class="fa-solid fa-lightbulb text-amber-400"></i>
+        <div id="rationale-box-${currentQueryId}" class="p-3.5 theme-subtle rounded-xl text-xs hidden">
+          <div class="text-indigo-500 dark:text-indigo-400 font-semibold mb-1 flex items-center space-x-1.5">
+            <i class="fa-solid fa-lightbulb text-amber-500"></i>
             <span>Intelligent Routing Rationale:</span>
           </div>
-          <p id="rationale-text-${currentQueryId}" class="text-slate-300 leading-relaxed"></p>
+          <p id="rationale-text-${currentQueryId}" class="leading-relaxed" style="color: var(--text-main);"></p>
         </div>
 
         <!-- Sources Box -->
-        <div id="sources-box-${currentQueryId}" class="p-3.5 bg-black/50 rounded-xl border border-white/[0.08] text-xs hidden">
-          <div class="text-slate-300 font-semibold mb-2 flex items-center space-x-1.5">
-            <i class="fa-solid fa-book-open-reader text-indigo-400"></i>
+        <div id="sources-box-${currentQueryId}" class="p-3.5 theme-subtle rounded-xl text-xs hidden">
+          <div class="font-semibold mb-2 flex items-center space-x-1.5" style="color: var(--text-main);">
+            <i class="fa-solid fa-book-open-reader text-indigo-500"></i>
             <span>Retrieved Evidence & Grounding Sources:</span>
           </div>
           <div id="sources-list-${currentQueryId}" class="flex flex-wrap gap-2"></div>
         </div>
 
         <!-- Synthesized Answer Box -->
-        <div id="answer-box-${currentQueryId}" class="p-5 bg-black/70 rounded-xl border border-indigo-500/30 text-sm hidden shadow-inner space-y-3">
-          <div class="flex items-center justify-between border-b border-white/[0.08] pb-2.5">
+        <div id="answer-box-${currentQueryId}" class="p-5 theme-subtle rounded-xl border border-indigo-500/30 text-sm hidden shadow-inner space-y-3">
+          <div class="flex items-center justify-between border-b pb-2.5" style="border-color: var(--border-panel);">
             <div class="flex items-center space-x-2">
-              <span class="w-6 h-6 rounded-md bg-purple-500/20 text-purple-400 flex items-center justify-center text-xs">
+              <span class="w-6 h-6 rounded-md bg-purple-500/20 text-purple-500 flex items-center justify-center text-xs">
                 <i class="fa-solid fa-wand-magic-sparkles"></i>
               </span>
-              <span class="font-semibold text-xs text-white">Synthesized Agent Response:</span>
-              <span id="model-tag-${currentQueryId}" class="text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-mono"></span>
+              <span class="font-semibold text-xs" style="color: var(--text-main);">Synthesized Agent Response:</span>
+              <span id="model-tag-${currentQueryId}" class="text-[10px] theme-subtle px-2 py-0.5 rounded font-mono" style="color: var(--text-main);"></span>
             </div>
-            <button onclick="copyCardAnswer(${currentQueryId})" class="text-xs px-2.5 py-1 bg-white/[0.08] hover:bg-white/[0.15] text-slate-300 rounded-md transition flex items-center space-x-1">
+            <button onclick="copyCardAnswer(${currentQueryId})" class="text-xs px-2.5 py-1 theme-subtle hover:border-indigo-500/50 rounded-md transition flex items-center space-x-1" style="color: var(--text-main);">
               <i class="fa-regular fa-copy"></i>
               <span>Copy</span>
             </button>
@@ -1530,9 +1815,9 @@
 
         function markCompleted(el, detailEl, label) {
           el.className = 'p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-xs';
-          el.querySelector('div').className = 'font-bold text-emerald-300';
+          el.querySelector('div').className = 'font-bold text-emerald-600 dark:text-emerald-300';
           detailEl.textContent = label;
-          detailEl.className = 'text-[10px] text-emerald-400 font-mono truncate';
+          detailEl.className = 'text-[10px] text-emerald-600 dark:text-emerald-400 font-mono truncate';
         }
 
         const d1 = document.getElementById(`step1-detail-${currentQueryId}`);
@@ -1541,25 +1826,25 @@
         const d4 = document.getElementById(`step4-detail-${currentQueryId}`);
 
         if (route === 'direct_llm') {
-          badge.className = 'text-xs px-2.5 py-0.5 rounded-full font-mono font-bold uppercase bg-slate-700 text-slate-200 border border-slate-600';
+          badge.className = 'text-xs px-2.5 py-0.5 rounded-full font-mono font-bold uppercase theme-subtle border border-slate-400 dark:border-slate-600';
           markCompleted(step1, d1, 'Direct LLM');
           markCompleted(step2, d2, 'Skipped (Zero Overhead)');
           markCompleted(step3, d3, 'Direct Pass');
           markCompleted(step4, d4, 'Synthesized');
         } else if (route === 'local_rag') {
-          badge.className = 'text-xs px-2.5 py-0.5 rounded-full font-mono font-bold uppercase bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
+          badge.className = 'text-xs px-2.5 py-0.5 rounded-full font-mono font-bold uppercase bg-emerald-500/20 text-emerald-600 dark:text-emerald-300 border border-emerald-500/30';
           markCompleted(step1, d1, 'Local RAG');
           markCompleted(step2, d2, 'BM25 + ChromaDB');
           markCompleted(step3, d3, 'RRF Ranking (k=60)');
           markCompleted(step4, d4, 'Synthesized');
         } else if (route === 'web_search') {
-          badge.className = 'text-xs px-2.5 py-0.5 rounded-full font-mono font-bold uppercase bg-cyan-500/20 text-cyan-300 border border-cyan-500/30';
+          badge.className = 'text-xs px-2.5 py-0.5 rounded-full font-mono font-bold uppercase bg-cyan-500/20 text-cyan-600 dark:text-cyan-300 border border-cyan-500/30';
           markCompleted(step1, d1, 'Web Search');
           markCompleted(step2, d2, 'Exa AI Neural Index');
           markCompleted(step3, d3, 'Web Snippets Fusion');
           markCompleted(step4, d4, 'Synthesized');
         } else if (route === 'both') {
-          badge.className = 'text-xs px-2.5 py-0.5 rounded-full font-mono font-bold uppercase bg-purple-500/20 text-purple-300 border border-purple-500/30';
+          badge.className = 'text-xs px-2.5 py-0.5 rounded-full font-mono font-bold uppercase bg-purple-500/20 text-purple-600 dark:text-purple-300 border border-purple-500/30';
           markCompleted(step1, d1, 'Both Fused');
           markCompleted(step2, d2, 'Hybrid RAG + Exa Web');
           markCompleted(step3, d3, 'Cross-Context Fusion');
@@ -1581,7 +1866,7 @@
           hasSources = true;
           data.internal_sources.forEach(src => {
             const badgeEl = document.createElement('span');
-            badgeEl.className = 'px-2.5 py-1 bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 rounded-lg font-mono text-[11px] flex items-center space-x-1.5';
+            badgeEl.className = 'px-2.5 py-1 bg-emerald-500/10 text-emerald-600 dark:text-emerald-300 border border-emerald-500/20 rounded-lg font-mono text-[11px] flex items-center space-x-1.5';
             badgeEl.innerHTML = `<i class="fa-solid fa-file-lines text-[10px]"></i><span>${src}</span>`;
             sourcesList.appendChild(badgeEl);
           });
@@ -1594,7 +1879,7 @@
             link.href = item.url;
             link.target = '_blank';
             link.rel = 'noopener noreferrer';
-            link.className = 'px-2.5 py-1 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 border border-cyan-500/20 rounded-lg text-[11px] flex items-center space-x-1.5 transition';
+            link.className = 'px-2.5 py-1 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-600 dark:text-cyan-300 border border-cyan-500/20 rounded-lg text-[11px] flex items-center space-x-1.5 transition';
             link.innerHTML = `<i class="fa-solid fa-arrow-up-right-from-square text-[9px]"></i><span>${item.title || item.url}</span>`;
             sourcesList.appendChild(link);
           });
@@ -1610,10 +1895,9 @@
         
         if (window.marked) {
           answerTextEl.innerHTML = marked.parse(rawAnswer);
-          // Highlight all code blocks
+          // Highlight code blocks
           answerTextEl.querySelectorAll('pre code').forEach((block) => {
             hljs.highlightElement(block);
-            // Add copy button to pre
             const pre = block.parentElement;
             if (!pre.querySelector('.code-copy-btn')) {
               const copyBtn = document.createElement('button');
