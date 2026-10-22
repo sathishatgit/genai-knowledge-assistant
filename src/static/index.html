@@ -21,15 +21,23 @@
             <h1 class="font-bold text-lg text-white">AGUI Agent Hub</h1>
             <span class="text-xs bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 px-2 py-0.5 rounded-full font-mono">Live Interactive</span>
           </div>
-          <p class="text-xs text-slate-400">Intelligent Routing • Hybrid RAG • Gemini • Developed by <a href="https://www.linkedin.com/in/sathishbabu-shanmugam/" target="_blank" class="text-indigo-400 font-semibold hover:underline">Sathish</a> (AI Engineer)</p>
+          <p class="text-xs text-slate-400">Intelligent Routing • Hybrid RAG • Multi-LLM (Gemini / OpenAI / NVIDIA / Ollama) • Developed by <a href="https://www.linkedin.com/in/sathishbabu-shanmugam/" target="_blank" class="text-indigo-400 font-semibold hover:underline">Sathish</a> (AI Engineer)</p>
         </div>
 
       <!-- Action Buttons & Status -->
       <div class="flex items-center flex-wrap gap-2 text-xs">
-        <div class="flex items-center space-x-1.5 px-3 py-1.5 bg-slate-800/80 rounded-lg border border-slate-700">
-          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-          <span class="text-slate-300">Gemini:</span>
-          <span id="geminiStatus" class="font-semibold text-emerald-400">Checking...</span>
+        <!-- LLM Provider Selector -->
+        <div class="flex items-center space-x-1.5 px-3 py-1.5 bg-indigo-950/60 rounded-lg border border-indigo-700/60 shadow-sm">
+          <i class="fa-solid fa-microchip text-indigo-400 text-xs"></i>
+          <span class="text-slate-300">LLM:</span>
+          <select id="providerSelect" onchange="handleProviderChange(this.value)" class="bg-slate-900 text-indigo-300 font-semibold text-xs border border-indigo-500/40 rounded px-1.5 py-0.5 outline-none focus:ring-1 focus:ring-indigo-500 cursor-pointer">
+            <option value="gemini">Google Gemini</option>
+            <option value="openai">OpenAI</option>
+            <option value="nvidia">NVIDIA NIM</option>
+            <option value="ollama">Ollama (Local / Cloud)</option>
+          </select>
+          <span id="providerModelBadge" class="text-[10px] bg-indigo-500/20 text-indigo-300 px-1.5 py-0.5 rounded border border-indigo-500/30 font-mono hidden sm:inline"></span>
+          <span id="providerStatusDot" class="w-2 h-2 rounded-full bg-emerald-400" title="Active LLM status"></span>
         </div>
         <div class="flex items-center space-x-1.5 px-3 py-1.5 bg-slate-800/80 rounded-lg border border-slate-700">
           <span class="w-2 h-2 rounded-full bg-blue-400"></span>
@@ -363,8 +371,20 @@
         const res = await fetch('/api/status');
         const data = await res.json();
         
-        document.getElementById('geminiStatus').textContent = data.gemini ? 'Ready' : 'Not Set';
-        document.getElementById('geminiStatus').className = data.gemini ? 'font-semibold text-emerald-400' : 'font-semibold text-amber-400';
+        // Active Provider and Model badge
+        if (data.active_provider) {
+          const select = document.getElementById('providerSelect');
+          if (select) select.value = data.active_provider;
+          const badge = document.getElementById('providerModelBadge');
+          if (badge) badge.textContent = data.active_model || data.active_provider;
+          const dot = document.getElementById('providerStatusDot');
+          if (dot) {
+            dot.className = data.active_ready 
+              ? 'w-2 h-2 rounded-full bg-emerald-400 animate-pulse' 
+              : 'w-2 h-2 rounded-full bg-amber-400';
+            dot.title = data.active_ready ? 'Provider Ready' : 'Key / Endpoint Missing';
+          }
+        }
         
         document.getElementById('jinaStatus').textContent = data.jina ? 'Ready' : 'Not Set';
         document.getElementById('jinaStatus').className = data.jina ? 'font-semibold text-emerald-400' : 'font-semibold text-amber-400';
@@ -377,6 +397,22 @@
         console.warn('Status check failed:', e);
       }
       fetchDocuments();
+    }
+
+    async function handleProviderChange(provider) {
+      try {
+        const res = await fetch('/api/providers/select', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ provider })
+        });
+        const result = await res.json();
+        if (result.success) {
+          fetchStatus();
+        }
+      } catch (e) {
+        console.error('Failed to switch provider:', e);
+      }
     }
 
     // Fetch list of documents in knowledge base

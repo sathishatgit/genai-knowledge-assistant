@@ -18,13 +18,24 @@ BM25_INDEX_PATH = DATA_DIR / "bm25_index.json"
 # Load environment variables from .env if present
 load_dotenv(dotenv_path=BASE_DIR / ".env")
 
+# Active LLM Provider: 'gemini' | 'openai' | 'ollama' | 'nvidia'
+LLM_PROVIDER = os.getenv("LLM_PROVIDER", "gemini").strip().lower()
+
 # API Keys
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "").strip()
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "").strip()
+NVIDIA_API_KEY = os.getenv("NVIDIA_API_KEY", "").strip()
 JINA_API_KEY = os.getenv("JINA_API_KEY", "").strip()
 EXA_API_KEY = os.getenv("EXA_API_KEY", "").strip()
 
 # Model Configurations
 GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-3.5-flash").strip()
+OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4o-mini").strip()
+NVIDIA_MODEL = os.getenv("NVIDIA_MODEL", "meta/llama-3.1-8b-instruct").strip()
+NVIDIA_BASE_URL = os.getenv("NVIDIA_BASE_URL", "https://integrate.api.nvidia.com/v1").strip()
+OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434").strip()
+OLLAMA_API_KEY = os.getenv("OLLAMA_API_KEY", "").strip()
+OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "llama3").strip()
 JINA_EMBEDDING_MODEL = os.getenv("JINA_EMBEDDING_MODEL", "jina-embeddings-v3").strip()
 
 # Chunking Parameters
@@ -55,6 +66,9 @@ def check_all_keys(verbose: bool = False) -> dict:
     """
     status = {
         "GEMINI_API_KEY": bool(GEMINI_API_KEY and not GEMINI_API_KEY.startswith("your_")),
+        "OPENAI_API_KEY": bool(OPENAI_API_KEY and not OPENAI_API_KEY.startswith("your_")),
+        "NVIDIA_API_KEY": bool(NVIDIA_API_KEY and not NVIDIA_API_KEY.startswith("your_")),
+        "OLLAMA_AVAILABLE": bool(OLLAMA_BASE_URL),
         "JINA_API_KEY": bool(JINA_API_KEY and not JINA_API_KEY.startswith("your_")),
         "EXA_API_KEY": bool(EXA_API_KEY and not EXA_API_KEY.startswith("your_")),
     }

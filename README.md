@@ -5,9 +5,13 @@
 ### Multi-Route Query Router • Hybrid RAG (BM25 + ChromaDB) • Live Web Search • AGUI Dashboard
 
 [![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.110%2B-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
-[![Google Gemini](https://img.shields.io/badge/Google%20Gemini-1.5%20%2F%20Flash-4285F4?style=for-the-badge&logo=google&logoColor=white)](https://aistudio.google.com/)
+[![LangChain](https://img.shields.io/badge/LangChain-1.4%2B-1C3C3C?style=for-the-badge&logo=chainlink&logoColor=white)](https://www.langchain.com/)
+[![Google Gemini](https://img.shields.io/badge/Google%20Gemini-3.5%20%2F%20Flash-4285F4?style=for-the-badge&logo=google&logoColor=white)](https://aistudio.google.com/)
+[![OpenAI](https://img.shields.io/badge/OpenAI-GPT--4o-412991?style=for-the-badge&logo=openai&logoColor=white)](https://platform.openai.com/)
+[![NVIDIA NIM](https://img.shields.io/badge/NVIDIA%20NIM-Llama%203.1-76B900?style=for-the-badge&logo=nvidia&logoColor=white)](https://build.nvidia.com/)
+[![Ollama](https://img.shields.io/badge/Ollama-Local%20%26%20Cloud-black?style=for-the-badge&logo=ollama&logoColor=white)](https://ollama.com/)
 [![ChromaDB](https://img.shields.io/badge/ChromaDB-Vector%20Store-FF6F61?style=for-the-badge&logo=databricks&logoColor=white)](https://www.trychroma.com/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.110%2B-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=for-the-badge)](https://github.com/sathishatgit/genai-knowledge-assistant/pulls)
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/sathishbabu-shanmugam/)
 
@@ -42,13 +46,14 @@ The **Intelligent GenAI Knowledge Assistant** solves this through a **Decoupled 
 
 | Capability | Technology | Description |
 |---|---|---|
-| **Intelligent Routing** | `Google Gemini 1.5 Flash` | Autonomous 4-route classifier with strict JSON output & heuristic fallback |
+| **Multi-Provider AI** | `LangChain 1.4+` | Unified support for **Google Gemini**, **OpenAI**, **NVIDIA NIM**, and **Ollama (Local/Cloud)** with runtime switching |
+| **Intelligent Routing** | `LangChain + Gemini / Multi-LLM` | Autonomous 4-route classifier with strict JSON output & heuristic fallback |
 | **Lexical Keyword Search** | `Okapi BM25` | Exact-match retrieval for technical acronyms, codes, and IDs |
 | **Dense Vector Search** | `Jina AI v3 + ChromaDB` | 1024-dim neural semantic search stored locally without Docker |
 | **Rank Fusion** | `Reciprocal Rank Fusion (RRF)` | Blends lexical & semantic rankings using standard $k=60$ smoothing |
 | **Live Web Search** | `Exa AI Neural Search` | Fetches real-time, authoritative internet sources with page contents |
-| **Resilient Generation** | `Gemini Multi-Model Fallback` | Multi-model quota chain iterating across Flash & Preview variants on rate limits |
-| **Live AGUI Dashboard** | `FastAPI + TailwindCSS` | Single-page real-time pipeline visualizer with instant in-browser ingestion |
+| **Resilient Generation** | `Multi-Model Quota Fallback` | Multi-model quota chain iterating across Flash & Preview variants on rate limits |
+| **Live AGUI Dashboard** | `FastAPI + TailwindCSS` | Single-page real-time pipeline visualizer with instant in-browser ingestion & model switching |
 | **Dynamic Ingestion** | `Zero-Downtime Indexing` | Upload `.txt` files or paste text in the UI with immediate live searchability |
 
 ---
@@ -188,15 +193,23 @@ pip install -r requirements.txt
 
 ---
 
-## 🔑 API Keys & `.env` Configuration
+## 🔑 AI Providers & `.env` Configuration
 
-This project requires **3 free API keys** (all provide free tiers without requiring a credit card):
+The assistant uses **LangChain** to support multiple state-of-the-art LLM providers with runtime switching directly from the UI:
 
-| Service | Provider Link | Free Tier Limits | Environment Variable |
+### Supported AI Providers & Keys:
+
+| Provider | Portal / Documentation | Free Tier / Availability | Configuration Key |
 |---|---|---|---|
-| **Google Gemini** | [Google AI Studio](https://aistudio.google.com/) | 15 RPM / 1M tokens per day | `GEMINI_API_KEY` |
-| **Jina AI** | [Jina AI Embeddings](https://jina.ai/) | 1,000,000 tokens free on signup | `JINA_API_KEY` |
-| **Exa AI** | [Exa AI Search](https://exa.ai/) | 1,000 free searches per month | `EXA_API_KEY` |
+| **Google Gemini** *(Default)* | [Google AI Studio](https://aistudio.google.com/) | **15 RPM / 1M tokens/day free** (no credit card) | `GEMINI_API_KEY` |
+| **NVIDIA NIM** | [build.nvidia.com](https://build.nvidia.com/) | **1,000 free inference credits** (Llama 3.1, Mixtral) | `NVIDIA_API_KEY` |
+| **Ollama (Local)** | [ollama.com](https://ollama.com/) | **100% Free & Local** (`http://localhost:11434`) | `OLLAMA_BASE_URL` |
+| **Ollama (Cloud / Remote)** | Any hosted endpoint | Remote / Cloud Ollama instances with optional auth | `OLLAMA_BASE_URL`, `OLLAMA_API_KEY` |
+| **OpenAI** | [platform.openai.com](https://platform.openai.com/) | Pay-as-you-go (GPT-4o, GPT-4o-mini) | `OPENAI_API_KEY` |
+| **Jina AI Embeddings** | [jina.ai](https://jina.ai/) | **1,000,000 tokens free** on signup | `JINA_API_KEY` |
+| **Exa AI Web Search** | [exa.ai](https://exa.ai/) | **1,000 free web searches/month** | `EXA_API_KEY` |
+
+---
 
 ### Step-by-Step Configuration:
 
@@ -209,27 +222,39 @@ This project requires **3 free API keys** (all provide free tiers without requir
    cp .env.example .env
    ```
 
-2. Open `.env` and fill in your keys:
+2. Open `.env` and configure your chosen provider:
    ```ini
-   # Google Gemini API Key (https://aistudio.google.com/)
+   # Active Provider: 'gemini' | 'openai' | 'nvidia' | 'ollama'
+   LLM_PROVIDER=gemini
+
+   # 1. Google Gemini
    GEMINI_API_KEY=your_gemini_api_key_here
-
-   # Jina AI Embeddings API Key (https://jina.ai/)
-   JINA_API_KEY=your_jina_api_key_here
-
-   # Exa AI Web Search Key (https://exa.ai/)
-   EXA_API_KEY=your_exa_api_key_here
-
-   # Model Defaults
    GEMINI_MODEL=gemini-1.5-flash
-   JINA_EMBEDDING_MODEL=jina-embeddings-v3
+
+   # 2. NVIDIA NIM (Free 1,000 credits at https://build.nvidia.com/)
+   NVIDIA_API_KEY=your_nvidia_api_key_here
+   NVIDIA_MODEL=meta/llama-3.1-8b-instruct
+   NVIDIA_BASE_URL=https://integrate.api.nvidia.com/v1
+
+   # 3. Ollama (Local: http://localhost:11434 OR Ollama Cloud URL)
+   OLLAMA_BASE_URL=http://localhost:11434
+   OLLAMA_API_KEY=
+   OLLAMA_MODEL=llama3
+
+   # 4. OpenAI
+   OPENAI_API_KEY=your_openai_api_key_here
+   OPENAI_MODEL=gpt-4o-mini
+
+   # Retrieval & Web Search
+   JINA_API_KEY=your_jina_api_key_here
+   EXA_API_KEY=your_exa_api_key_here
    ```
 
 3. **Verify Your Setup:**
    ```bash
    python check_setup.py
    ```
-   *Checks Python version, package imports, API key existence, and local ChromaDB health.*
+   *Validates Python version, package imports, API key existence, and local ChromaDB health.*
 
 ---
 

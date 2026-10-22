@@ -52,15 +52,68 @@ async def serve_index():
     return FileResponse(INDEX_HTML)
 
 
+from src import config
+from src import llm
+
+class ProviderSelectRequest(BaseModel):
+    provider: str
+    model: Optional[str] = None
+
+
 @app.get("/api/status")
 async def get_status():
-    """Return live system component status and document counts."""
+    """Return live system component status, active provider, and document counts."""
+    providers = llm.get_available_providers()
+    active_prov = config.LLM_PROVIDER
+    active_info = providers.get(active_prov, {})
     return {
-        "gemini": bool(GEMINI_API_KEY and not GEMINI_API_KEY.startswith("your_")),
-        "jina": bool(JINA_API_KEY and not JINA_API_KEY.startswith("your_")),
-        "exa": bool(EXA_API_KEY and not EXA_API_KEY.startswith("your_")),
+        "gemini": bool(config.GEMINI_API_KEY and not config.GEMINI_API_KEY.startswith("your_")),
+        "jina": bool(config.JINA_API_KEY and not config.JINA_API_KEY.startswith("your_")),
+        "exa": bool(config.EXA_API_KEY and not config.EXA_API_KEY.startswith("your_")),
+        "active_provider": active_prov,
+        "active_model": active_info.get("model", ""),
+        "active_ready": active_info.get("ready", False),
+        "providers": providers,
         "chroma_count": vector_store.count(),
         "bm25_count": len(bm25_engine.chunks) if bm25_engine.chunks else 0,
+    }
+
+
+@app.get("/api/providers")
+async def get_providers():
+    """Return all supported LLM providers and the currently active one."""
+    return {
+        "active_provider": config.LLM_PROVIDER,
+        "providers": llm.get_available_providers()
+    }
+
+
+@app.post("/api/providers/select")
+async def select_provider(req: ProviderSelectRequest):
+    """Switch active LLM provider dynamically at runtime."""
+    prov = req.provider.strip().lower()
+    if prov not in llm.SUPPORTED_PROVIDERS:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Unsupported provider: {prov}. Supported: {list(llm.SUPPORTED_PROVIDERS)}"
+        )
+    config.LLM_PROVIDER = prov
+    if req.model:
+        if prov == "gemini":
+            config.GEMINI_MODEL = req.model.strip()
+        elif prov == "openai":
+            config.OPENAI_MODEL = req.model.strip()
+        elif prov == "nvidia":
+            config.NVIDIA_MODEL = req.model.strip()
+        elif prov == "ollama":
+            config.OLLAMA_MODEL = req.model.strip()
+
+    providers = llm.get_available_providers()
+    return {
+        "success": True,
+        "active_provider": config.LLM_PROVIDER,
+        "model": providers.get(config.LLM_PROVIDER, {}).get("model", ""),
+        "ready": providers.get(config.LLM_PROVIDER, {}).get("ready", False)
     }
 
 

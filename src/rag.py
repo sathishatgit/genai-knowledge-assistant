@@ -11,7 +11,7 @@ from typing import Dict, Any, List, Optional
 from src.router import route_query
 from src.hybrid_search import hybrid_search
 from src.exa_search import exa_search
-from src.gemini import generate_text
+from src.llm import generate_text
 from src.bm25_search import BM25SearchEngine
 from src.vector_store import ChromaVectorStore
 from src.config import DEFAULT_TOP_K, EXA_NUM_RESULTS

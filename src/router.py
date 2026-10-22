@@ -13,7 +13,7 @@ DO NOT ALWAYS USE RAG: Unnecessary retrieval introduces latency, cost, and noise
 import json
 import re
 from typing import Dict, Any, Optional
-from src.gemini import generate_text
+from src.llm import generate_text
 
 ALLOWED_ROUTES = {"direct_llm", "local_rag", "web_search", "both"}
 DEFAULT_FALLBACK_ROUTE = "direct_llm"
