@@ -192,26 +192,66 @@ The project uses a minimal, carefully selected dependency set:
 
 ## 8. API Keys & `.env` Configuration
 
+This project requires **3 free API keys**. All services listed below offer a free tier — no credit card required to get started.
+
+---
+
+### 🔑 How to Get Your API Keys
+
+#### 1. Google Gemini API Key (for LLM routing + response generation)
+| | |
+|---|---|
+| **Sign up at** | https://aistudio.google.com/ |
+| **Steps** | Sign in with Google → Click **"Get API Key"** → **"Create API key"** → Copy the key |
+| **Free Tier** | Gemini 1.5 Flash: **15 requests/min, 1 million tokens/day** (no credit card needed) |
+| **Env variable** | `GEMINI_API_KEY` |
+
+#### 2. Jina AI API Key (for text embeddings)
+| | |
+|---|---|
+| **Sign up at** | https://jina.ai/ |
+| **Steps** | Click **"Get API Key"** on the homepage → Sign up with email or Google → Copy the key |
+| **Free Tier** | **1 million tokens free** on signup (no credit card needed) |
+| **Env variable** | `JINA_API_KEY` |
+
+#### 3. Exa AI API Key (for live web search)
+| | |
+|---|---|
+| **Sign up at** | https://exa.ai/ |
+| **Steps** | Click **"Get Started"** → Create account → Go to **Dashboard → API Keys** → Copy the key |
+| **Free Tier** | **1,000 free searches/month** (no credit card needed) |
+| **Env variable** | `EXA_API_KEY` |
+
+---
+
+### ⚙️ Configure Your `.env` File
+
 Copy `.env.example` to `.env`:
 ```bash
+# Windows
+copy .env.example .env
+
+# Linux / macOS
 cp .env.example .env
 ```
 
-Open `.env` and configure your API keys:
+Open `.env` and paste your keys:
 ```ini
-# Google Gemini API Key (https://aistudio.google.com/)
+# Google Gemini API Key — https://aistudio.google.com/
 GEMINI_API_KEY=your_gemini_api_key_here
 
-# Jina AI Embeddings API Key (https://jina.ai/embeddings/)
+# Jina AI Embeddings API Key — https://jina.ai/
 JINA_API_KEY=your_jina_api_key_here
 
-# Exa AI Search API Key (https://exa.ai/)
+# Exa AI Search API Key — https://exa.ai/
 EXA_API_KEY=your_exa_api_key_here
 
-# Optional Model Configuration Defaults
+# Model Configuration (defaults shown below — change if needed)
 GEMINI_MODEL=gemini-1.5-flash
 JINA_EMBEDDING_MODEL=jina-embeddings-v3
 ```
+
+> ⚠️ **Never commit your `.env` file to Git.** It is already listed in `.gitignore` to protect your keys.
 
 ---
 
