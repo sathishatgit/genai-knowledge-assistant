@@ -132,31 +132,47 @@ The Decision Engine evaluates query intent and dispatches to one of four distinc
 
 ---
 
-## 💻 AGUI Interactive Web Dashboard
+## 💻 AGUI Interactive Multi-Page Web Application
 
-The application includes a clean single-page interactive UI running directly on FastAPI.
+The application features a modern, responsive, multi-page web application running directly on FastAPI with dark glassmorphic design and tabbed navigation.
 
 ```text
 ┌────────────────────────────────────────────────────────────────────────────────────────┐
-│  🧠 AGUI Agent Hub    [Gemini: Ready] [Jina: Ready] [Exa: Ready] [Chunks: 22]          │
-├────────────────────────────────┬───────────────────────────────────────────────────────┤
-│  📂 INDEXED KNOWLEDGE          │  💬 INTERACTIVE WORKSPACE                             │
-│  • python.txt (1,420 chars)    │  [ Preset Buttons: Direct | Local | Web | Both ]      │
-│  • generative_ai.txt           │  ┌──────────────────────────────────────────────────┐ │
-│  • machine_learning.txt        │  │ Ask anything... (Auto-routes or force route)     │ │
-│  • rag.txt                     │  └──────────────────────────────────────────────────┘ │
-│  • Sathish.txt                 │                                                       │
-│                                │  ⚡ Real-Time Pipeline Tracker:                       │
-│  [➕ Add Knowledge Data]       │  [✓ Router] ➔ [✓ Hybrid Search] ➔ [✓ Gemini Synthesizer]
-│  [🔄 Re-Index Store]           │  📑 Answer with Expandable Citations & Source Badges   │
-└────────────────────────────────┴───────────────────────────────────────────────────────┘
+│  🧠 AGUI Agent Hub v2.0    [💬 Playground] [📚 Knowledge] [🧠 Models] [⚡ Arch]   [Repo] │
+├────────────────────────────────────────────────────────────────────────────────────────┤
+│  PAGE 1: 💬 AGENT PLAYGROUND                                                           │
+│  • Quick workshop test presets (Direct LLM, Local RAG, Web Search, Both Fused)         │
+│  • Dynamic route mode selector (Auto intelligent classifier vs force route)            │
+│  • 4-stage pipeline execution visualizer (Classifier ➔ Retrieval ➔ Fusion ➔ Synthesis) │
+│  • Markdown-formatted answers with source citations, rationale, and copy button        │
+├────────────────────────────────────────────────────────────────────────────────────────┤
+│  PAGE 2: 📚 KNOWLEDGE BASE STUDIO                                                      │
+│  • Real-time vector metrics (ChromaDB Chunks, BM25 Docs, Local Documents)              │
+│  • Direct paragraph input with immediate auto-chunking and indexing                    │
+│  • Drag-and-drop .txt file upload zone with instant ingestion                          │
+│  • Searchable document explorer grid with one-click "Ask about this doc"               │
+├────────────────────────────────────────────────────────────────────────────────────────┤
+│  PAGE 3: 🧠 MULTI-LLM & MODEL HUB                                                      │
+│  • Visual management cards for Google Gemini, OpenAI, NVIDIA NIM, and Ollama           │
+│  • One-click runtime model switching without server restarts                           │
+│  • Live model connectivity test console to benchmark response latency                  │
+├────────────────────────────────────────────────────────────────────────────────────────┤
+│  PAGE 4: ⚡ SYSTEM ARCHITECTURE & TELEMETRY                                            │
+│  • Interactive visual breakdown of all 4 query routes                                  │
+│  • Reciprocal Rank Fusion (RRF k=60) mathematical formulation and explanation          │
+│  • Component health monitoring matrix (Jina, ChromaDB, BM25, Exa, FastAPI)             │
+├────────────────────────────────────────────────────────────────────────────────────────┤
+│  Made with ❤️ by Sathish — AI Engineer  •  [GitHub] [LinkedIn] [Repository]             │
+└────────────────────────────────────────────────────────────────────────────────────────┘
 ```
 
 ### Dashboard Capabilities:
-- 🚀 **Real-Time Pipeline Stepper**: Watch the step-by-step progress from Intent Classification ➔ Retrieval ➔ Rank Fusion ➔ Response Generation.
-- 📂 **Instant Dynamic Ingestion**: Add new custom knowledge via direct text paste or `.txt` file upload without restarting the server.
+- 🚀 **Real-Time 4-Stage Pipeline Tracker**: Watch live progress from Intent Classification ➔ Retrieval ➔ Rank Fusion ➔ Synthesis.
+- 📚 **Knowledge Base Studio**: Ingest custom text or `.txt` files on the fly and browse indexed chunks.
+- 🧠 **Multi-Provider AI Hub**: Switch between Gemini, OpenAI, NVIDIA NIM, and Ollama at runtime.
 - 🎯 **One-Click Presets**: Pre-configured query buttons for evaluating all 4 routing paths instantly.
-- 🏷️ **Transparent Citations**: Expandable source panels showing matched document names, similarity scores, and live web URLs.
+- 🏷️ **Transparent Citations & Rationale**: Expandable source panels showing matched document names, similarity scores, routing reason, and live web URLs.
+- 💖 **Developer Attribution**: Integrated footer crediting Sathish with direct link to GitHub profile.
 
 ---
 

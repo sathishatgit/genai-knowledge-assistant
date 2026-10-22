@@ -133,7 +133,8 @@ async def list_documents():
                 "filename": file_path.name,
                 "size_bytes": stat.st_size,
                 "char_count": len(content),
-                "preview": content[:120].strip() + ("..." if len(content) > 120 else "")
+                "preview": content[:120].strip() + ("..." if len(content) > 120 else ""),
+                "content": content
             })
         except Exception:
             pass

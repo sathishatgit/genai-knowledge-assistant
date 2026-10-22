@@ -1,404 +1,1167 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="h-full bg-[#080c14] text-slate-100 antialiased selection:bg-indigo-500/30 selection:text-indigo-200">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AGUI - Intelligent GenAI Interactive Agent</title>
+  <title>AGUI Agent Hub — Intelligent Multi-LLM & Hybrid RAG Assistant</title>
+  
+  <!-- Inter Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Font Awesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- Marked.js for Markdown -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  
+  <!-- Highlight.js for Syntax Highlighting -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  
+  <!-- Canvas Confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            brand: {
+              50: '#eef2ff',
+              100: '#e0e7ff',
+              200: '#c7d2fe',
+              400: '#818cf8',
+              500: '#6366f1',
+              600: '#4f46e5',
+              700: '#4338ca',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(99, 102, 241, 0.25); border-radius: 9999px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(99, 102, 241, 0.6); }
+
+    /* Ambient Background Glow */
+    .bg-mesh {
+      background-color: #080c14;
+      background-image: 
+        radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.12) 0px, transparent 50%),
+        radial-gradient(at 100% 0%, rgba(168, 85, 247, 0.08) 0px, transparent 50%),
+        radial-gradient(at 50% 100%, rgba(14, 165, 233, 0.08) 0px, transparent 50%);
+    }
+
+    /* Glass Panels */
+    .glass-panel {
+      background: rgba(13, 19, 32, 0.72);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+    }
+    .glass-panel-hover {
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .glass-panel-hover:hover {
+      border-color: rgba(99, 102, 241, 0.4);
+      box-shadow: 0 12px 30px -10px rgba(99, 102, 241, 0.18);
+      transform: translateY(-1px);
+    }
+
+    /* Markdown Styling in Responses */
+    .prose-ai { font-size: 0.925rem; line-height: 1.7; color: #e2e8f0; }
+    .prose-ai p { margin-bottom: 0.85rem; }
+    .prose-ai p:last-child { margin-bottom: 0; }
+    .prose-ai h1, .prose-ai h2, .prose-ai h3 { color: #f8fafc; font-weight: 700; margin-top: 1.25rem; margin-bottom: 0.5rem; }
+    .prose-ai h1 { font-size: 1.35rem; }
+    .prose-ai h2 { font-size: 1.15rem; }
+    .prose-ai h3 { font-size: 1rem; }
+    .prose-ai ul { list-style-type: disc; padding-left: 1.4rem; margin-bottom: 0.85rem; }
+    .prose-ai ol { list-style-type: decimal; padding-left: 1.4rem; margin-bottom: 0.85rem; }
+    .prose-ai li { margin-bottom: 0.3rem; }
+    .prose-ai strong { color: #ffffff; font-weight: 600; }
+    .prose-ai code:not(pre code) {
+      background: rgba(99, 102, 241, 0.12);
+      color: #a5b4fc;
+      border: 1px solid rgba(99, 102, 241, 0.25);
+      padding: 0.15rem 0.4rem;
+      border-radius: 0.375rem;
+      font-size: 0.85em;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .prose-ai pre {
+      background: #0f1422 !important;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 0.75rem;
+      padding: 1rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+      position: relative;
+    }
+    .prose-ai pre code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.825rem;
+      background: transparent !important;
+      padding: 0 !important;
+    }
+    .prose-ai blockquote {
+      border-left: 3px solid #6366f1;
+      padding-left: 1rem;
+      color: #94a3b8;
+      font-style: italic;
+      margin: 0.85rem 0;
+    }
+    .prose-ai table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0;
+      font-size: 0.85rem;
+    }
+    .prose-ai th, .prose-ai td {
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 0.5rem 0.75rem;
+      text-align: left;
+    }
+    .prose-ai th { background: rgba(99, 102, 241, 0.1); color: #f8fafc; font-weight: 600; }
+
+    /* Code Copy Button */
+    .code-copy-btn {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 0.375rem;
+      color: #94a3b8;
+      padding: 0.25rem 0.5rem;
+      font-size: 0.75rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .code-copy-btn:hover {
+      background: rgba(99, 102, 241, 0.3);
+      color: #fff;
+    }
+  </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen font-sans flex flex-col">
+<body class="bg-mesh min-h-screen flex flex-col font-sans">
 
-  <!-- Header -->
-  <header class="border-b border-slate-800 bg-slate-900/60 backdrop-blur sticky top-0 z-50 px-6 py-4">
-    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
-      <div class="flex items-center space-x-3">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center shadow-lg shadow-indigo-500/30">
-          <i class="fa-solid fa-brain text-white text-lg"></i>
-        </div>
-        <div>
-          <div class="flex items-center space-x-2">
-            <h1 class="font-bold text-lg text-white">AGUI Agent Hub</h1>
-            <span class="text-xs bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 px-2 py-0.5 rounded-full font-mono">Live Interactive</span>
+  <!-- Toast Notification Container -->
+  <div id="toastContainer" class="fixed top-5 right-5 z-[100] flex flex-col space-y-2.5 pointer-events-none"></div>
+
+  <!-- Main App Layout (Top Bar + Responsive Content + Sticky Modern Footer) -->
+  <div class="flex-1 flex flex-col">
+    
+    <!-- TOP NAVIGATION BAR -->
+    <header class="border-b border-white/[0.08] bg-[#0c111d]/85 backdrop-blur-xl sticky top-0 z-50 px-4 sm:px-6 py-3">
+      <div class="max-w-7xl mx-auto flex items-center justify-between gap-4">
+        
+        <!-- Brand & Slogan -->
+        <div class="flex items-center space-x-3 cursor-pointer" onclick="switchPage('chat')">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center shadow-lg shadow-indigo-500/25 ring-1 ring-white/20">
+            <i class="fa-solid fa-brain text-white text-lg"></i>
           </div>
-          <p class="text-xs text-slate-400">Intelligent Routing • Hybrid RAG • Multi-LLM (Gemini / OpenAI / NVIDIA / Ollama) • Developed by <a href="https://www.linkedin.com/in/sathishbabu-shanmugam/" target="_blank" class="text-indigo-400 font-semibold hover:underline">Sathish</a> (AI Engineer)</p>
+          <div>
+            <div class="flex items-center space-x-2">
+              <h1 class="font-bold text-base sm:text-lg text-white tracking-tight">AGUI Agent Hub</h1>
+              <span class="text-[10px] bg-gradient-to-r from-indigo-500/20 to-purple-500/20 text-indigo-300 border border-indigo-500/30 px-2 py-0.5 rounded-full font-mono font-semibold">v2.5 Pro</span>
+            </div>
+            <p class="text-[11px] text-slate-400 hidden sm:block">Intelligent Multi-LLM Router • Hybrid BM25 & ChromaDB RAG</p>
+          </div>
         </div>
 
-      <!-- Action Buttons & Status -->
-      <div class="flex items-center flex-wrap gap-2 text-xs">
-        <!-- LLM Provider Selector -->
-        <div class="flex items-center space-x-1.5 px-3 py-1.5 bg-indigo-950/60 rounded-lg border border-indigo-700/60 shadow-sm">
-          <i class="fa-solid fa-microchip text-indigo-400 text-xs"></i>
-          <span class="text-slate-300">LLM:</span>
-          <select id="providerSelect" onchange="handleProviderChange(this.value)" class="bg-slate-900 text-indigo-300 font-semibold text-xs border border-indigo-500/40 rounded px-1.5 py-0.5 outline-none focus:ring-1 focus:ring-indigo-500 cursor-pointer">
-            <option value="gemini">Google Gemini</option>
-            <option value="openai">OpenAI</option>
-            <option value="nvidia">NVIDIA NIM</option>
-            <option value="ollama">Ollama (Local / Cloud)</option>
-          </select>
-          <span id="providerModelBadge" class="text-[10px] bg-indigo-500/20 text-indigo-300 px-1.5 py-0.5 rounded border border-indigo-500/30 font-mono hidden sm:inline"></span>
-          <span id="providerStatusDot" class="w-2 h-2 rounded-full bg-emerald-400" title="Active LLM status"></span>
-        </div>
-        <div class="flex items-center space-x-1.5 px-3 py-1.5 bg-slate-800/80 rounded-lg border border-slate-700">
-          <span class="w-2 h-2 rounded-full bg-blue-400"></span>
-          <span class="text-slate-300">Jina:</span>
-          <span id="jinaStatus" class="font-semibold text-blue-400">Checking...</span>
-        </div>
-        <div class="flex items-center space-x-1.5 px-3 py-1.5 bg-slate-800/80 rounded-lg border border-slate-700">
-          <span class="w-2 h-2 rounded-full bg-cyan-400"></span>
-          <span class="text-slate-300">Exa:</span>
-          <span id="exaStatus" class="font-semibold text-cyan-400">Checking...</span>
-        </div>
-        <div class="flex items-center space-x-1.5 px-3 py-1.5 bg-slate-800/80 rounded-lg border border-slate-700">
-          <i class="fa-solid fa-database text-purple-400 text-[10px]"></i>
-          <span class="text-slate-300">Chunks:</span>
-          <span id="chromaStatus" class="font-semibold text-purple-400">Checking...</span>
-        </div>
+        <!-- Center Tabs (SPA Multi-Page Switcher) -->
+        <nav class="hidden md:flex items-center space-x-1 bg-black/40 p-1.5 rounded-xl border border-white/[0.08] text-xs font-medium">
+          <button id="nav-btn-chat" onclick="switchPage('chat')" class="flex items-center space-x-2 px-3.5 py-1.5 rounded-lg transition text-white bg-indigo-600 shadow-md shadow-indigo-600/30">
+            <i class="fa-solid fa-comments text-xs"></i>
+            <span>Chat Playground</span>
+          </button>
+          <button id="nav-btn-knowledge" onclick="switchPage('knowledge')" class="flex items-center space-x-2 px-3.5 py-1.5 rounded-lg transition text-slate-400 hover:text-white hover:bg-white/5">
+            <i class="fa-solid fa-database text-xs"></i>
+            <span>Knowledge Studio</span>
+            <span id="navDocBadge" class="text-[10px] bg-indigo-500/20 text-indigo-300 px-1.5 py-0.2 rounded-full font-mono">...</span>
+          </button>
+          <button id="nav-btn-models" onclick="switchPage('models')" class="flex items-center space-x-2 px-3.5 py-1.5 rounded-lg transition text-slate-400 hover:text-white hover:bg-white/5">
+            <i class="fa-solid fa-microchip text-xs"></i>
+            <span>AI Model Hub</span>
+          </button>
+          <button id="nav-btn-architecture" onclick="switchPage('architecture')" class="flex items-center space-x-2 px-3.5 py-1.5 rounded-lg transition text-slate-400 hover:text-white hover:bg-white/5">
+            <i class="fa-solid fa-network-wired text-xs"></i>
+            <span>Architecture & RRF</span>
+          </button>
+        </nav>
 
-        <!-- Add Data Button -->
-        <button onclick="toggleDataModal(true)" class="px-3 py-1.5 bg-indigo-600/30 hover:bg-indigo-600/50 text-indigo-300 border border-indigo-500/40 rounded-lg transition text-xs flex items-center space-x-1.5 shadow-sm">
-          <i class="fa-solid fa-file-circle-plus text-xs"></i>
-          <span>Add Knowledge Data</span>
+        <!-- Right Quick Controls -->
+        <div class="flex items-center space-x-2 text-xs">
+          <!-- Active LLM Switcher Dropdown -->
+          <div class="flex items-center space-x-1.5 px-2.5 py-1.5 bg-black/40 rounded-lg border border-white/[0.08] hover:border-indigo-500/40 transition">
+            <span id="quickProviderDot" class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span class="text-slate-400 text-[11px] hidden lg:inline">LLM:</span>
+            <select id="quickProviderSelect" onchange="handleProviderChange(this.value)" class="bg-transparent text-indigo-300 font-semibold text-xs outline-none cursor-pointer">
+              <option value="gemini" class="bg-slate-900 text-white">Gemini</option>
+              <option value="openai" class="bg-slate-900 text-white">OpenAI</option>
+              <option value="nvidia" class="bg-slate-900 text-white">NVIDIA NIM</option>
+              <option value="ollama" class="bg-slate-900 text-white">Ollama</option>
+            </select>
+            <span id="quickModelBadge" class="text-[10px] bg-indigo-500/20 text-indigo-300 px-1.5 py-0.5 rounded font-mono hidden xl:inline">gemini-3.5-flash</span>
+          </div>
+
+          <!-- New Query Button -->
+          <button onclick="startNewQuery()" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white font-medium rounded-lg transition flex items-center space-x-1.5 shadow-sm shadow-indigo-600/30" title="Clear and start new query">
+            <i class="fa-solid fa-plus text-xs"></i>
+            <span class="hidden sm:inline">New Query</span>
+          </button>
+
+          <!-- GitHub Repo Link -->
+          <a href="https://github.com/sathishatgit/genai-knowledge-assistant" target="_blank" rel="noopener noreferrer" class="px-2.5 py-1.5 bg-white/[0.05] hover:bg-white/[0.1] text-slate-300 border border-white/[0.08] rounded-lg transition flex items-center space-x-1.5" title="View GitHub Repository">
+            <i class="fa-brands fa-github text-sm"></i>
+          </a>
+        </div>
+      </div>
+
+      <!-- Mobile Navigation Sub-bar -->
+      <div class="flex md:hidden items-center justify-around border-t border-white/[0.06] pt-2.5 mt-2.5 text-xs">
+        <button onclick="switchPage('chat')" id="mobile-btn-chat" class="flex flex-col items-center py-1 text-indigo-400 font-medium">
+          <i class="fa-solid fa-comments text-base mb-1"></i>
+          <span>Playground</span>
         </button>
-
-        <!-- Re-index Button -->
-        <button onclick="triggerIngest()" id="btnIngest" class="px-3 py-1.5 bg-purple-600/30 hover:bg-purple-600/50 text-purple-300 border border-purple-500/40 rounded-lg transition text-xs flex items-center space-x-1">
-          <i class="fa-solid fa-rotate text-xs"></i>
-          <span>Re-Index</span>
+        <button onclick="switchPage('knowledge')" id="mobile-btn-knowledge" class="flex flex-col items-center py-1 text-slate-400 font-medium">
+          <i class="fa-solid fa-database text-base mb-1"></i>
+          <span>Knowledge</span>
+        </button>
+        <button onclick="switchPage('models')" id="mobile-btn-models" class="flex flex-col items-center py-1 text-slate-400 font-medium">
+          <i class="fa-solid fa-microchip text-base mb-1"></i>
+          <span>Models</span>
+        </button>
+        <button onclick="switchPage('architecture')" id="mobile-btn-architecture" class="flex flex-col items-center py-1 text-slate-400 font-medium">
+          <i class="fa-solid fa-network-wired text-base mb-1"></i>
+          <span>Arch & RRF</span>
         </button>
       </div>
-    </div>
-  </header>
+    </header>
 
-  <!-- Main Container -->
-  <main class="flex-1 max-w-7xl w-full mx-auto p-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
-
-    <!-- Left Column: Controls, Question Presets & Knowledge Base Status (4 Cols) -->
-    <div class="lg:col-span-4 flex flex-col space-y-6">
+    <!-- ======================================================================= -->
+    <!-- VIEW 1: CHAT PLAYGROUND                                                 -->
+    <!-- ======================================================================= -->
+    <main id="view-chat" class="page-container flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 flex flex-col space-y-6">
       
-      <!-- Preset Scenarios Card -->
-      <div class="bg-slate-900/70 border border-slate-800 rounded-2xl p-5 shadow-xl">
-        <h2 class="text-sm font-semibold text-slate-200 mb-3 flex items-center space-x-2">
-          <i class="fa-solid fa-flask text-indigo-400"></i>
-          <span>Workshop Test Scenarios</span>
-        </h2>
-        <p class="text-xs text-slate-400 mb-4">Click any test query to see the Intelligent Router dynamically switch strategies:</p>
-
-        <div class="space-y-2">
-          <button onclick="selectPreset('What is a Python list?', 'direct_llm')" class="w-full text-left p-3 rounded-xl bg-slate-800/50 hover:bg-slate-800 border border-slate-700/60 hover:border-slate-600 transition group">
-            <div class="flex items-center justify-between mb-1">
-              <span class="text-xs font-semibold text-slate-200 group-hover:text-white">1. Direct LLM Route</span>
-              <span class="text-[10px] bg-slate-700 text-slate-300 px-2 py-0.5 rounded font-mono">direct_llm</span>
-            </div>
-            <div class="text-xs text-slate-400 truncate">"What is a Python list?"</div>
-          </button>
-
-          <button onclick="selectPreset('According to our documents, what is our RAG architecture?', 'local_rag')" class="w-full text-left p-3 rounded-xl bg-slate-800/50 hover:bg-slate-800 border border-slate-700/60 hover:border-emerald-500/40 transition group">
-            <div class="flex items-center justify-between mb-1">
-              <span class="text-xs font-semibold text-slate-200 group-hover:text-white">2. Local RAG Route</span>
-              <span class="text-[10px] bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-2 py-0.5 rounded font-mono">local_rag</span>
-            </div>
-            <div class="text-xs text-slate-400 truncate">"According to our documents, what is our RAG architecture?"</div>
-          </button>
-
-          <button onclick="selectPreset('What is the latest Gemini model?', 'web_search')" class="w-full text-left p-3 rounded-xl bg-slate-800/50 hover:bg-slate-800 border border-slate-700/60 hover:border-cyan-500/40 transition group">
-            <div class="flex items-center justify-between mb-1">
-              <span class="text-xs font-semibold text-slate-200 group-hover:text-white">3. Web Search Route</span>
-              <span class="text-[10px] bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 px-2 py-0.5 rounded font-mono">web_search</span>
-            </div>
-            <div class="text-xs text-slate-400 truncate">"What is the latest Gemini model?"</div>
-          </button>
-
-          <button onclick="selectPreset('Compare our RAG architecture with the latest RAG approaches.', 'both')" class="w-full text-left p-3 rounded-xl bg-slate-800/50 hover:bg-slate-800 border border-slate-700/60 hover:border-purple-500/40 transition group">
-            <div class="flex items-center justify-between mb-1">
-              <span class="text-xs font-semibold text-slate-200 group-hover:text-white">4. Both Fused Route</span>
-              <span class="text-[10px] bg-purple-500/20 text-purple-300 border border-purple-500/30 px-2 py-0.5 rounded font-mono">both</span>
-            </div>
-            <div class="text-xs text-slate-400 truncate">"Compare our RAG architecture with the latest RAG approaches."</div>
-          </button>
-        </div>
-      </div>
-
-      <!-- Execution Mode Option -->
-      <div class="bg-slate-900/70 border border-slate-800 rounded-2xl p-5 shadow-xl">
-        <label class="block text-xs font-semibold text-slate-300 mb-2 flex items-center justify-between">
-          <span>Route Decision Mode</span>
-          <i class="fa-solid fa-sliders text-slate-400"></i>
-        </label>
-        <select id="routeMode" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-indigo-500">
-          <option value="">Auto (Intelligent Gemini Router)</option>
-          <option value="direct_llm">Force Route: Direct LLM</option>
-          <option value="local_rag">Force Route: Local RAG (BM25 + Vector)</option>
-          <option value="web_search">Force Route: Web Search (Exa)</option>
-          <option value="both">Force Route: Both (RAG + Web)</option>
-        </select>
-        <p class="text-[11px] text-slate-400 mt-2">Leave on 'Auto' to let the LLM classifier determine the optimal strategy.</p>
-      </div>
-
-      <!-- Knowledge Base Documents List Card -->
-      <div class="bg-slate-900/70 border border-slate-800 rounded-2xl p-5 shadow-xl flex-1 text-xs text-slate-400 flex flex-col">
-        <div class="font-semibold text-slate-300 mb-3 flex items-center justify-between">
+      <!-- Top Presets Shelf (Interactive Chips) -->
+      <div class="glass-panel rounded-2xl p-4 sm:p-5">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 mb-3">
           <div class="flex items-center space-x-2">
-            <i class="fa-solid fa-folder-closed text-indigo-400"></i>
-            <span>Indexed Documents</span>
+            <span class="w-6 h-6 rounded-lg bg-indigo-500/20 text-indigo-400 flex items-center justify-center text-xs">
+              <i class="fa-solid fa-flask"></i>
+            </span>
+            <span class="text-xs font-semibold uppercase tracking-wider text-slate-300">Test Scenarios & Canonical Routes</span>
           </div>
-          <button onclick="toggleDataModal(true)" class="text-indigo-400 hover:text-indigo-300 text-xs">
-            + Add New
-          </button>
+          <span class="text-[11px] text-slate-400">Click any scenario to see real-time route classification & fusion:</span>
         </div>
-        <div id="docListContainer" class="space-y-2 overflow-y-auto max-h-48 pr-1 font-mono text-[11px]">
-          <div class="text-slate-500 italic">Loading documents...</div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
+          <!-- Preset 1: Direct LLM -->
+          <button onclick="triggerPreset('What is a Python list and its primary methods?', 'direct_llm')" class="text-left p-3 rounded-xl bg-black/30 hover:bg-indigo-950/30 border border-white/[0.06] hover:border-indigo-500/40 transition group">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-xs font-semibold text-slate-200 group-hover:text-indigo-300 flex items-center space-x-1.5">
+                <i class="fa-solid fa-bolt text-amber-400 text-xs"></i>
+                <span>Direct LLM</span>
+              </span>
+              <span class="text-[9px] bg-slate-800 text-slate-300 px-1.5 py-0.5 rounded font-mono">0ms retrieval</span>
+            </div>
+            <p class="text-[11px] text-slate-400 truncate">"What is a Python list?"</p>
+          </button>
+
+          <!-- Preset 2: Local RAG -->
+          <button onclick="triggerPreset('According to our documents, what is our RAG architecture?', 'local_rag')" class="text-left p-3 rounded-xl bg-black/30 hover:bg-emerald-950/30 border border-white/[0.06] hover:border-emerald-500/40 transition group">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-xs font-semibold text-slate-200 group-hover:text-emerald-300 flex items-center space-x-1.5">
+                <i class="fa-solid fa-book-bookmark text-emerald-400 text-xs"></i>
+                <span>Local RAG</span>
+              </span>
+              <span class="text-[9px] bg-emerald-500/10 text-emerald-300 px-1.5 py-0.5 rounded font-mono border border-emerald-500/20">BM25 + Chroma</span>
+            </div>
+            <p class="text-[11px] text-slate-400 truncate">"What is our RAG architecture?"</p>
+          </button>
+
+          <!-- Preset 3: Web Search -->
+          <button onclick="triggerPreset('What is the latest Google Gemini model released recently?', 'web_search')" class="text-left p-3 rounded-xl bg-black/30 hover:bg-cyan-950/30 border border-white/[0.06] hover:border-cyan-500/40 transition group">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-xs font-semibold text-slate-200 group-hover:text-cyan-300 flex items-center space-x-1.5">
+                <i class="fa-solid fa-globe text-cyan-400 text-xs"></i>
+                <span>Web Search</span>
+              </span>
+              <span class="text-[9px] bg-cyan-500/10 text-cyan-300 px-1.5 py-0.5 rounded font-mono border border-cyan-500/20">Exa AI Neural</span>
+            </div>
+            <p class="text-[11px] text-slate-400 truncate">"What is the latest Gemini model?"</p>
+          </button>
+
+          <!-- Preset 4: Both Fused -->
+          <button onclick="triggerPreset('Compare our internal RAG architecture with modern 2026 enterprise approaches.', 'both')" class="text-left p-3 rounded-xl bg-black/30 hover:bg-purple-950/30 border border-white/[0.06] hover:border-purple-500/40 transition group">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-xs font-semibold text-slate-200 group-hover:text-purple-300 flex items-center space-x-1.5">
+                <i class="fa-solid fa-layer-group text-purple-400 text-xs"></i>
+                <span>Both Fused</span>
+              </span>
+              <span class="text-[9px] bg-purple-500/10 text-purple-300 px-1.5 py-0.5 rounded font-mono border border-purple-500/20">Reciprocal Rank</span>
+            </div>
+            <p class="text-[11px] text-slate-400 truncate">"Compare internal vs modern RAG"</p>
+          </button>
         </div>
       </div>
 
-    </div>
-
-    <!-- Right Column: Interactive Chat & Live Agent Execution Trace (8 Cols) -->
-    <div class="lg:col-span-8 flex flex-col space-y-6">
-
-      <!-- Query Input Bar -->
-      <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 shadow-2xl">
-        <form onsubmit="handleQuerySubmit(event)" class="flex flex-col sm:flex-row gap-3">
-          <div class="relative flex-1">
-            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
-              <i class="fa-solid fa-magnifying-glass text-sm"></i>
+      <!-- Main Chat Conversation Feed -->
+      <div id="chatFeed" class="flex-1 flex flex-col space-y-5">
+        
+        <!-- Welcome Hero Banner (Displayed before any query is asked) -->
+        <div id="emptyHeroBanner" class="glass-panel rounded-3xl p-8 sm:p-14 text-center flex flex-col items-center justify-center space-y-5 my-auto">
+          <div class="relative">
+            <div class="w-20 h-20 rounded-2xl bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center text-white text-3xl shadow-xl shadow-indigo-500/20">
+              <i class="fa-solid fa-wand-magic-sparkles"></i>
             </div>
-            <input
-              type="text"
-              id="queryInput"
-              placeholder="Ask anything (e.g. 'What is a Python list?' or 'What is our RAG architecture?')..."
-              class="w-full bg-slate-950 border border-slate-700/80 rounded-xl pl-10 pr-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition"
-              required
-            />
+            <span class="absolute -bottom-1 -right-1 flex h-4 w-4">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-4 w-4 bg-emerald-500"></span>
+            </span>
           </div>
-          <button
-            type="submit"
-            id="btnSubmit"
-            class="px-6 py-3 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-medium text-sm rounded-xl shadow-lg shadow-indigo-500/25 transition flex items-center justify-center space-x-2 disabled:opacity-50"
-          >
-            <span>Ask Agent</span>
-            <i class="fa-solid fa-arrow-right text-xs"></i>
-          </button>
+
+          <div class="max-w-xl space-y-2">
+            <h2 class="text-xl sm:text-2xl font-extrabold text-white tracking-tight">How can I assist your research today?</h2>
+            <p class="text-xs sm:text-sm text-slate-400 leading-relaxed">
+              Ask any question to test our multi-stage agent. Queries are intelligently classified into <strong class="text-slate-200">Direct LLM</strong>, <strong class="text-emerald-400">Local RAG</strong> (BM25 + ChromaDB), <strong class="text-cyan-400">Neural Web Search</strong> (Exa AI), or <strong class="text-purple-400">Cross-Context Fusion</strong>.
+            </p>
+          </div>
+
+          <!-- Feature Pills -->
+          <div class="flex flex-wrap justify-center gap-2 pt-2 text-xs">
+            <span class="px-3 py-1.5 rounded-full bg-white/[0.04] border border-white/[0.08] text-slate-300 flex items-center space-x-1.5">
+              <i class="fa-solid fa-microchip text-indigo-400"></i>
+              <span>Multi-LLM Engine</span>
+            </span>
+            <span class="px-3 py-1.5 rounded-full bg-white/[0.04] border border-white/[0.08] text-slate-300 flex items-center space-x-1.5">
+              <i class="fa-solid fa-code-merge text-purple-400"></i>
+              <span>RRF (k=60) Fusion</span>
+            </span>
+            <span class="px-3 py-1.5 rounded-full bg-white/[0.04] border border-white/[0.08] text-slate-300 flex items-center space-x-1.5">
+              <i class="fa-solid fa-fingerprint text-emerald-400"></i>
+              <span>Local Data Sovereignty</span>
+            </span>
+          </div>
+        </div>
+
+        <!-- Dynamic Query Execution Cards will be appended here -->
+        <div id="conversationStream" class="flex flex-col space-y-6"></div>
+
+      </div>
+
+      <!-- Floating Query Input Bar (Sticky at bottom) -->
+      <div class="glass-panel rounded-2xl p-3 sm:p-4 shadow-2xl border-indigo-500/30 sticky bottom-4">
+        <form onsubmit="handleQuerySubmit(event)" class="space-y-2.5">
+          
+          <!-- Routing Mode Chips & Model Info Row -->
+          <div class="flex flex-wrap items-center justify-between gap-2 px-1 text-xs">
+            <div class="flex items-center space-x-2">
+              <span class="text-slate-400 font-medium flex items-center space-x-1">
+                <i class="fa-solid fa-route text-indigo-400 text-xs"></i>
+                <span class="hidden sm:inline">Route Strategy:</span>
+              </span>
+              <select id="routeMode" class="bg-black/50 border border-white/[0.1] text-indigo-300 text-xs rounded-lg px-2.5 py-1 outline-none focus:border-indigo-500 cursor-pointer">
+                <option value="">⚡ Auto (Intelligent Classifier)</option>
+                <option value="direct_llm">🧠 Force Route: Direct LLM</option>
+                <option value="local_rag">📂 Force Route: Local RAG (BM25 + Chroma)</option>
+                <option value="web_search">🌐 Force Route: Web Search (Exa AI)</option>
+                <option value="both">🔄 Force Route: Both Fused (RRF Ranking)</option>
+              </select>
+            </div>
+            
+            <div class="flex items-center space-x-3 text-[11px] text-slate-400">
+              <span class="hidden md:inline text-slate-500">Press <kbd class="px-1.5 py-0.5 bg-white/10 rounded font-mono text-[10px]">Enter</kbd> to ask</span>
+              <span class="flex items-center space-x-1 text-indigo-300 font-medium">
+                <i class="fa-solid fa-sparkles text-xs"></i>
+                <span id="activeModelTag">Gemini</span>
+              </span>
+            </div>
+          </div>
+
+          <!-- Main Input Field & Submit Button -->
+          <div class="relative flex items-center">
+            <textarea
+              id="queryInput"
+              rows="2"
+              placeholder="Ask anything (e.g. 'What is a Python list?' or 'According to our documents, what is our RAG architecture?')..."
+              class="w-full bg-black/60 border border-white/[0.1] rounded-xl pl-4 pr-28 sm:pr-32 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500/80 focus:ring-1 focus:ring-indigo-500/50 resize-none transition shadow-inner leading-relaxed"
+              required
+              onkeydown="if(event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); handleQuerySubmit(event); }"
+            ></textarea>
+            
+            <button
+              type="submit"
+              id="btnSubmit"
+              class="absolute right-2.5 bottom-2.5 px-4 sm:px-5 py-2 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-semibold text-xs sm:text-sm rounded-lg shadow-lg shadow-indigo-500/25 transition flex items-center space-x-1.5 disabled:opacity-50 cursor-pointer"
+            >
+              <span>Ask Agent</span>
+              <i class="fa-solid fa-arrow-up text-xs"></i>
+            </button>
+          </div>
         </form>
       </div>
 
-      <!-- Agent Execution Status Card -->
-      <div id="executionTraceCard" class="hidden bg-slate-900/80 border border-slate-800 rounded-2xl p-5 shadow-xl transition-all">
-        <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
-          <div class="flex items-center space-x-2">
-            <span id="traceSpinner" class="w-3 h-3 border-2 border-indigo-400 border-t-transparent rounded-full animate-spin"></span>
-            <h3 class="text-sm font-semibold text-slate-200">Live Agent Pipeline Execution</h3>
+    </main>
+
+    <!-- ======================================================================= -->
+    <!-- VIEW 2: KNOWLEDGE BASE STUDIO                                           -->
+    <!-- ======================================================================= -->
+    <main id="view-knowledge" class="page-container flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 flex flex-col space-y-6 hidden">
+      
+      <!-- Metrics Overview Cards -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        
+        <div class="glass-panel glass-panel-hover rounded-2xl p-5 flex items-center space-x-4">
+          <div class="w-12 h-12 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center text-xl shadow-inner">
+            <i class="fa-solid fa-cubes-stacked"></i>
           </div>
-          <div id="routeBadge" class="text-xs px-2.5 py-1 rounded-full font-mono font-semibold uppercase bg-slate-800 text-slate-400">
-            Routing...
+          <div>
+            <div class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">ChromaDB Chunks</div>
+            <div id="kbChromaCount" class="text-2xl font-black text-white">...</div>
+            <div class="text-[10px] text-emerald-400 flex items-center space-x-1">
+              <i class="fa-solid fa-circle-check text-[9px]"></i>
+              <span>Dense 1024-dim Vectors</span>
+            </div>
           </div>
         </div>
 
-        <!-- Live Step Progress Bar -->
-        <div class="grid grid-cols-4 gap-2 mb-4 text-center">
-          <div id="step1" class="p-2 rounded-lg bg-slate-800 border border-slate-700 text-xs">
-            <div class="font-bold text-slate-300">1. Router</div>
-            <div class="text-[10px] text-slate-400" id="step1Detail">Classifying query</div>
+        <div class="glass-panel glass-panel-hover rounded-2xl p-5 flex items-center space-x-4">
+          <div class="w-12 h-12 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center text-xl shadow-inner">
+            <i class="fa-solid fa-file-lines"></i>
           </div>
-          <div id="step2" class="p-2 rounded-lg bg-slate-800/40 border border-slate-800 text-xs">
-            <div class="font-bold text-slate-400">2. Retrieval</div>
-            <div class="text-[10px] text-slate-500" id="step2Detail">Pending</div>
-          </div>
-          <div id="step3" class="p-2 rounded-lg bg-slate-800/40 border border-slate-800 text-xs">
-            <div class="font-bold text-slate-400">3. Fusion</div>
-            <div class="text-[10px] text-slate-500" id="step3Detail">Pending</div>
-          </div>
-          <div id="step4" class="p-2 rounded-lg bg-slate-800/40 border border-slate-800 text-xs">
-            <div class="font-bold text-slate-400">4. Gemini</div>
-            <div class="text-[10px] text-slate-500" id="step4Detail">Pending</div>
+          <div>
+            <div class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Indexed Documents</div>
+            <div id="kbDocCount" class="text-2xl font-black text-white">...</div>
+            <div class="text-[10px] text-blue-400 flex items-center space-x-1">
+              <i class="fa-solid fa-folder-open text-[9px]"></i>
+              <span>Internal Knowledge Files</span>
+            </div>
           </div>
         </div>
 
-        <!-- Routing Rationale Box -->
-        <div id="routingRationaleBox" class="p-3 bg-slate-950/60 rounded-xl border border-slate-800 text-xs mb-4 hidden">
-          <div class="text-slate-400 font-semibold mb-1 flex items-center space-x-1">
-            <i class="fa-solid fa-lightbulb text-amber-400"></i>
-            <span>Routing Reason:</span>
+        <div class="glass-panel glass-panel-hover rounded-2xl p-5 flex items-center space-x-4">
+          <div class="w-12 h-12 rounded-xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center text-xl shadow-inner">
+            <i class="fa-solid fa-font"></i>
           </div>
-          <p id="routingRationaleText" class="text-slate-300 font-sans"></p>
+          <div>
+            <div class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">BM25 Lexical Docs</div>
+            <div id="kbBm25Count" class="text-2xl font-black text-white">...</div>
+            <div class="text-[10px] text-indigo-400 flex items-center space-x-1">
+              <i class="fa-solid fa-magnifying-glass text-[9px]"></i>
+              <span>Exact Keyword Inverted Index</span>
+            </div>
+          </div>
         </div>
 
-        <!-- Retrieved Sources Box -->
-        <div id="sourcesBox" class="p-3 bg-slate-950/60 rounded-xl border border-slate-800 text-xs mb-4 hidden">
-          <div class="text-slate-400 font-semibold mb-2 flex items-center space-x-1">
-            <i class="fa-solid fa-folder-open text-indigo-400"></i>
-            <span>Retrieved Sources & References:</span>
+        <div class="glass-panel rounded-2xl p-5 flex items-center justify-between">
+          <div class="space-y-1">
+            <div class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Full Ingestion</div>
+            <div class="text-xs text-white font-medium">Re-chunk & Re-embed</div>
+            <div class="text-[10px] text-slate-500">Synchronizes BM25 & ChromaDB</div>
           </div>
-          <div id="sourcesList" class="flex flex-wrap gap-2"></div>
+          <button onclick="triggerIngest()" id="btnIngestFull" class="px-4 py-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-medium text-xs rounded-xl shadow-lg shadow-purple-600/30 transition flex items-center space-x-1.5">
+            <i class="fa-solid fa-rotate text-xs"></i>
+            <span>Re-Index</span>
+          </button>
         </div>
 
-        <!-- Final Answer Box -->
-        <div id="answerBox" class="p-4 bg-slate-950 rounded-xl border border-slate-800 text-sm hidden">
-          <div class="text-slate-400 font-semibold text-xs mb-2 flex items-center justify-between">
-            <span class="flex items-center space-x-1.5">
-              <i class="fa-solid fa-sparkles text-purple-400"></i>
-              <span>Final Answer Generated by Gemini:</span>
-            </span>
-            <button onclick="copyAnswer()" class="text-slate-500 hover:text-slate-300 text-xs">
-              <i class="fa-regular fa-copy"></i> Copy
+      </div>
+
+      <!-- Ingestion Workspaces (2 Columns) -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        
+        <!-- Workspace A: Direct Paragraph Input -->
+        <div class="glass-panel rounded-2xl p-6 shadow-xl space-y-4">
+          <div class="flex items-center space-x-3 border-b border-white/[0.08] pb-3.5">
+            <div class="w-9 h-9 rounded-xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center text-base">
+              <i class="fa-solid fa-pen-fancy"></i>
+            </div>
+            <div>
+              <h3 class="font-bold text-white text-sm">Direct Text & Knowledge Ingestion</h3>
+              <p class="text-[11px] text-slate-400">Instantly chunk and index custom paragraphs or company facts</p>
+            </div>
+          </div>
+
+          <form onsubmit="handleDirectTextSubmit(event)" class="space-y-4">
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 mb-1.5">Document Subject / Filename</label>
+              <input
+                type="text"
+                id="docTitleInput"
+                placeholder="e.g. system_architecture_2026 or employee_benefits"
+                class="w-full bg-black/60 border border-white/[0.1] rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition"
+                required
+              />
+            </div>
+
+            <div>
+              <div class="flex items-center justify-between mb-1.5">
+                <label class="block text-xs font-semibold text-slate-300">Content / Paragraph</label>
+                <span id="charCountDisplay" class="text-[10px] text-slate-500 font-mono">0 chars</span>
+              </div>
+              <textarea
+                id="docContentInput"
+                rows="6"
+                oninput="document.getElementById('charCountDisplay').textContent = this.value.length + ' chars'"
+                placeholder="Write or paste your custom internal knowledge here. It will be chunked into 500-char pieces, converted to dense vector embeddings with Jina AI, and indexed into both BM25 and ChromaDB..."
+                class="w-full bg-black/60 border border-white/[0.1] rounded-xl p-3.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 leading-relaxed transition"
+                required
+              ></textarea>
+            </div>
+
+            <button
+              type="submit"
+              id="btnSaveDirect"
+              class="w-full py-2.5 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-medium text-xs rounded-xl shadow-lg shadow-indigo-500/25 transition flex items-center justify-center space-x-2"
+            >
+              <i class="fa-solid fa-plus"></i>
+              <span>Save & Index into Knowledge Base</span>
             </button>
+          </form>
+        </div>
+
+        <!-- Workspace B: Drag & Drop File Upload -->
+        <div class="glass-panel rounded-2xl p-6 shadow-xl space-y-4">
+          <div class="flex items-center space-x-3 border-b border-white/[0.08] pb-3.5">
+            <div class="w-9 h-9 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-base">
+              <i class="fa-solid fa-cloud-arrow-up"></i>
+            </div>
+            <div>
+              <h3 class="font-bold text-white text-sm">Upload Plain Text Document (.txt)</h3>
+              <p class="text-[11px] text-slate-400">Add policies, research papers, resumes, or engineering documentation</p>
+            </div>
           </div>
-          <div id="answerText" class="text-slate-200 leading-relaxed whitespace-pre-wrap"></div>
+
+          <form onsubmit="handleFileUploadSubmit(event)" class="space-y-4">
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 mb-2">Drop Zone</label>
+              <div 
+                id="dropZone" 
+                class="border-2 border-dashed border-white/[0.15] hover:border-emerald-500/60 rounded-xl p-8 text-center transition cursor-pointer bg-black/30 group"
+                onclick="document.getElementById('fileUploadInput').click()"
+              >
+                <i class="fa-solid fa-file-arrow-up text-emerald-400 text-3xl mb-3 group-hover:scale-110 transition transform"></i>
+                <div class="text-xs text-slate-200 font-semibold">Click to browse or drop your .txt file here</div>
+                <div class="text-[10px] text-slate-500 mt-1">UTF-8 plain text documents up to 5MB</div>
+                <div id="selectedFileBadge" class="text-xs text-emerald-300 font-mono font-semibold mt-3"></div>
+                <input
+                  type="file"
+                  id="fileUploadInput"
+                  accept=".txt"
+                  class="hidden"
+                  onchange="handleFileSelection(this)"
+                  required
+                />
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              id="btnSaveUpload"
+              class="w-full py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-medium text-xs rounded-xl shadow-lg shadow-emerald-600/25 transition flex items-center justify-center space-x-2"
+            >
+              <i class="fa-solid fa-upload"></i>
+              <span>Upload & Ingest Document</span>
+            </button>
+          </form>
         </div>
+
       </div>
 
-      <!-- Welcome Banner (When empty) -->
-      <div id="welcomeBanner" class="border border-slate-800/80 bg-slate-900/40 rounded-2xl p-8 text-center flex flex-col items-center justify-center">
-        <div class="w-16 h-16 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 text-2xl mb-4">
-          <i class="fa-solid fa-wand-magic-sparkles"></i>
-        </div>
-        <h3 class="text-base font-semibold text-white mb-2">Ready to Test Intelligent GenAI</h3>
-        <p class="text-xs text-slate-400 max-w-md mb-6 leading-relaxed">
-          Ask a general question, query the internal knowledge base, search real-time web facts, or add custom paragraphs and text files.
-        </p>
-        <div class="flex flex-wrap justify-center gap-2">
-          <span class="text-[11px] bg-slate-800 text-slate-300 px-3 py-1 rounded-full border border-slate-700">1. Direct LLM</span>
-          <span class="text-[11px] bg-emerald-500/10 text-emerald-300 px-3 py-1 rounded-full border border-emerald-500/20">2. Local RAG</span>
-          <span class="text-[11px] bg-cyan-500/10 text-cyan-300 px-3 py-1 rounded-full border border-cyan-500/20">3. Web Search</span>
-          <span class="text-[11px] bg-purple-500/10 text-purple-300 px-3 py-1 rounded-full border border-purple-500/20">4. Both Fused</span>
-        </div>
-      </div>
-
-    </div>
-  </main>
-
-  <!-- Add Knowledge Data Modal -->
-  <div id="dataModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4">
-      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-        <div class="flex items-center space-x-2">
-          <div class="w-8 h-8 rounded-lg bg-indigo-500/20 text-indigo-400 flex items-center justify-center">
-            <i class="fa-solid fa-file-circle-plus"></i>
+      <!-- Document Explorer Grid -->
+      <div class="glass-panel rounded-2xl p-6 shadow-xl space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/[0.08] pb-4">
+          <div class="flex items-center space-x-2.5">
+            <i class="fa-solid fa-folder-tree text-indigo-400 text-lg"></i>
+            <div>
+              <h3 class="font-bold text-white text-sm">Document Library & Chunk Inspector</h3>
+              <p class="text-[11px] text-slate-400">Click any document to inspect full text, view chunk counts, or query it</p>
+            </div>
           </div>
-          <h3 class="font-bold text-slate-100 text-base">Add Data to Knowledge Base</h3>
+
+          <!-- Document Search Bar -->
+          <div class="relative w-full sm:w-72">
+            <input
+              type="text"
+              id="docSearchInput"
+              oninput="filterDocuments(this.value)"
+              placeholder="Search documents by name or content..."
+              class="w-full bg-black/60 border border-white/[0.1] rounded-xl pl-9 pr-3.5 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+            />
+            <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-500 text-xs"></i>
+          </div>
         </div>
-        <button onclick="toggleDataModal(false)" class="text-slate-400 hover:text-white">
-          <i class="fa-solid fa-xmark text-lg"></i>
-        </button>
+
+        <!-- Document Cards Container -->
+        <div id="documentCardsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div class="text-slate-500 text-xs italic col-span-full py-8 text-center">Loading document library...</div>
+        </div>
       </div>
 
-      <!-- Tabs -->
-      <div class="flex border-b border-slate-800 text-xs">
-        <button id="tabBtnDirect" onclick="switchModalTab('direct')" class="px-4 py-2 font-semibold text-indigo-400 border-b-2 border-indigo-400 transition">
-          Direct Paragraph Input
-        </button>
-        <button id="tabBtnUpload" onclick="switchModalTab('upload')" class="px-4 py-2 font-semibold text-slate-400 hover:text-slate-200 transition">
-          Upload .txt File
-        </button>
+    </main>
+
+    <!-- ======================================================================= -->
+    <!-- VIEW 3: AI MODEL HUB                                                    -->
+    <!-- ======================================================================= -->
+    <main id="view-models" class="page-container flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 flex flex-col space-y-6 hidden">
+      
+      <!-- Hub Header Banner -->
+      <div class="glass-panel rounded-2xl p-6 border-indigo-500/20">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div class="space-y-1">
+            <div class="flex items-center space-x-2">
+              <span class="w-8 h-8 rounded-lg bg-indigo-500/20 text-indigo-400 flex items-center justify-center text-sm">
+                <i class="fa-solid fa-microchip"></i>
+              </span>
+              <h2 class="text-lg font-bold text-white">Multi-LLM Unified Model Hub</h2>
+            </div>
+            <p class="text-xs text-slate-400 max-w-2xl leading-relaxed">
+              Switch freely between Google Gemini, OpenAI, NVIDIA NIM, and Ollama at runtime without restarting the server. All models are orchestrated seamlessly with LangChain connectors.
+            </p>
+          </div>
+          <div class="px-4 py-2 bg-indigo-950/60 border border-indigo-500/40 rounded-xl text-xs flex items-center space-x-2">
+            <span class="text-slate-400">Active Provider:</span>
+            <span id="activeModelNameHub" class="font-bold text-indigo-300 font-mono uppercase">Gemini</span>
+          </div>
+        </div>
       </div>
 
-      <!-- Tab 1: Direct Paragraph Input Form -->
-      <form id="formDirectText" onsubmit="handleDirectTextSubmit(event)" class="space-y-3">
-        <div>
-          <label class="block text-xs font-semibold text-slate-300 mb-1">Document Title / Subject</label>
+      <!-- 4 Provider Interactive Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+        
+        <!-- Provider 1: Google Gemini -->
+        <div id="hub-card-gemini" class="glass-panel glass-panel-hover rounded-2xl p-6 flex flex-col justify-between space-y-4">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <div class="flex items-center space-x-3">
+                <div class="w-11 h-11 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center text-xl">
+                  <i class="fa-brands fa-google"></i>
+                </div>
+                <div>
+                  <h3 class="font-bold text-white text-base">Google Gemini</h3>
+                  <span class="text-[11px] text-blue-400 font-mono">Multimodal & High Speed</span>
+                </div>
+              </div>
+              <span id="badge-hub-gemini" class="text-[10px] px-2.5 py-0.5 rounded-full font-mono font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Active</span>
+            </div>
+            <p class="text-xs text-slate-300 leading-relaxed mb-3">
+              Native multi-model resilience fallback chain (`gemini-3.5-flash` → `gemini-3.8-flash` → `gemini-1.5-pro`). Powering both rapid router classification and synthesized RAG answers.
+            </p>
+            <div class="text-[11px] bg-black/40 p-3 rounded-xl border border-white/[0.06] space-y-1 font-mono text-slate-300">
+              <div><span class="text-slate-500">Model:</span> gemini-3.5-flash</div>
+              <div><span class="text-slate-500">Tier:</span> Free & Enterprise Resilient Chain</div>
+            </div>
+          </div>
+
+          <button onclick="handleProviderChange('gemini')" class="w-full py-2.5 px-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold transition flex items-center justify-center space-x-2 shadow-md shadow-indigo-600/30">
+            <i class="fa-solid fa-check"></i>
+            <span>Set as Active Provider</span>
+          </button>
+        </div>
+
+        <!-- Provider 2: OpenAI -->
+        <div id="hub-card-openai" class="glass-panel glass-panel-hover rounded-2xl p-6 flex flex-col justify-between space-y-4">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <div class="flex items-center space-x-3">
+                <div class="w-11 h-11 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-xl">
+                  <i class="fa-solid fa-cube"></i>
+                </div>
+                <div>
+                  <h3 class="font-bold text-white text-base">OpenAI</h3>
+                  <span class="text-[11px] text-emerald-400 font-mono">ChatOpenAI via LangChain</span>
+                </div>
+              </div>
+              <span id="badge-hub-openai" class="text-[10px] px-2.5 py-0.5 rounded-full font-mono font-semibold bg-slate-800 text-slate-400 border border-slate-700">Ready</span>
+            </div>
+            <p class="text-xs text-slate-300 leading-relaxed mb-3">
+              Frontier reasoning models (`gpt-4o`, `gpt-4o-mini`). Full streaming, JSON structured schema outputs, and multi-turn agentic workflows.
+            </p>
+            <div class="text-[11px] bg-black/40 p-3 rounded-xl border border-white/[0.06] space-y-1 font-mono text-slate-300">
+              <div><span class="text-slate-500">Model:</span> gpt-4o-mini</div>
+              <div><span class="text-slate-500">Key:</span> OPENAI_API_KEY</div>
+            </div>
+          </div>
+
+          <button onclick="handleProviderChange('openai')" class="w-full py-2.5 px-3 rounded-xl bg-white/[0.08] hover:bg-emerald-600 text-slate-200 hover:text-white text-xs font-semibold transition flex items-center justify-center space-x-2">
+            <i class="fa-solid fa-check"></i>
+            <span>Set as Active Provider</span>
+          </button>
+        </div>
+
+        <!-- Provider 3: NVIDIA NIM -->
+        <div id="hub-card-nvidia" class="glass-panel glass-panel-hover rounded-2xl p-6 flex flex-col justify-between space-y-4">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <div class="flex items-center space-x-3">
+                <div class="w-11 h-11 rounded-xl bg-green-500/20 text-green-400 flex items-center justify-center text-xl">
+                  <i class="fa-solid fa-microchip"></i>
+                </div>
+                <div>
+                  <h3 class="font-bold text-white text-base">NVIDIA NIM</h3>
+                  <span class="text-[11px] text-green-400 font-mono">Accelerated Microservices</span>
+                </div>
+              </div>
+              <span id="badge-hub-nvidia" class="text-[10px] px-2.5 py-0.5 rounded-full font-mono font-semibold bg-slate-800 text-slate-400 border border-slate-700">Ready</span>
+            </div>
+            <p class="text-xs text-slate-300 leading-relaxed mb-3">
+              High-throughput cloud inference on NVIDIA GPUs running Meta Llama 3.3 70B Instruct with sub-second response times.
+            </p>
+            <div class="text-[11px] bg-black/40 p-3 rounded-xl border border-white/[0.06] space-y-1 font-mono text-slate-300">
+              <div><span class="text-slate-500">Endpoint:</span> https://integrate.api.nvidia.com/v1</div>
+              <div><span class="text-slate-500">Key:</span> NVIDIA_API_KEY</div>
+            </div>
+          </div>
+
+          <button onclick="handleProviderChange('nvidia')" class="w-full py-2.5 px-3 rounded-xl bg-white/[0.08] hover:bg-green-600 text-slate-200 hover:text-white text-xs font-semibold transition flex items-center justify-center space-x-2">
+            <i class="fa-solid fa-check"></i>
+            <span>Set as Active Provider</span>
+          </button>
+        </div>
+
+        <!-- Provider 4: Ollama Cloud & Local -->
+        <div id="hub-card-ollama" class="glass-panel glass-panel-hover rounded-2xl p-6 flex flex-col justify-between space-y-4">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <div class="flex items-center space-x-3">
+                <div class="w-11 h-11 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-xl">
+                  <i class="fa-solid fa-server"></i>
+                </div>
+                <div>
+                  <h3 class="font-bold text-white text-base">Ollama (Cloud & Local)</h3>
+                  <span class="text-[11px] text-amber-400 font-mono">Sovereign & On-Premise</span>
+                </div>
+              </div>
+              <span id="badge-hub-ollama" class="text-[10px] px-2.5 py-0.5 rounded-full font-mono font-semibold bg-slate-800 text-slate-400 border border-slate-700">Ready</span>
+            </div>
+            <p class="text-xs text-slate-300 leading-relaxed mb-3">
+              Connect to your local Ollama daemon or Ollama Cloud remote endpoint. Completely private execution of Llama 3, DeepSeek, or Mistral.
+            </p>
+            <div class="text-[11px] bg-black/40 p-3 rounded-xl border border-white/[0.06] space-y-1 font-mono text-slate-300">
+              <div><span class="text-slate-500">Endpoint:</span> http://localhost:11434/v1 (or Cloud URL)</div>
+              <div><span class="text-slate-500">Model:</span> llama3</div>
+            </div>
+          </div>
+
+          <button onclick="handleProviderChange('ollama')" class="w-full py-2.5 px-3 rounded-xl bg-white/[0.08] hover:bg-amber-600 text-slate-200 hover:text-white text-xs font-semibold transition flex items-center justify-center space-x-2">
+            <i class="fa-solid fa-check"></i>
+            <span>Set as Active Provider</span>
+          </button>
+        </div>
+
+      </div>
+
+      <!-- Latency & Model Ping Benchmark Console -->
+      <div class="glass-panel rounded-2xl p-6 shadow-xl space-y-4">
+        <div class="flex items-center justify-between border-b border-white/[0.08] pb-3">
+          <div class="flex items-center space-x-2">
+            <i class="fa-solid fa-gauge-high text-indigo-400"></i>
+            <h3 class="font-bold text-white text-sm">Real-Time Connectivity & Latency Benchmark</h3>
+          </div>
+          <span class="text-[11px] text-slate-400">Pings the currently selected LLM with a warm-up prompt</span>
+        </div>
+
+        <div class="flex flex-col sm:flex-row gap-3">
           <input
             type="text"
-            id="docTitleInput"
-            placeholder="e.g. cloud_security_policy or company_faq"
-            class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"
-            required
+            id="benchmarkPromptInput"
+            value="In 10 words, explain why hybrid RAG outperforms vector search alone."
+            class="flex-1 bg-black/60 border border-white/[0.1] rounded-xl px-4 py-2.5 text-xs text-white font-mono focus:outline-none focus:border-indigo-500"
           />
+          <button
+            onclick="runModelBenchmark()"
+            id="btnBenchmark"
+            class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-medium text-xs rounded-xl shadow-lg shadow-indigo-600/30 transition flex items-center justify-center space-x-2"
+          >
+            <i class="fa-solid fa-play text-xs"></i>
+            <span>Test Latency</span>
+          </button>
         </div>
-        <div>
-          <label class="block text-xs font-semibold text-slate-300 mb-1">Paragraph / Text Content</label>
-          <textarea
-            id="docContentInput"
-            rows="5"
-            placeholder="Paste or write your custom text, knowledge, or internal documentation here..."
-            class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 leading-relaxed"
-            required
-          ></textarea>
-        </div>
-        <button
-          type="submit"
-          id="btnSaveDirect"
-          class="w-full py-2.5 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-medium text-xs rounded-xl shadow-lg transition flex items-center justify-center space-x-2"
-        >
-          <i class="fa-solid fa-check"></i>
-          <span>Save & Ingest into Knowledge Base</span>
-        </button>
-      </form>
 
-      <!-- Tab 2: Upload File Form -->
-      <form id="formUploadFile" onsubmit="handleFileUploadSubmit(event)" class="space-y-3 hidden">
-        <div>
-          <label class="block text-xs font-semibold text-slate-300 mb-2">Select Plain Text (.txt) File</label>
-          <div class="border-2 border-dashed border-slate-700 rounded-xl p-6 text-center hover:border-indigo-500/60 transition cursor-pointer" onclick="document.getElementById('fileUploadInput').click()">
-            <i class="fa-solid fa-cloud-arrow-up text-indigo-400 text-2xl mb-2"></i>
-            <div class="text-xs text-slate-300">Click to choose a file or drag & drop</div>
-            <div id="selectedFileName" class="text-xs text-emerald-400 mt-2 font-mono"></div>
-            <input
-              type="file"
-              id="fileUploadInput"
-              accept=".txt"
-              class="hidden"
-              onchange="handleFileSelected(this)"
-              required
-            />
+        <div id="benchmarkOutputBox" class="p-4 bg-black/60 rounded-xl border border-white/[0.08] text-xs font-mono text-slate-300 hidden whitespace-pre-wrap leading-relaxed"></div>
+      </div>
+
+    </main>
+
+    <!-- ======================================================================= -->
+    <!-- VIEW 4: SYSTEM ARCHITECTURE & RRF MATHEMATICS                           -->
+    <!-- ======================================================================= -->
+    <main id="view-architecture" class="page-container flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 flex flex-col space-y-6 hidden">
+      
+      <!-- Arch Header -->
+      <div class="glass-panel rounded-2xl p-6">
+        <div class="flex items-center space-x-3 mb-2">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-purple-500 to-indigo-500 flex items-center justify-center text-white text-lg shadow-lg shadow-purple-500/20">
+            <i class="fa-solid fa-network-wired"></i>
+          </div>
+          <div>
+            <h2 class="text-lg font-bold text-white">System Architecture & Fusion Mathematics</h2>
+            <p class="text-xs text-slate-400">Complete pipeline breakdown: Lexical BM25, Semantic Jina Vectors & Reciprocal Rank Fusion</p>
           </div>
         </div>
-        <button
-          type="submit"
-          id="btnSaveUpload"
-          class="w-full py-2.5 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-medium text-xs rounded-xl shadow-lg transition flex items-center justify-center space-x-2"
-        >
-          <i class="fa-solid fa-upload"></i>
-          <span>Upload & Ingest into Knowledge Base</span>
-        </button>
-      </form>
+      </div>
 
-      <div id="modalAlert" class="text-xs p-2.5 rounded-xl hidden font-medium"></div>
+      <!-- 4 Routing Branches Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        
+        <div class="glass-panel rounded-2xl p-5 border-l-4 border-l-slate-400 space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="font-bold text-xs text-white">1. Direct LLM</span>
+            <span class="text-[9px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-mono">direct_llm</span>
+          </div>
+          <p class="text-[11px] text-slate-400 leading-relaxed">
+            Zero retrieval overhead. General knowledge queries, code syntax explanations, and greetings bypass search engines and stream directly from the model.
+          </p>
+          <div class="text-[10px] text-slate-500 font-mono">0ms retrieval • Pure Synthesis</div>
+        </div>
 
+        <div class="glass-panel rounded-2xl p-5 border-l-4 border-l-emerald-500 space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="font-bold text-xs text-emerald-300">2. Local RAG</span>
+            <span class="text-[9px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded font-mono">local_rag</span>
+          </div>
+          <p class="text-[11px] text-slate-400 leading-relaxed">
+            Dispatched when user asks about proprietary documents, policies, or internal code. Uses hybrid BM25 + Jina vectors fused by RRF.
+          </p>
+          <div class="text-[10px] text-emerald-400 font-mono">100% Private • Local Disk</div>
+        </div>
+
+        <div class="glass-panel rounded-2xl p-5 border-l-4 border-l-cyan-500 space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="font-bold text-xs text-cyan-300">3. Web Search</span>
+            <span class="text-[9px] bg-cyan-500/20 text-cyan-300 px-2 py-0.5 rounded font-mono">web_search</span>
+          </div>
+          <p class="text-[11px] text-slate-400 leading-relaxed">
+            Queries Exa AI's neural web crawler for current events, external documentation, or real-time 2026 AI industry releases.
+          </p>
+          <div class="text-[10px] text-cyan-400 font-mono">Live Internet • Neural Index</div>
+        </div>
+
+        <div class="glass-panel rounded-2xl p-5 border-l-4 border-l-purple-500 space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="font-bold text-xs text-purple-300">4. Both Fused</span>
+            <span class="text-[9px] bg-purple-500/20 text-purple-300 px-2 py-0.5 rounded font-mono">both</span>
+          </div>
+          <p class="text-[11px] text-slate-400 leading-relaxed">
+            Executes local RAG and live web search in parallel, cross-fusing both external news and internal documentation into a unified perspective.
+          </p>
+          <div class="text-[10px] text-purple-400 font-mono">Comparative • Dual-Grounding</div>
+        </div>
+
+      </div>
+
+      <!-- Mathematical Deep-Dive: RRF Formula -->
+      <div class="glass-panel rounded-2xl p-6 shadow-xl space-y-4">
+        <div class="flex items-center space-x-2.5 border-b border-white/[0.08] pb-3.5">
+          <i class="fa-solid fa-square-root-variable text-purple-400 text-lg"></i>
+          <h3 class="font-bold text-white text-sm">Reciprocal Rank Fusion (RRF) Mathematical Formula</h3>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-center">
+          <div class="space-y-3 text-xs text-slate-300 leading-relaxed">
+            <p>
+              Dense vector search captures semantic synonyms but struggles with exact product IDs or acronyms. BM25 captures exact lexical keywords but ignores semantic context. Our hybrid engine fuses both using Cormack's Reciprocal Rank Fusion:
+            </p>
+            <div class="p-4 bg-black/60 rounded-xl border border-indigo-500/30 text-center font-mono text-indigo-300 text-sm sm:text-base shadow-inner">
+              RRF_Score(d) = ∑ [ 1 / ( k + rank_m(d) ) ]
+            </div>
+            <p class="text-[11px] text-slate-400">
+              Where <code class="text-indigo-300 font-mono">k = 60</code>. Items retrieved by both lexical and dense channels accumulate dominant scores, eliminating single-retriever blind spots.
+            </p>
+          </div>
+
+          <!-- Component Specifications Table -->
+          <div class="bg-black/60 p-4 rounded-xl border border-white/[0.08] space-y-2 text-xs font-mono">
+            <div class="flex justify-between py-1.5 border-b border-white/[0.06]">
+              <span class="text-slate-400">Embedding Model:</span>
+              <span class="text-emerald-400">Jina AI (jina-embeddings-v3)</span>
+            </div>
+            <div class="flex justify-between py-1.5 border-b border-white/[0.06]">
+              <span class="text-slate-400">Vector Storage:</span>
+              <span class="text-purple-400">ChromaDB Persistent (L2 Distance)</span>
+            </div>
+            <div class="flex justify-between py-1.5 border-b border-white/[0.06]">
+              <span class="text-slate-400">Lexical Search:</span>
+              <span class="text-indigo-400">BM25 Okapi (Persistent JSON Index)</span>
+            </div>
+            <div class="flex justify-between py-1.5 border-b border-white/[0.06]">
+              <span class="text-slate-400">Web Retrieval:</span>
+              <span class="text-cyan-400">Exa AI Neural Search API</span>
+            </div>
+            <div class="flex justify-between py-1.5">
+              <span class="text-slate-400">Backend Server:</span>
+              <span class="text-amber-400">FastAPI 0.142 + Uvicorn (Port 8000)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+
+    <!-- ======================================================================= -->
+    <!-- DOCUMENT PREVIEW MODAL / DRAWER                                         -->
+    <!-- ======================================================================= -->
+    <div id="docViewerModal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-[80] flex items-center justify-center p-4 hidden">
+      <div class="glass-panel rounded-2xl max-w-2xl w-full p-6 shadow-2xl flex flex-col max-h-[85vh] space-y-4 border-indigo-500/30">
+        <div class="flex items-center justify-between border-b border-white/[0.08] pb-3">
+          <div class="flex items-center space-x-2.5">
+            <div class="w-8 h-8 rounded-lg bg-indigo-500/20 text-indigo-400 flex items-center justify-center text-sm">
+              <i class="fa-solid fa-file-lines"></i>
+            </div>
+            <div>
+              <h3 id="modalDocTitle" class="font-bold text-white text-sm">document.txt</h3>
+              <p id="modalDocMeta" class="text-[11px] text-slate-400">1,240 characters • Text file</p>
+            </div>
+          </div>
+          <button onclick="closeDocModal()" class="text-slate-400 hover:text-white p-1">
+            <i class="fa-solid fa-xmark text-lg"></i>
+          </button>
+        </div>
+
+        <!-- Full Document Text Content -->
+        <div class="flex-1 overflow-y-auto p-4 bg-black/60 rounded-xl border border-white/[0.08] text-xs text-slate-300 font-mono whitespace-pre-wrap leading-relaxed">
+          <div id="modalDocBody"></div>
+        </div>
+
+        <div class="flex items-center justify-between pt-2">
+          <button onclick="askQuestionFromModal()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold flex items-center space-x-1.5 transition">
+            <i class="fa-solid fa-comments"></i>
+            <span>Ask question about this document</span>
+          </button>
+          <button onclick="closeDocModal()" class="px-4 py-2 bg-white/[0.08] hover:bg-white/[0.15] text-slate-300 rounded-xl text-xs font-medium transition">
+            Close
+          </button>
+        </div>
+      </div>
     </div>
+
   </div>
 
-  <footer class="border-t border-slate-800/80 bg-slate-950 px-6 py-4 text-xs text-slate-500">
-    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-center sm:text-left">
-      <span>Intelligent GenAI Knowledge Assistant • Powered by Gemini, Jina AI, ChromaDB, BM25 & Exa</span>
-      <span class="text-slate-400">Developed by <a href="https://www.linkedin.com/in/sathishbabu-shanmugam/" target="_blank" class="text-indigo-400 font-semibold hover:underline">Sathish</a> — AI Engineer</span>
+  <!-- ========================================================================= -->
+  <!-- FOOTER: Made with Love by Sathish (AI Engineer) with Clickable Links       -->
+  <!-- ========================================================================= -->
+  <footer class="border-t border-white/[0.08] bg-[#090d16] py-6 px-4 sm:px-6 mt-auto">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-slate-400">
+      
+      <!-- Brand & Capabilities -->
+      <div class="flex items-center space-x-2 text-center md:text-left">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        <span class="font-semibold text-slate-200">AGUI Knowledge Assistant</span>
+        <span class="text-slate-600 hidden sm:inline">•</span>
+        <span class="text-slate-400 hidden sm:inline">Multi-LLM & Hybrid RAG Engine</span>
+      </div>
+
+      <!-- Slogan with Clickable GitHub Link for Sathish -->
+      <div class="flex items-center space-x-1.5 text-slate-300 text-center">
+        <span>Made with</span>
+        <i class="fa-solid fa-heart text-red-500 animate-pulse text-xs"></i>
+        <span>by</span>
+        <a 
+          href="https://github.com/sathishatgit" 
+          target="_blank" 
+          rel="noopener noreferrer" 
+          class="font-bold text-indigo-400 hover:text-indigo-300 underline decoration-indigo-500/50 hover:decoration-indigo-300 transition"
+          title="Visit Sathish's GitHub Profile"
+        >
+          Sathish
+        </a>
+        <span class="text-slate-500">—</span>
+        <span class="text-indigo-300 font-medium">AI Engineer</span>
+      </div>
+
+      <!-- Social & Project Links -->
+      <div class="flex items-center space-x-5 text-slate-400">
+        <a 
+          href="https://github.com/sathishatgit" 
+          target="_blank" 
+          rel="noopener noreferrer" 
+          class="hover:text-white transition flex items-center space-x-1.5 group"
+          title="GitHub Profile"
+        >
+          <i class="fa-brands fa-github text-sm text-slate-400 group-hover:text-white"></i>
+          <span>GitHub</span>
+        </a>
+
+        <a 
+          href="https://www.linkedin.com/in/sathishbabu-shanmugam/" 
+          target="_blank" 
+          rel="noopener noreferrer" 
+          class="hover:text-white transition flex items-center space-x-1.5 group"
+          title="LinkedIn Profile"
+        >
+          <i class="fa-brands fa-linkedin text-sm text-blue-400 group-hover:text-blue-300"></i>
+          <span>LinkedIn</span>
+        </a>
+
+        <a 
+          href="https://github.com/sathishatgit/genai-knowledge-assistant" 
+          target="_blank" 
+          rel="noopener noreferrer" 
+          class="hover:text-white transition flex items-center space-x-1.5 group"
+          title="GitHub Repository"
+        >
+          <i class="fa-solid fa-code-fork text-xs text-purple-400 group-hover:text-purple-300"></i>
+          <span>Repository</span>
+        </a>
+      </div>
+
     </div>
   </footer>
 
+  <!-- ========================================================================= -->
+  <!-- JAVASCRIPT CONTROLLER                                                     -->
+  <!-- ========================================================================= -->
   <script>
-    // Fetch live system status on page load
+    // State Store
+    let allDocuments = [];
+    let currentActivePage = 'chat';
+    let currentActiveProvider = 'gemini';
+    let currentModalDoc = null;
+    let queryCounter = 0;
+
+    // Toast Notifications
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      
+      let bg = 'bg-[#0f172a] border-white/10 text-white';
+      let icon = 'fa-circle-info text-blue-400';
+      if (type === 'success') {
+        bg = 'bg-[#0f172a] border-emerald-500/40 text-emerald-200';
+        icon = 'fa-circle-check text-emerald-400';
+      } else if (type === 'error') {
+        bg = 'bg-[#0f172a] border-red-500/40 text-red-200';
+        icon = 'fa-circle-exclamation text-red-400';
+      }
+
+      toast.className = `p-3.5 rounded-xl border shadow-2xl flex items-center space-x-2.5 text-xs pointer-events-auto transition-all duration-300 transform translate-x-full ${bg}`;
+      toast.innerHTML = `<i class="fa-solid ${icon} text-sm"></i><span>${message}</span>`;
+      container.appendChild(toast);
+
+      requestAnimationFrame(() => toast.classList.remove('translate-x-full'));
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-x-full');
+        setTimeout(() => toast.remove(), 300);
+      }, 3500);
+    }
+
+    // SPA Page Switching
+    function switchPage(pageId) {
+      currentActivePage = pageId;
+      const pages = ['chat', 'knowledge', 'models', 'architecture'];
+
+      pages.forEach(p => {
+        const viewEl = document.getElementById(`view-${p}`);
+        const navBtn = document.getElementById(`nav-btn-${p}`);
+        const mobBtn = document.getElementById(`mobile-btn-${p}`);
+
+        if (p === pageId) {
+          viewEl.classList.remove('hidden');
+          if (navBtn) {
+            navBtn.className = 'flex items-center space-x-2 px-3.5 py-1.5 rounded-lg transition text-white bg-indigo-600 shadow-md shadow-indigo-600/30';
+          }
+          if (mobBtn) {
+            mobBtn.className = 'flex flex-col items-center py-1 text-indigo-400 font-medium';
+          }
+        } else {
+          viewEl.classList.add('hidden');
+          if (navBtn) {
+            navBtn.className = 'flex items-center space-x-2 px-3.5 py-1.5 rounded-lg transition text-slate-400 hover:text-white hover:bg-white/5';
+          }
+          if (mobBtn) {
+            mobBtn.className = 'flex flex-col items-center py-1 text-slate-400 font-medium';
+          }
+        }
+      });
+
+      window.location.hash = pageId;
+    }
+
+    // Initialize on Load
+    window.addEventListener('DOMContentLoaded', () => {
+      const hash = window.location.hash.replace('#', '');
+      if (['chat', 'knowledge', 'models', 'architecture'].includes(hash)) {
+        switchPage(hash);
+      }
+      fetchStatus();
+      fetchDocuments();
+    });
+
+    // Fetch Live Status
     async function fetchStatus() {
       try {
         const res = await fetch('/api/status');
         const data = await res.json();
+
+        currentActiveProvider = data.active_provider || 'gemini';
         
-        // Active Provider and Model badge
-        if (data.active_provider) {
-          const select = document.getElementById('providerSelect');
-          if (select) select.value = data.active_provider;
-          const badge = document.getElementById('providerModelBadge');
-          if (badge) badge.textContent = data.active_model || data.active_provider;
-          const dot = document.getElementById('providerStatusDot');
-          if (dot) {
-            dot.className = data.active_ready 
-              ? 'w-2 h-2 rounded-full bg-emerald-400 animate-pulse' 
-              : 'w-2 h-2 rounded-full bg-amber-400';
-            dot.title = data.active_ready ? 'Provider Ready' : 'Key / Endpoint Missing';
-          }
+        // Update top bar controls
+        const quickSelect = document.getElementById('quickProviderSelect');
+        if (quickSelect) quickSelect.value = currentActiveProvider;
+
+        const quickModelBadge = document.getElementById('quickModelBadge');
+        if (quickModelBadge) quickModelBadge.textContent = data.active_model || currentActiveProvider;
+
+        const activeModelTag = document.getElementById('activeModelTag');
+        if (activeModelTag) activeModelTag.textContent = (data.active_provider || 'gemini').toUpperCase();
+
+        const activeModelNameHub = document.getElementById('activeModelNameHub');
+        if (activeModelNameHub) activeModelNameHub.textContent = (data.active_provider || 'gemini').toUpperCase();
+
+        // Update counts
+        const chromaCount = data.chroma_count || 0;
+        const bm25Count = data.bm25_count || 0;
+
+        document.getElementById('kbChromaCount').textContent = `${chromaCount} Chunks`;
+        document.getElementById('kbBm25Count').textContent = `${bm25Count} Docs`;
+
+        // Update provider cards
+        if (data.providers) {
+          ['gemini', 'openai', 'nvidia', 'ollama'].forEach(p => {
+            const badge = document.getElementById(`badge-hub-${p}`);
+            const card = document.getElementById(`hub-card-${p}`);
+            if (badge) {
+              if (p === data.active_provider) {
+                badge.textContent = 'Active';
+                badge.className = 'text-[10px] px-2.5 py-0.5 rounded-full font-mono font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
+                if (card) card.classList.add('border-indigo-500/50');
+              } else if (data.providers[p]?.ready) {
+                badge.textContent = 'Ready';
+                badge.className = 'text-[10px] px-2.5 py-0.5 rounded-full font-mono font-semibold bg-white/10 text-slate-300 border border-white/15';
+                if (card) card.classList.remove('border-indigo-500/50');
+              } else {
+                badge.textContent = 'Key Needed';
+                badge.className = 'text-[10px] px-2.5 py-0.5 rounded-full font-mono font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20';
+                if (card) card.classList.remove('border-indigo-500/50');
+              }
+            }
+          });
         }
-        
-        document.getElementById('jinaStatus').textContent = data.jina ? 'Ready' : 'Not Set';
-        document.getElementById('jinaStatus').className = data.jina ? 'font-semibold text-emerald-400' : 'font-semibold text-amber-400';
 
-        document.getElementById('exaStatus').textContent = data.exa ? 'Ready' : 'Not Set';
-        document.getElementById('exaStatus').className = data.exa ? 'font-semibold text-emerald-400' : 'font-semibold text-amber-400';
-
-        document.getElementById('chromaStatus').textContent = `${data.chroma_count} Chunks`;
       } catch (e) {
-        console.warn('Status check failed:', e);
+        console.warn('Status fetch error:', e);
       }
-      fetchDocuments();
     }
 
+    // Switch Provider
     async function handleProviderChange(provider) {
       try {
         const res = await fetch('/api/providers/select', {
@@ -408,90 +1171,132 @@
         });
         const result = await res.json();
         if (result.success) {
+          showToast(`Active AI Provider switched to ${provider.toUpperCase()}`, 'success');
           fetchStatus();
         }
       } catch (e) {
-        console.error('Failed to switch provider:', e);
+        showToast('Failed to switch provider: ' + e, 'error');
       }
     }
 
-    // Fetch list of documents in knowledge base
+    // Fetch Documents
     async function fetchDocuments() {
       try {
         const res = await fetch('/api/documents');
-        const docs = await res.json();
-        const container = document.getElementById('docListContainer');
-        container.innerHTML = '';
+        allDocuments = await res.json();
+        
+        document.getElementById('kbDocCount').textContent = allDocuments.length;
+        const navBadge = document.getElementById('navDocBadge');
+        if (navBadge) navBadge.textContent = `${allDocuments.length} docs`;
 
-        if (!docs || docs.length === 0) {
-          container.innerHTML = '<div class="text-slate-500 italic">No documents indexed yet.</div>';
-          return;
-        }
-
-        docs.forEach(doc => {
-          const item = document.createElement('div');
-          item.className = 'p-2 rounded-lg bg-slate-800/50 border border-slate-700/60 flex items-center justify-between';
-          item.innerHTML = `
-            <div class="truncate mr-2">
-              <span class="text-slate-200 font-semibold"><i class="fa-solid fa-file-lines text-slate-400 mr-1"></i>${doc.filename}</span>
-              <span class="text-[10px] text-slate-500 block truncate">${doc.preview}</span>
-            </div>
-            <span class="text-[10px] text-indigo-400 whitespace-nowrap">${doc.char_count} chars</span>
-          `;
-          container.appendChild(item);
-        });
+        renderDocumentGrid(allDocuments);
       } catch (e) {
-        console.warn('Document list fetch failed:', e);
+        console.warn('Documents fetch error:', e);
       }
     }
 
-    function toggleDataModal(show) {
-      const modal = document.getElementById('dataModal');
-      if (show) {
-        modal.classList.remove('hidden');
-        document.getElementById('modalAlert').classList.add('hidden');
-      } else {
-        modal.classList.add('hidden');
+    // Render Document Explorer Grid
+    function renderDocumentGrid(docs) {
+      const container = document.getElementById('documentCardsContainer');
+      container.innerHTML = '';
+
+      if (!docs || docs.length === 0) {
+        container.innerHTML = '<div class="text-slate-500 text-xs italic col-span-full py-8 text-center">No documents in knowledge base yet. Ingest a paragraph or upload a file above.</div>';
+        return;
       }
+
+      docs.forEach(doc => {
+        const card = document.createElement('div');
+        card.className = 'p-4 rounded-xl bg-black/40 border border-white/[0.08] hover:border-indigo-500/40 transition flex flex-col justify-between space-y-3 cursor-pointer group';
+        card.onclick = () => openDocModal(doc);
+        
+        card.innerHTML = `
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="font-bold text-xs text-white truncate flex items-center space-x-1.5 group-hover:text-indigo-300 transition" title="${doc.filename}">
+                <i class="fa-solid fa-file-lines text-indigo-400 text-xs"></i>
+                <span class="truncate">${doc.filename}</span>
+              </span>
+              <span class="text-[10px] bg-indigo-500/10 text-indigo-300 px-2 py-0.5 rounded font-mono border border-indigo-500/20 whitespace-nowrap">${doc.char_count} chars</span>
+            </div>
+            <p class="text-[11px] text-slate-400 line-clamp-3 leading-relaxed font-sans bg-black/50 p-2.5 rounded-lg border border-white/[0.05]">
+              ${doc.preview}
+            </p>
+          </div>
+          <div class="flex items-center justify-between pt-2 border-t border-white/[0.06] text-[10px]">
+            <span class="text-slate-500">${(doc.size_bytes / 1024).toFixed(1)} KB</span>
+            <span class="text-indigo-400 font-semibold group-hover:translate-x-1 transition flex items-center space-x-1">
+              <span>View full doc</span>
+              <i class="fa-solid fa-arrow-right text-[9px]"></i>
+            </span>
+          </div>
+        `;
+        container.appendChild(card);
+      });
     }
 
-    function switchModalTab(tab) {
-      const formDirect = document.getElementById('formDirectText');
-      const formUpload = document.getElementById('formUploadFile');
-      const btnDirect = document.getElementById('tabBtnDirect');
-      const btnUpload = document.getElementById('tabBtnUpload');
-
-      if (tab === 'direct') {
-        formDirect.classList.remove('hidden');
-        formUpload.classList.add('hidden');
-        btnDirect.className = 'px-4 py-2 font-semibold text-indigo-400 border-b-2 border-indigo-400 transition';
-        btnUpload.className = 'px-4 py-2 font-semibold text-slate-400 hover:text-slate-200 transition';
-      } else {
-        formDirect.classList.add('hidden');
-        formUpload.classList.remove('hidden');
-        btnDirect.className = 'px-4 py-2 font-semibold text-slate-400 hover:text-slate-200 transition';
-        btnUpload.className = 'px-4 py-2 font-semibold text-indigo-400 border-b-2 border-indigo-400 transition';
+    // Filter Documents
+    function filterDocuments(query) {
+      const q = query.toLowerCase().trim();
+      if (!q) {
+        renderDocumentGrid(allDocuments);
+        return;
       }
+      const filtered = allDocuments.filter(d => 
+        d.filename.toLowerCase().includes(q) || (d.preview && d.preview.toLowerCase().includes(q))
+      );
+      renderDocumentGrid(filtered);
     }
 
-    function handleFileSelected(input) {
-      const label = document.getElementById('selectedFileName');
-      if (input.files && input.files[0]) {
-        label.textContent = `Selected: ${input.files[0].name} (${input.files[0].size} bytes)`;
-      } else {
-        label.textContent = '';
-      }
+    // Document Modal Viewer
+    function openDocModal(doc) {
+      currentModalDoc = doc;
+      document.getElementById('modalDocTitle').textContent = doc.filename;
+      document.getElementById('modalDocMeta').textContent = `${doc.char_count.toLocaleString()} characters • ${(doc.size_bytes / 1024).toFixed(1)} KB`;
+      document.getElementById('modalDocBody').textContent = doc.content || doc.preview || 'No content preview available.';
+      document.getElementById('docViewerModal').classList.remove('hidden');
     }
 
+    function closeDocModal() {
+      document.getElementById('docViewerModal').classList.add('hidden');
+      currentModalDoc = null;
+    }
+
+    function askQuestionFromModal() {
+      if (!currentModalDoc) return;
+      const filename = currentModalDoc.filename;
+      closeDocModal();
+      switchPage('chat');
+      document.getElementById('queryInput').value = `According to our document '${filename}', what are the key findings or details?`;
+      document.getElementById('routeMode').value = 'local_rag';
+      handleQuerySubmit(new Event('submit'));
+    }
+
+    // Start New Query
+    function startNewQuery() {
+      document.getElementById('queryInput').value = '';
+      document.getElementById('routeMode').value = '';
+      switchPage('chat');
+      document.getElementById('queryInput').focus();
+    }
+
+    // Trigger Preset from Shelf
+    function triggerPreset(query, route) {
+      switchPage('chat');
+      document.getElementById('queryInput').value = query;
+      document.getElementById('routeMode').value = route || '';
+      handleQuerySubmit(new Event('submit'));
+    }
+
+    // Direct Text Submission
     async function handleDirectTextSubmit(e) {
       e.preventDefault();
       const title = document.getElementById('docTitleInput').value.trim();
       const content = document.getElementById('docContentInput').value.trim();
       const btn = document.getElementById('btnSaveDirect');
-      const alertBox = document.getElementById('modalAlert');
 
       btn.disabled = true;
-      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> <span>Saving & Indexing...</span>';
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> <span>Chunking & Indexing...</span>';
 
       try {
         const res = await fetch('/api/documents/text', {
@@ -502,22 +1307,30 @@
         const data = await res.json();
         if (!res.ok) throw new Error(data.detail || 'Failed to save document');
 
-        alertBox.className = 'text-xs p-2.5 rounded-xl bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
-        alertBox.textContent = data.message;
-        alertBox.classList.remove('hidden');
+        showToast(data.message, 'success');
+        if (window.confetti) confetti({ particleCount: 50, spread: 60, origin: { y: 0.8 } });
 
         document.getElementById('docTitleInput').value = '';
         document.getElementById('docContentInput').value = '';
+        document.getElementById('charCountDisplay').textContent = '0 chars';
+        
         fetchStatus();
-        setTimeout(() => toggleDataModal(false), 1500);
-
+        fetchDocuments();
       } catch (err) {
-        alertBox.className = 'text-xs p-2.5 rounded-xl bg-red-500/20 text-red-300 border border-red-500/30';
-        alertBox.textContent = err.message;
-        alertBox.classList.remove('hidden');
+        showToast(err.message, 'error');
       } finally {
         btn.disabled = false;
-        btn.innerHTML = '<i class="fa-solid fa-check"></i> <span>Save & Ingest into Knowledge Base</span>';
+        btn.innerHTML = '<i class="fa-solid fa-plus"></i> <span>Save & Index into Knowledge Base</span>';
+      }
+    }
+
+    // File Upload Handling
+    function handleFileSelection(input) {
+      const label = document.getElementById('selectedFileBadge');
+      if (input.files && input.files[0]) {
+        label.textContent = `Selected: ${input.files[0].name} (${(input.files[0].size / 1024).toFixed(1)} KB)`;
+      } else {
+        label.textContent = '';
       }
     }
 
@@ -525,10 +1338,9 @@
       e.preventDefault();
       const input = document.getElementById('fileUploadInput');
       const btn = document.getElementById('btnSaveUpload');
-      const alertBox = document.getElementById('modalAlert');
 
       if (!input.files || !input.files[0]) {
-        alert('Please choose a .txt file.');
+        showToast('Please select a .txt file first.', 'error');
         return;
       }
 
@@ -546,48 +1358,48 @@
         const data = await res.json();
         if (!res.ok) throw new Error(data.detail || 'Upload failed');
 
-        alertBox.className = 'text-xs p-2.5 rounded-xl bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
-        alertBox.textContent = data.message;
-        alertBox.classList.remove('hidden');
+        showToast(data.message, 'success');
+        if (window.confetti) confetti({ particleCount: 60, spread: 70, origin: { y: 0.8 } });
 
         input.value = '';
-        document.getElementById('selectedFileName').textContent = '';
+        document.getElementById('selectedFileBadge').textContent = '';
+        
         fetchStatus();
-        setTimeout(() => toggleDataModal(false), 1500);
-
+        fetchDocuments();
       } catch (err) {
-        alertBox.className = 'text-xs p-2.5 rounded-xl bg-red-500/20 text-red-300 border border-red-500/30';
-        alertBox.textContent = err.message;
-        alertBox.classList.remove('hidden');
+        showToast(err.message, 'error');
       } finally {
         btn.disabled = false;
-        btn.innerHTML = '<i class="fa-solid fa-upload"></i> <span>Upload & Ingest into Knowledge Base</span>';
+        btn.innerHTML = '<i class="fa-solid fa-upload"></i> <span>Upload & Ingest Document</span>';
       }
     }
 
-    function selectPreset(query, route) {
-      document.getElementById('queryInput').value = query;
-      document.getElementById('routeMode').value = route || '';
-      handleQuerySubmit(new Event('submit'));
-    }
-
+    // Trigger full ingestion
     async function triggerIngest() {
-      const btn = document.getElementById('btnIngest');
-      btn.disabled = true;
-      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin text-xs"></i> <span>Indexing...</span>';
+      const btn = document.getElementById('btnIngestFull');
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> <span>Indexing...</span>';
+      }
+
       try {
         const res = await fetch('/api/ingest', { method: 'POST' });
         const data = await res.json();
-        alert(data.message || 'Ingestion completed successfully!');
+        showToast(data.message || 'Ingestion completed successfully!', 'success');
+        if (window.confetti) confetti({ particleCount: 70, spread: 80, origin: { y: 0.7 } });
         fetchStatus();
+        fetchDocuments();
       } catch (err) {
-        alert('Ingestion error: ' + err);
+        showToast('Ingestion error: ' + err, 'error');
       } finally {
-        btn.disabled = false;
-        btn.innerHTML = '<i class="fa-solid fa-rotate text-xs"></i> <span>Re-Index</span>';
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fa-solid fa-rotate text-xs"></i> <span>Re-Index</span>';
+        }
       }
     }
 
+    // Process Query with Live Pipeline Execution
     async function handleQuerySubmit(e) {
       if (e) e.preventDefault();
       const input = document.getElementById('queryInput');
@@ -597,24 +1409,103 @@
       const forcedRoute = document.getElementById('routeMode').value || null;
       const btnSubmit = document.getElementById('btnSubmit');
 
-      // UI Transitions
-      document.getElementById('welcomeBanner').classList.add('hidden');
-      const traceCard = document.getElementById('executionTraceCard');
-      traceCard.classList.remove('hidden');
+      // Hide empty hero banner
+      document.getElementById('emptyHeroBanner').classList.add('hidden');
 
-      // Reset Step Visuals
-      setStepActive(1, 'Routing query with Gemini...');
-      resetStep(2);
-      resetStep(3);
-      resetStep(4);
+      queryCounter++;
+      const currentQueryId = queryCounter;
 
-      document.getElementById('routeBadge').textContent = 'Routing...';
-      document.getElementById('routeBadge').className = 'text-xs px-2.5 py-1 rounded-full font-mono font-semibold uppercase bg-slate-800 text-slate-400';
-      document.getElementById('routingRationaleBox').classList.add('hidden');
-      document.getElementById('sourcesBox').classList.add('hidden');
-      document.getElementById('answerBox').classList.add('hidden');
-      document.getElementById('traceSpinner').classList.remove('hidden');
+      // Create conversation item card in stream
+      const stream = document.getElementById('conversationStream');
+      const card = document.createElement('div');
+      card.id = `query-card-${currentQueryId}`;
+      card.className = 'glass-panel rounded-2xl p-5 sm:p-6 shadow-2xl transition-all space-y-5 border-indigo-500/20';
 
+      card.innerHTML = `
+        <!-- User Query Bubble -->
+        <div class="flex items-start space-x-3 border-b border-white/[0.08] pb-4">
+          <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center text-white text-xs font-bold shadow-md">
+            <i class="fa-solid fa-user"></i>
+          </div>
+          <div class="flex-1">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-white">Your Query</span>
+              <span class="text-[10px] text-slate-500 font-mono">${new Date().toLocaleTimeString()}</span>
+            </div>
+            <p class="text-sm text-slate-200 mt-1 font-medium">${query}</p>
+          </div>
+        </div>
+
+        <!-- Live Pipeline Execution Tracker -->
+        <div class="space-y-3">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+              <span id="spinner-${currentQueryId}" class="w-3.5 h-3.5 border-2 border-indigo-400 border-t-transparent rounded-full animate-spin"></span>
+              <span class="text-xs font-semibold text-slate-300">Agent Pipeline Execution</span>
+            </div>
+            <span id="badge-route-${currentQueryId}" class="text-xs px-2.5 py-0.5 rounded-full font-mono font-bold uppercase bg-slate-800 text-slate-400 border border-slate-700">
+              Routing...
+            </span>
+          </div>
+
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+            <div id="step1-${currentQueryId}" class="p-2.5 rounded-xl bg-indigo-500/15 border border-indigo-500/40 text-xs">
+              <div class="font-bold text-indigo-300">1. Classifier</div>
+              <div class="text-[10px] text-indigo-200 font-mono truncate" id="step1-detail-${currentQueryId}">Evaluating query</div>
+            </div>
+            <div id="step2-${currentQueryId}" class="p-2.5 rounded-xl bg-black/40 border border-white/[0.06] text-xs">
+              <div class="font-bold text-slate-400">2. Retrieval</div>
+              <div class="text-[10px] text-slate-500 font-mono truncate" id="step2-detail-${currentQueryId}">Pending</div>
+            </div>
+            <div id="step3-${currentQueryId}" class="p-2.5 rounded-xl bg-black/40 border border-white/[0.06] text-xs">
+              <div class="font-bold text-slate-400">3. RRF Fusion</div>
+              <div class="text-[10px] text-slate-500 font-mono truncate" id="step3-detail-${currentQueryId}">Pending</div>
+            </div>
+            <div id="step4-${currentQueryId}" class="p-2.5 rounded-xl bg-black/40 border border-white/[0.06] text-xs">
+              <div class="font-bold text-slate-400">4. Synthesis</div>
+              <div class="text-[10px] text-slate-500 font-mono truncate" id="step4-detail-${currentQueryId}">Pending</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Rationale Box -->
+        <div id="rationale-box-${currentQueryId}" class="p-3.5 bg-black/50 rounded-xl border border-indigo-900/40 text-xs hidden">
+          <div class="text-indigo-400 font-semibold mb-1 flex items-center space-x-1.5">
+            <i class="fa-solid fa-lightbulb text-amber-400"></i>
+            <span>Intelligent Routing Rationale:</span>
+          </div>
+          <p id="rationale-text-${currentQueryId}" class="text-slate-300 leading-relaxed"></p>
+        </div>
+
+        <!-- Sources Box -->
+        <div id="sources-box-${currentQueryId}" class="p-3.5 bg-black/50 rounded-xl border border-white/[0.08] text-xs hidden">
+          <div class="text-slate-300 font-semibold mb-2 flex items-center space-x-1.5">
+            <i class="fa-solid fa-book-open-reader text-indigo-400"></i>
+            <span>Retrieved Evidence & Grounding Sources:</span>
+          </div>
+          <div id="sources-list-${currentQueryId}" class="flex flex-wrap gap-2"></div>
+        </div>
+
+        <!-- Synthesized Answer Box -->
+        <div id="answer-box-${currentQueryId}" class="p-5 bg-black/70 rounded-xl border border-indigo-500/30 text-sm hidden shadow-inner space-y-3">
+          <div class="flex items-center justify-between border-b border-white/[0.08] pb-2.5">
+            <div class="flex items-center space-x-2">
+              <span class="w-6 h-6 rounded-md bg-purple-500/20 text-purple-400 flex items-center justify-center text-xs">
+                <i class="fa-solid fa-wand-magic-sparkles"></i>
+              </span>
+              <span class="font-semibold text-xs text-white">Synthesized Agent Response:</span>
+              <span id="model-tag-${currentQueryId}" class="text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-mono"></span>
+            </div>
+            <button onclick="copyCardAnswer(${currentQueryId})" class="text-xs px-2.5 py-1 bg-white/[0.08] hover:bg-white/[0.15] text-slate-300 rounded-md transition flex items-center space-x-1">
+              <i class="fa-regular fa-copy"></i>
+              <span>Copy</span>
+            </button>
+          </div>
+          <div id="answer-text-${currentQueryId}" class="prose-ai"></div>
+        </div>
+      `;
+
+      stream.prepend(card);
       btnSubmit.disabled = true;
 
       try {
@@ -629,53 +1520,70 @@
 
         // Update Route Badge
         const route = data.route || 'direct_llm';
-        const badge = document.getElementById('routeBadge');
+        const badge = document.getElementById(`badge-route-${currentQueryId}`);
         badge.textContent = route.replace('_', ' ');
 
+        const step1 = document.getElementById(`step1-${currentQueryId}`);
+        const step2 = document.getElementById(`step2-${currentQueryId}`);
+        const step3 = document.getElementById(`step3-${currentQueryId}`);
+        const step4 = document.getElementById(`step4-${currentQueryId}`);
+
+        function markCompleted(el, detailEl, label) {
+          el.className = 'p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-xs';
+          el.querySelector('div').className = 'font-bold text-emerald-300';
+          detailEl.textContent = label;
+          detailEl.className = 'text-[10px] text-emerald-400 font-mono truncate';
+        }
+
+        const d1 = document.getElementById(`step1-detail-${currentQueryId}`);
+        const d2 = document.getElementById(`step2-detail-${currentQueryId}`);
+        const d3 = document.getElementById(`step3-detail-${currentQueryId}`);
+        const d4 = document.getElementById(`step4-detail-${currentQueryId}`);
+
         if (route === 'direct_llm') {
-          badge.className = 'text-xs px-2.5 py-1 rounded-full font-mono font-semibold uppercase bg-slate-700 text-slate-200 border border-slate-600';
-          setStepCompleted(1, 'Direct LLM');
-          setStepCompleted(2, 'Skipped (Zero Overhead)');
-          setStepCompleted(3, 'Direct Path');
-          setStepCompleted(4, 'Synthesized');
+          badge.className = 'text-xs px-2.5 py-0.5 rounded-full font-mono font-bold uppercase bg-slate-700 text-slate-200 border border-slate-600';
+          markCompleted(step1, d1, 'Direct LLM');
+          markCompleted(step2, d2, 'Skipped (Zero Overhead)');
+          markCompleted(step3, d3, 'Direct Pass');
+          markCompleted(step4, d4, 'Synthesized');
         } else if (route === 'local_rag') {
-          badge.className = 'text-xs px-2.5 py-1 rounded-full font-mono font-semibold uppercase bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
-          setStepCompleted(1, 'Local RAG');
-          setStepCompleted(2, 'BM25 + ChromaDB');
-          setStepCompleted(3, 'RRF Ranking (k=60)');
-          setStepCompleted(4, 'Synthesized');
+          badge.className = 'text-xs px-2.5 py-0.5 rounded-full font-mono font-bold uppercase bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
+          markCompleted(step1, d1, 'Local RAG');
+          markCompleted(step2, d2, 'BM25 + ChromaDB');
+          markCompleted(step3, d3, 'RRF Ranking (k=60)');
+          markCompleted(step4, d4, 'Synthesized');
         } else if (route === 'web_search') {
-          badge.className = 'text-xs px-2.5 py-1 rounded-full font-mono font-semibold uppercase bg-cyan-500/20 text-cyan-300 border border-cyan-500/30';
-          setStepCompleted(1, 'Web Search');
-          setStepCompleted(2, 'Exa AI Neural Search');
-          setStepCompleted(3, 'Web Snippets');
-          setStepCompleted(4, 'Synthesized');
+          badge.className = 'text-xs px-2.5 py-0.5 rounded-full font-mono font-bold uppercase bg-cyan-500/20 text-cyan-300 border border-cyan-500/30';
+          markCompleted(step1, d1, 'Web Search');
+          markCompleted(step2, d2, 'Exa AI Neural Index');
+          markCompleted(step3, d3, 'Web Snippets Fusion');
+          markCompleted(step4, d4, 'Synthesized');
         } else if (route === 'both') {
-          badge.className = 'text-xs px-2.5 py-1 rounded-full font-mono font-semibold uppercase bg-purple-500/20 text-purple-300 border border-purple-500/30';
-          setStepCompleted(1, 'Both Fused');
-          setStepCompleted(2, 'Hybrid RAG + Exa');
-          setStepCompleted(3, 'Cross-Context Fusion');
-          setStepCompleted(4, 'Synthesized');
+          badge.className = 'text-xs px-2.5 py-0.5 rounded-full font-mono font-bold uppercase bg-purple-500/20 text-purple-300 border border-purple-500/30';
+          markCompleted(step1, d1, 'Both Fused');
+          markCompleted(step2, d2, 'Hybrid RAG + Exa Web');
+          markCompleted(step3, d3, 'Cross-Context Fusion');
+          markCompleted(step4, d4, 'Synthesized');
         }
 
         // Show Rationale
         if (data.reason) {
-          document.getElementById('routingRationaleText').textContent = data.reason;
-          document.getElementById('routingRationaleBox').classList.remove('hidden');
+          document.getElementById(`rationale-text-${currentQueryId}`).textContent = data.reason;
+          document.getElementById(`rationale-box-${currentQueryId}`).classList.remove('hidden');
         }
 
         // Show Sources
-        const sourcesList = document.getElementById('sourcesList');
+        const sourcesList = document.getElementById(`sources-list-${currentQueryId}`);
         sourcesList.innerHTML = '';
         let hasSources = false;
 
         if (data.internal_sources && data.internal_sources.length > 0) {
           hasSources = true;
           data.internal_sources.forEach(src => {
-            const badge = document.createElement('span');
-            badge.className = 'px-2.5 py-1 bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 rounded-lg font-mono text-[11px] flex items-center space-x-1';
-            badge.innerHTML = `<i class="fa-solid fa-file-lines text-[10px]"></i><span>${src}</span>`;
-            sourcesList.appendChild(badge);
+            const badgeEl = document.createElement('span');
+            badgeEl.className = 'px-2.5 py-1 bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 rounded-lg font-mono text-[11px] flex items-center space-x-1.5';
+            badgeEl.innerHTML = `<i class="fa-solid fa-file-lines text-[10px]"></i><span>${src}</span>`;
+            sourcesList.appendChild(badgeEl);
           });
         }
 
@@ -685,54 +1593,99 @@
             const link = document.createElement('a');
             link.href = item.url;
             link.target = '_blank';
-            link.className = 'px-2.5 py-1 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 border border-cyan-500/20 rounded-lg text-[11px] flex items-center space-x-1 transition';
+            link.rel = 'noopener noreferrer';
+            link.className = 'px-2.5 py-1 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 border border-cyan-500/20 rounded-lg text-[11px] flex items-center space-x-1.5 transition';
             link.innerHTML = `<i class="fa-solid fa-arrow-up-right-from-square text-[9px]"></i><span>${item.title || item.url}</span>`;
             sourcesList.appendChild(link);
           });
         }
 
         if (hasSources) {
-          document.getElementById('sourcesBox').classList.remove('hidden');
+          document.getElementById(`sources-box-${currentQueryId}`).classList.remove('hidden');
         }
 
-        // Show Final Answer
-        document.getElementById('answerText').textContent = data.answer || 'No response generated.';
-        document.getElementById('answerBox').classList.remove('hidden');
+        // Render Answer with Markdown & Syntax Highlighting
+        const rawAnswer = data.answer || 'No response generated.';
+        const answerTextEl = document.getElementById(`answer-text-${currentQueryId}`);
+        
+        if (window.marked) {
+          answerTextEl.innerHTML = marked.parse(rawAnswer);
+          // Highlight all code blocks
+          answerTextEl.querySelectorAll('pre code').forEach((block) => {
+            hljs.highlightElement(block);
+            // Add copy button to pre
+            const pre = block.parentElement;
+            if (!pre.querySelector('.code-copy-btn')) {
+              const copyBtn = document.createElement('button');
+              copyBtn.className = 'code-copy-btn';
+              copyBtn.innerHTML = '<i class="fa-regular fa-copy"></i> Copy';
+              copyBtn.onclick = () => {
+                navigator.clipboard.writeText(block.innerText);
+                copyBtn.innerHTML = '<i class="fa-solid fa-check text-emerald-400"></i> Copied';
+                setTimeout(() => copyBtn.innerHTML = '<i class="fa-regular fa-copy"></i> Copy', 2000);
+              };
+              pre.appendChild(copyBtn);
+            }
+          });
+        } else {
+          answerTextEl.textContent = rawAnswer;
+        }
+
+        document.getElementById(`model-tag-${currentQueryId}`).textContent = currentActiveProvider.toUpperCase();
+        document.getElementById(`answer-box-${currentQueryId}`).classList.remove('hidden');
 
       } catch (err) {
-        alert('Query failed: ' + err.message);
+        showToast('Query failed: ' + err.message, 'error');
       } finally {
         btnSubmit.disabled = false;
-        document.getElementById('traceSpinner').classList.add('hidden');
+        const spinner = document.getElementById(`spinner-${currentQueryId}`);
+        if (spinner) spinner.classList.add('hidden');
       }
     }
 
-    function setStepActive(stepNum, detail) {
-      const step = document.getElementById(`step${stepNum}`);
-      step.className = 'p-2 rounded-lg bg-indigo-500/20 border border-indigo-500/40 text-xs';
-      document.getElementById(`step${stepNum}Detail`).textContent = detail;
+    // Copy Card Answer
+    function copyCardAnswer(queryId) {
+      const textEl = document.getElementById(`answer-text-${queryId}`);
+      if (textEl) {
+        navigator.clipboard.writeText(textEl.innerText || textEl.textContent);
+        showToast('Synthesized answer copied to clipboard!', 'success');
+      }
     }
 
-    function setStepCompleted(stepNum, detail) {
-      const step = document.getElementById(`step${stepNum}`);
-      step.className = 'p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-xs text-emerald-300';
-      document.getElementById(`step${stepNum}Detail`).textContent = detail;
-    }
+    // Model Benchmark Tester
+    async function runModelBenchmark() {
+      const prompt = document.getElementById('benchmarkPromptInput').value.trim();
+      const btn = document.getElementById('btnBenchmark');
+      const box = document.getElementById('benchmarkOutputBox');
 
-    function resetStep(stepNum) {
-      const step = document.getElementById(`step${stepNum}`);
-      step.className = 'p-2 rounded-lg bg-slate-800/40 border border-slate-800 text-xs text-slate-500';
-      document.getElementById(`step${stepNum}Detail`).textContent = 'Pending';
-    }
+      if (!prompt) return;
 
-    function copyAnswer() {
-      const text = document.getElementById('answerText').textContent;
-      navigator.clipboard.writeText(text);
-      alert('Answer copied to clipboard!');
-    }
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> <span>Testing...</span>';
+      box.classList.remove('hidden');
+      box.textContent = `[Pinging active provider: ${currentActiveProvider.toUpperCase()}...]\n`;
 
-    // Initialize
-    fetchStatus();
+      const startTime = performance.now();
+
+      try {
+        const res = await fetch('/api/query', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ query: prompt, route: 'direct_llm' })
+        });
+        const data = await res.json();
+        const duration = ((performance.now() - startTime) / 1000).toFixed(2);
+
+        box.textContent = `[Response received in ${duration}s via ${currentActiveProvider.toUpperCase()}]\n\n${data.answer || JSON.stringify(data)}`;
+        showToast(`Model responded in ${duration}s`, 'success');
+      } catch (err) {
+        box.textContent = `[Error testing provider]: ${err.message}`;
+        showToast('Benchmark test failed: ' + err.message, 'error');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-play text-xs"></i> <span>Test Latency</span>';
+      }
+    }
   </script>
 </body>
 </html>
