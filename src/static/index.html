@@ -456,6 +456,32 @@
 
       <!-- Floating Query Input Bar (Sticky at bottom) -->
       <div class="glass-panel rounded-2xl p-3 sm:p-4 shadow-2xl border-indigo-500/30 sticky bottom-4">
+        
+        <!-- Credit Exhaustion Banner (Shown when credits == 0 on deployed site) -->
+        <div id="creditExhaustedBanner" class="hidden mb-3 p-3.5 rounded-xl bg-gradient-to-r from-red-500/15 via-purple-500/10 to-indigo-500/10 border border-red-500/40 shadow-lg transition-all">
+          <div class="flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+            <div class="flex items-center space-x-2.5 text-center sm:text-left">
+              <div class="w-8 h-8 rounded-lg bg-red-500/20 text-red-500 flex items-center justify-center text-sm flex-shrink-0">
+                <i class="fa-solid fa-lock"></i>
+              </div>
+              <div>
+                <div class="font-bold text-xs text-red-600 dark:text-red-400">10 Free Trial Credits Exhausted (0/10)</div>
+                <p class="text-[10px]" style="color: var(--text-muted);">
+                  Live cloud deployment queries are paused to protect API quotas. Contact Sathish to unlock access!
+                </p>
+              </div>
+            </div>
+            <button 
+              type="button" 
+              onclick="openCreditContactModal()" 
+              class="px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-lg transition shadow-md shadow-indigo-600/30 flex items-center space-x-1.5 text-xs whitespace-nowrap cursor-pointer"
+            >
+              <i class="fa-solid fa-paper-plane text-[10px]"></i>
+              <span>Contact Sathish</span>
+            </button>
+          </div>
+        </div>
+
         <form onsubmit="handleQuerySubmit(event)" class="space-y-2.5">
           
           <!-- Routing Mode Chips & Model Info Row -->
@@ -475,6 +501,8 @@
             </div>
             
             <div class="flex items-center space-x-3 text-[11px]" style="color: var(--text-muted);">
+              <!-- Dynamic Credit Badge -->
+              <div id="creditBadgeContainer" class="flex items-center"></div>
               <span class="hidden md:inline">Press <kbd class="px-1.5 py-0.5 rounded font-mono text-[10px] theme-subtle">Enter</kbd> to ask</span>
               <span class="flex items-center space-x-1 text-indigo-500 dark:text-indigo-300 font-medium">
                 <i class="fa-solid fa-sparkles text-xs"></i>
@@ -1164,6 +1192,78 @@
       </div>
     </div>
 
+    <!-- ========================================================================= -->
+    <!-- MODAL: Credit Exhausted - Contact Sathish                                -->
+    <!-- ========================================================================= -->
+    <div id="creditContactModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md hidden transition-all duration-300">
+      <div class="glass-panel rounded-3xl p-6 sm:p-8 max-w-md w-full relative overflow-hidden shadow-2xl border border-red-500/30 text-center space-y-5" style="background: var(--bg-panel);">
+        
+        <button onclick="closeCreditContactModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full theme-subtle flex items-center justify-center hover:bg-red-500/20 hover:text-red-400 transition" style="color: var(--text-muted);">
+          <i class="fa-solid fa-xmark text-sm"></i>
+        </button>
+
+        <!-- Lock Icon with Glow -->
+        <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-red-500 via-purple-500 to-indigo-500 p-0.5 mx-auto shadow-xl shadow-red-500/30">
+          <div class="w-full h-full rounded-[14px] flex items-center justify-center text-white text-2xl" style="background: var(--bg-panel);">
+            <i class="fa-solid fa-lock text-red-500"></i>
+          </div>
+        </div>
+
+        <div class="space-y-1.5">
+          <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-red-500/10 text-red-500 border border-red-500/30 inline-block">
+            Demonstration Quota Reached
+          </span>
+          <h3 class="text-xl font-black tracking-tight" style="color: var(--text-main);">
+            10 Free Credits Completed!
+          </h3>
+          <p class="text-xs leading-relaxed max-w-sm mx-auto" style="color: var(--text-muted);">
+            You have used all 10 free trial queries on this public deployment. To prevent API rate-limit and credit exhaustion, chat queries are paused.
+          </p>
+        </div>
+
+        <!-- Action Prompts to Contact Sathish -->
+        <div class="theme-subtle p-4 rounded-2xl text-left space-y-1.5 border" style="border-color: var(--border-panel);">
+          <div class="text-xs font-bold text-indigo-500 dark:text-indigo-400 flex items-center space-x-1.5">
+            <i class="fa-solid fa-user-astronaut"></i>
+            <span>Get In Touch with Sathish:</span>
+          </div>
+          <p class="text-[11px] leading-relaxed" style="color: var(--text-muted);">
+            Reach out to <strong>Sathish (AI Engineer)</strong> for extended quota access, custom document ingestion, or an architecture walkthrough.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
+          <a 
+            href="https://www.linkedin.com/in/sathishbabu-shanmugam/" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            class="py-2.5 px-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs flex items-center justify-center space-x-2 shadow-lg shadow-blue-600/30 transition transform hover:-translate-y-0.5"
+          >
+            <i class="fa-brands fa-linkedin text-sm"></i>
+            <span>Message on LinkedIn</span>
+          </a>
+
+          <a 
+            href="https://github.com/sathishatgit" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            class="py-2.5 px-4 rounded-xl bg-slate-900 hover:bg-black text-white dark:bg-white/10 dark:hover:bg-white/20 font-semibold text-xs flex items-center justify-center space-x-2 transition transform hover:-translate-y-0.5"
+          >
+            <i class="fa-brands fa-github text-sm"></i>
+            <span>GitHub Profile</span>
+          </a>
+        </div>
+
+        <button 
+          onclick="closeCreditContactModal(); openProfileModal();" 
+          class="text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:underline inline-flex items-center space-x-1 cursor-pointer"
+        >
+          <span>View Sathish's Developer Profile & Stats</span>
+          <i class="fa-solid fa-arrow-right text-[10px]"></i>
+        </button>
+      </div>
+    </div>
+
   </div>
 
   <!-- ========================================================================= -->
@@ -1345,6 +1445,134 @@
       showToast('Engineered with passion by Sathish — AI Engineer! ❤️', 'success');
     }
 
+    // =========================================================================
+    // Deployment & Quota Management (10 Free Queries per Browser on Deployed Site)
+    // =========================================================================
+    const MAX_FREE_CREDITS = 10;
+    let isLocalEnvironment = true;
+
+    function checkIsLocal() {
+      const host = window.location.hostname;
+      return host === 'localhost' || host === '127.0.0.1' || host === '0.0.0.0' || host === '';
+    }
+
+    function getOrCreateClientId() {
+      let cid = localStorage.getItem('agui_client_id');
+      if (!cid) {
+        cid = 'client_' + Math.random().toString(36).substring(2, 12) + '_' + Date.now().toString(36);
+        localStorage.setItem('agui_client_id', cid);
+      }
+      return cid;
+    }
+
+    function getRemainingCredits() {
+      if (isLocalEnvironment) return Infinity;
+      const saved = localStorage.getItem('agui_free_credits');
+      if (saved === null) {
+        localStorage.setItem('agui_free_credits', String(MAX_FREE_CREDITS));
+        return MAX_FREE_CREDITS;
+      }
+      return parseInt(saved, 10);
+    }
+
+    function consumeCredit() {
+      if (isLocalEnvironment) return Infinity;
+      let current = getRemainingCredits();
+      current = Math.max(0, current - 1);
+      localStorage.setItem('agui_free_credits', String(current));
+      updateCreditUI();
+      if (current === 0) {
+        openCreditContactModal();
+      }
+      return current;
+    }
+
+    function updateCreditUI() {
+      const container = document.getElementById('creditBadgeContainer');
+      const input = document.getElementById('queryInput');
+      const btnSubmit = document.getElementById('btnSubmit');
+      const banner = document.getElementById('creditExhaustedBanner');
+
+      if (isLocalEnvironment) {
+        if (container) {
+          container.innerHTML = `
+            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 flex items-center space-x-1" title="Running on localhost: Unlimited queries">
+              <i class="fa-solid fa-bolt text-emerald-500 text-[9px]"></i>
+              <span>Local Dev: Unlimited</span>
+            </span>
+          `;
+        }
+        if (input) {
+          input.disabled = false;
+          input.classList.remove('opacity-60', 'cursor-not-allowed');
+        }
+        if (btnSubmit) {
+          btnSubmit.disabled = false;
+          btnSubmit.classList.remove('opacity-50', 'cursor-not-allowed');
+          btnSubmit.title = "Ask Agent";
+        }
+        if (banner) banner.classList.add('hidden');
+        return;
+      }
+
+      // Deployed Environment with 10 free queries
+      const credits = getRemainingCredits();
+      let badgeStyle = 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30';
+      let icon = 'fa-sparkles text-emerald-500';
+
+      if (credits <= 3 && credits > 0) {
+        badgeStyle = 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/30';
+        icon = 'fa-triangle-exclamation text-amber-500';
+      } else if (credits === 0) {
+        badgeStyle = 'bg-red-500/10 text-red-600 dark:text-red-400 border-red-500/30 animate-pulse';
+        icon = 'fa-lock text-red-500';
+      }
+
+      if (container) {
+        container.innerHTML = `
+          <button type="button" onclick="openCreditContactModal()" class="px-2.5 py-0.5 rounded-full text-[10px] font-bold border flex items-center space-x-1 transition cursor-pointer hover:scale-105 ${badgeStyle}" title="Free demonstration credits remaining on this live deployment">
+            <i class="fa-solid ${icon} text-[9px]"></i>
+            <span>Credits: <strong>${credits}/${MAX_FREE_CREDITS}</strong></span>
+          </button>
+        `;
+      }
+
+      if (credits <= 0) {
+        if (input) {
+          input.disabled = true;
+          input.placeholder = "Free trial completed (0/10 credits). Contact Sathish to unlock access...";
+          input.classList.add('opacity-60', 'cursor-not-allowed');
+        }
+        if (btnSubmit) {
+          btnSubmit.disabled = true;
+          btnSubmit.classList.add('opacity-50', 'cursor-not-allowed');
+          btnSubmit.title = "Credits exhausted. Contact Sathish.";
+        }
+        if (banner) banner.classList.remove('hidden');
+      } else {
+        if (input) {
+          input.disabled = false;
+          input.classList.remove('opacity-60', 'cursor-not-allowed');
+        }
+        if (btnSubmit) {
+          btnSubmit.disabled = false;
+          btnSubmit.classList.remove('opacity-50', 'cursor-not-allowed');
+          btnSubmit.title = "Ask Agent";
+        }
+        if (banner) banner.classList.add('hidden');
+      }
+    }
+
+    function openCreditContactModal() {
+      const modal = document.getElementById('creditContactModal');
+      if (modal) modal.classList.remove('hidden');
+    }
+
+    function closeCreditContactModal() {
+      const modal = document.getElementById('creditContactModal');
+      if (modal) modal.classList.add('hidden');
+    }
+
     // SPA Page Switching
     function switchPage(pageId) {
       currentActivePage = pageId;
@@ -1382,6 +1610,8 @@
 
     // Initialize on Load
     window.addEventListener('DOMContentLoaded', () => {
+      isLocalEnvironment = checkIsLocal();
+      updateCreditUI();
       const hash = window.location.hash.replace('#', '');
       if (['chat', 'knowledge', 'models', 'architecture'].includes(hash)) {
         switchPage(hash);
@@ -1395,6 +1625,11 @@
       try {
         const res = await fetch('/api/status');
         const data = await res.json();
+
+        if (data.is_local !== undefined) {
+          isLocalEnvironment = Boolean(data.is_local && checkIsLocal());
+        }
+        updateCreditUI();
 
         currentActiveProvider = data.active_provider || 'gemini';
         
@@ -1567,6 +1802,11 @@
 
     // Trigger Preset from Shelf
     function triggerPreset(query, route) {
+      if (!isLocalEnvironment && getRemainingCredits() <= 0) {
+        openCreditContactModal();
+        showToast('Free trial credits exhausted (0/10). Please contact Sathish to unlock access!', 'error');
+        return;
+      }
       switchPage('chat');
       document.getElementById('queryInput').value = query;
       document.getElementById('routeMode').value = route || '';
@@ -1691,6 +1931,13 @@
       const query = input.value.trim();
       if (!query) return;
 
+      // Credit limit enforcement on deployed instance
+      if (!isLocalEnvironment && getRemainingCredits() <= 0) {
+        openCreditContactModal();
+        showToast('Free trial credits exhausted (0/10). Please contact Sathish to unlock access!', 'error');
+        return;
+      }
+
       const forcedRoute = document.getElementById('routeMode').value || null;
       const btnSubmit = document.getElementById('btnSubmit');
 
@@ -1796,12 +2043,26 @@
       try {
         const res = await fetch('/api/query', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 
+            'Content-Type': 'application/json',
+            'x-client-id': getOrCreateClientId()
+          },
           body: JSON.stringify({ query: query, route: forcedRoute })
         });
 
         const data = await res.json();
-        if (data.error) throw new Error(data.error);
+
+        if (res.status === 429) {
+          localStorage.setItem('agui_free_credits', '0');
+          updateCreditUI();
+          openCreditContactModal();
+          throw new Error(data.detail || 'Free demonstration credit limit (10 queries) exhausted.');
+        }
+
+        if (!res.ok) throw new Error(data.detail || data.error || 'Query failed');
+
+        // Decrement credit on deployed instances
+        consumeCredit();
 
         // Update Route Badge
         const route = data.route || 'direct_llm';
@@ -1921,7 +2182,7 @@
       } catch (err) {
         showToast('Query failed: ' + err.message, 'error');
       } finally {
-        btnSubmit.disabled = false;
+        updateCreditUI();
         const spinner = document.getElementById(`spinner-${currentQueryId}`);
         if (spinner) spinner.classList.add('hidden');
       }

@@ -16,10 +16,32 @@ warnings.filterwarnings("ignore", category=DeprecationWarning)
 PROJECT_ROOT = Path(__file__).resolve().parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import HTMLResponse, FileResponse
 from pydantic import BaseModel
 from typing import Optional, List, Dict, Any
+
+# Deployment & Quota Management (10 free queries per browser on deployed instances)
+client_usage_tracker: Dict[str, int] = {}
+MAX_FREE_CREDITS = 10
+
+def is_local_request(request: Request) -> bool:
+    """Check if request originates from localhost / local development."""
+    import os
+    if os.environ.get("FORCE_DEPLOYED_QUOTA", "").lower() in ("true", "1", "yes"):
+        return False
+    host = request.headers.get("host", "").split(":")[0].lower()
+    return host in ("localhost", "127.0.0.1", "0.0.0.0", "testserver")
+
+def get_client_identifier(request: Request) -> str:
+    """Extract unique client identifier from header or IP."""
+    client_id = request.headers.get("x-client-id")
+    if client_id:
+        return client_id.strip()
+    forwarded = request.headers.get("x-forwarded-for")
+    if forwarded:
+        return forwarded.split(",")[0].strip()
+    return request.client.host if request.client else "anonymous"
 
 from src.config import GEMINI_API_KEY, JINA_API_KEY, EXA_API_KEY
 from src.rag import KnowledgeAssistant
@@ -71,11 +93,14 @@ class ProviderSelectRequest(BaseModel):
 
 
 @app.get("/api/status")
-async def get_status():
-    """Return live system component status, active provider, and document counts."""
+async def get_status(request: Request):
+    """Return live system component status, active provider, document counts, and deployment status."""
     providers = llm.get_available_providers()
     active_prov = config.LLM_PROVIDER
     active_info = providers.get(active_prov, {})
+    is_local = is_local_request(request)
+    client_id = get_client_identifier(request)
+    used_credits = client_usage_tracker.get(client_id, 0)
     return {
         "gemini": bool(config.GEMINI_API_KEY and not config.GEMINI_API_KEY.startswith("your_")),
         "jina": bool(config.JINA_API_KEY and not config.JINA_API_KEY.startswith("your_")),
@@ -86,6 +111,10 @@ async def get_status():
         "providers": providers,
         "chroma_count": vector_store.count(),
         "bm25_count": len(bm25_engine.chunks) if bm25_engine.chunks else 0,
+        "is_local": is_local,
+        "max_free_credits": MAX_FREE_CREDITS,
+        "used_credits": used_credits,
+        "remaining_credits": max(0, MAX_FREE_CREDITS - used_credits) if not is_local else None,
     }
 
 
@@ -234,13 +263,27 @@ async def trigger_ingest():
 
 
 @app.post("/api/query")
-async def process_user_query(req: QueryRequest):
-    """Process user query through the multi-route agent pipeline."""
+async def process_user_query(req: QueryRequest, request: Request):
+    """Process user query through the multi-route agent pipeline with credit quota on public deployments."""
     if not req.query or not req.query.strip():
         raise HTTPException(status_code=400, detail="Query cannot be empty.")
 
+    # Apply 10-query limit ONLY on deployed instances (origin is NOT local)
+    if not is_local_request(request):
+        client_id = get_client_identifier(request)
+        current_count = client_usage_tracker.get(client_id, 0)
+        if current_count >= MAX_FREE_CREDITS:
+            raise HTTPException(
+                status_code=429,
+                detail="Free demonstration credit limit (10 queries) exhausted for this live deployment. Please contact Sathish (AI Engineer) on LinkedIn or GitHub for extended access."
+            )
+        client_usage_tracker[client_id] = current_count + 1
+
     try:
         result = assistant.process_query(req.query.strip(), forced_route=req.route)
+        if not is_local_request(request):
+            client_id = get_client_identifier(request)
+            result["remaining_credits"] = max(0, MAX_FREE_CREDITS - client_usage_tracker.get(client_id, 0))
         return result
     except Exception as e:
         return {
