@@ -36,6 +36,16 @@ INDEX_HTML = STATIC_DIR / "index.html"
 bm25_engine = BM25SearchEngine()
 bm25_engine.load_index()
 vector_store = ChromaVectorStore()
+
+# If deploying to a clean container where indexes are not pre-built, auto-run ingestion
+if vector_store.count() == 0 and len(bm25_engine.chunks) == 0:
+    try:
+        print("[Startup] Initializing empty knowledge base from documents...")
+        run_ingestion(reset_db=False)
+        bm25_engine.load_index()
+    except Exception as e:
+        print(f"[Startup] Initial ingestion notice: {e}")
+
 assistant = KnowledgeAssistant(bm25_engine=bm25_engine, vector_store=vector_store)
 
 
@@ -244,16 +254,18 @@ async def process_user_query(req: QueryRequest):
 
 
 def run():
+    import os
     import uvicorn
+    port = int(os.environ.get("PORT", 8000))
     print("\n=======================================================")
     print(" AGUI Interactive Agent Hub Live Server")
     print("=======================================================")
-    print(" Access the live interactive web UI at:")
-    print(" >>> http://localhost:8000")
-    print(" >>> http://127.0.0.1:8000")
+    print(f" Access the live interactive web UI at:")
+    print(f" >>> http://localhost:{port}")
+    print(f" >>> http://127.0.0.1:{port}")
     print(" Press Ctrl+C to stop the server.")
     print("=======================================================\n")
-    uvicorn.run("app:app", host="0.0.0.0", port=8000, reload=False)
+    uvicorn.run("app:app", host="0.0.0.0", port=port, reload=False)
 
 
 if __name__ == "__main__":
