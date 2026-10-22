@@ -2,9 +2,8 @@
 
 An educational, realistic, and complete Generative AI application built for live hands-on workshops and real-world multi-route RAG architectures.
 
-> **👨‍💻 Developed by:** **Sathish**  
-> **💼 Role:** AI Engineer, R Logics Solutions  
-> **🎓 Alma Mater:** MCA, E.G.S. Pillay Engineering College (EGSPEC)  
+> **👨‍💻 Developed by:** **Sathish** (AI Engineer)  
+> **🔗 LinkedIn:** [Sathishbabu Shanmugam](https://www.linkedin.com/in/sathishbabu-shanmugam/)  
 > **🐙 GitHub:** [@sathishatgit](https://github.com/sathishatgit)
 
 ---
@@ -454,9 +453,32 @@ The router acts as the traffic controller. It feeds the user question into Gemin
 
 ## 15. Author & Credits
 
-- **Creator & Lead Developer:** **Sathish**
-- **Title:** AI Engineer, R Logics Solutions
-- **Academic Background:** Master of Computer Applications (MCA), E.G.S. Pillay Engineering College (EGSPEC)
+- **Creator & Lead Developer:** **Sathish** (AI Engineer)
+- **LinkedIn:** [https://www.linkedin.com/in/sathishbabu-shanmugam/](https://www.linkedin.com/in/sathishbabu-shanmugam/)
 - **GitHub Profile:** [https://github.com/sathishatgit](https://github.com/sathishatgit)
 - **Repository:** [https://github.com/sathishatgit/genai-knowledge-assistant](https://github.com/sathishatgit/genai-knowledge-assistant)
+
+---
+
+## 16. Contributing & Pull Requests
+
+This is an open repository — anyone can clone, study, and experiment with the project! Direct pushes to the repository are restricted; all contributions are welcome through **Pull Requests (PRs)**:
+
+1. **Fork** the repository to your own GitHub account.
+2. **Clone** your fork locally:
+   ```bash
+   git clone https://github.com/<your-username>/genai-knowledge-assistant.git
+   ```
+3. **Create a new branch** for your feature or bugfix:
+   ```bash
+   git checkout -b feature/your-feature-name
+   ```
+4. **Make your changes** and test thoroughly.
+5. **Commit and push** to your fork:
+   ```bash
+   git commit -m "feat: describe your change"
+   git push origin feature/your-feature-name
+   ```
+6. **Open a Pull Request (PR)** against the `master` branch of [sathishatgit/genai-knowledge-assistant](https://github.com/sathishatgit/genai-knowledge-assistant).
+
 
