@@ -1,6 +1,11 @@
 # Intelligent GenAI Knowledge Assistant
 
-An educational, realistic, and complete Generative AI application built for live hands-on workshops.
+An educational, realistic, and complete Generative AI application built for live hands-on workshops and real-world multi-route RAG architectures.
+
+> **👨‍💻 Developed by:** **Sathish**  
+> **💼 Role:** AI Engineer, R Logics Solutions  
+> **🎓 Alma Mater:** MCA, E.G.S. Pillay Engineering College (EGSPEC)  
+> **🐙 GitHub:** [@sathishatgit](https://github.com/sathishatgit)
 
 ---
 
@@ -444,3 +449,14 @@ The router acts as the traffic controller. It feeds the user question into Gemin
 | `Exa Search API HTTP error 401` | Invalid or expired Exa key | Verify your key at [exa.ai](https://exa.ai/) |
 | `No .txt documents found` | `data/documents/` is empty | Run `python ingest.py` after adding documents |
 | `ChromaDB count is 0` | Ingestion was run without JINA key | Set `JINA_API_KEY` in `.env` and rerun `python ingest.py` |
+
+---
+
+## 15. Author & Credits
+
+- **Creator & Lead Developer:** **Sathish**
+- **Title:** AI Engineer, R Logics Solutions
+- **Academic Background:** Master of Computer Applications (MCA), E.G.S. Pillay Engineering College (EGSPEC)
+- **GitHub Profile:** [https://github.com/sathishatgit](https://github.com/sathishatgit)
+- **Repository:** [https://github.com/sathishatgit/genai-knowledge-assistant](https://github.com/sathishatgit/genai-knowledge-assistant)
+
